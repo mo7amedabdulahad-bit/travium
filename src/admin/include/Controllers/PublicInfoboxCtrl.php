@@ -17,7 +17,7 @@ class PublicInfoboxCtrl
         $globalDB = GlobalDB::getInstance();
         if(!isServerFinished() && isset($_REQUEST['section']) && $_REQUEST['section'] == 'delete'){
             $iId = (int)$_REQUEST['iid'];
-            $globalDB->query("DELETE FROM infobox WHERE id=$iId AND autoType=0");
+            $globalDB->query("DELETE FROM infobox WHERE id=$iId");
             InfoBoxModel::invalidatePublicInfoBox();
             AdminLog::getInstance()->addLog("deleted {$params['action']}");
         }
@@ -26,7 +26,7 @@ class PublicInfoboxCtrl
             InfoBoxModel::invalidatePublicInfoBox();
             AdminLog::getInstance()->addLog("added {$params['action']}");
         }
-        $result = $globalDB->query("SELECT * FROM infobox WHERE autoType=0 AND showTo>=" . time());
+        $result = $globalDB->query("SELECT * FROM infobox WHERE showTo>=" . time());
         $params['content'] = null;
         while($row = $result->fetch_assoc()){
             $params['content'] .= '<tr>';
