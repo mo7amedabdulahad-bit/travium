@@ -125,12 +125,13 @@ class DB
     public function real_connect($host = NULL, $username = NULL, $passwd = NULL, $dbname = NULL, $port = NULL, $socket = NULL)
     {
         $this->mysqli = new \mysqli($host, $username, $passwd, $dbname, $port, $socket);
-        $status = $this->mysqli->ping();
-        if ($status) {
+        // ping() deprecated in PHP 8.4 - just check connection exists
+        if ($this->mysqli && !$this->mysqli->connect_error) {
             $this->set_charset("utf8");
             $this->lastPing = time();
+            return true;
         }
-        return $status;
+        return false;
     }
 
     public function set_charset($charset)
@@ -140,7 +141,8 @@ class DB
 
     public function ping()
     {
-        return $this->mysqli->ping();
+        // ping() deprecated in PHP 8.4 - just return connection status
+        return ($this->mysqli && !$this->mysqli->connect_error);
     }
 
     public function checkConnection($force = false)
@@ -151,12 +153,13 @@ class DB
         }
         $ping = TRUE;
         if (($this->lastPing - time()) > 100 || $force) {
-            $ping = $this->ping();
+            // ping() deprecated in PHP 8.4 - just check connection exists
+            $ping = ($this->mysqli && !$this->mysqli->connect_error);
             $try = 0;
             while (!$ping && $try <= 20) {
                 ++$try;
                 $this->forceNewDatabase();
-                $ping = $this->ping();
+                $ping = ($this->mysqli && !$this->mysqli->connect_error);
                 logError("Could not ping MySQL");
                 sleep(1);
             }
