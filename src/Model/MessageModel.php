@@ -239,7 +239,8 @@ class MessageModel
         return $md5_checksum;
     }
 
-    public function checkLastMessage($uid, $banned, $to_uid = FALSE, $subject, $text)
+    // PHP 8.4 compatible: Required parameters before optional
+    public function checkLastMessage($uid, $banned, $subject, $text, $to_uid = FALSE)
     {
         if ($to_uid !== FALSE && $to_uid <= 2) {
             return TRUE;

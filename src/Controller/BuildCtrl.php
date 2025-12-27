@@ -623,9 +623,9 @@ class BuildCtrl extends GameCtrl
             case 3:
             case 4:
                 $percent = $village->calculateResourcesTotalBonusProduction($item_id);
-                $this->getValuesTable($contract, ["percent" => $percent], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::fieldProduction($lvl) + round5(Formulas::fieldProduction($lvl) * $params['percent'] / 100);
-                });
+                }, ["percent" => $percent]);
                 break;
             case 5:
             case 6:
@@ -633,7 +633,7 @@ class BuildCtrl extends GameCtrl
             case 8:
             case 9:
             case 45:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return $lvl * 5;
                 });
                 break;
@@ -641,23 +641,23 @@ class BuildCtrl extends GameCtrl
             case 11:
             case 38:
             case 39:
-                $this->getValuesTable($contract, ["big" => $item_id > 11], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return $params['big'] ? Formulas::bigStoreCAP($lvl) : Formulas::storeCAP($lvl);
-                });
+                }, ["big" => $item_id > 11]);
                 break;
             case 23:
                 $increase = ArtefactsModel::getArtifactEffectByType($this->session->getPlayerId(), $village->getKid(), ArtefactsModel::ARTIFACT_CRANNY);
-                $this->getValuesTable($contract, ["race" => $this->session->getRace(), "increase" => $increase,], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::crannyCAP($lvl, $params['race']) * $params['increase'];
-                });
+                }, ["race" => $this->session->getRace(), "increase" => $increase,]);
                 break;
             case 36:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::trapperValue($lvl);
                 });
                 break;
             case 15:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::getMainBuildingValue($lvl);
                 });
                 break;
@@ -666,27 +666,27 @@ class BuildCtrl extends GameCtrl
             case 33:
             case 42:
             case 43:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::wallPower($this->session->getRace(), $lvl);
                 });
                 break;
             case 41:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return 100 + $lvl;
                 });
                 break;
             case 14:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::TournamentSqValue($lvl);
                 });
                 break;
             case 28:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::TradeOfficeValue($lvl);
                 });
                 break;
             case 34:
-                $this->getValuesTable($contract, [], function ($params, $lvl) {
+                $this->getValuesTable($contract, function ($params, $lvl) {
                     return Formulas::StonemasonsLodgeValue($lvl);
                 });
                 break;
@@ -698,7 +698,8 @@ class BuildCtrl extends GameCtrl
         return PHPBatchView::render("build/buildingReadyWrapper", $contract);
     }
 
-    private function getValuesTable(&$contract, $params = [], callable $callback)
+    // PHP 8.4 compatible: Required parameter (callable) before optional (array)
+    private function getValuesTable(&$contract, callable $callback, $params = [])
     {
         $contract['showValuesTable'] = TRUE;
         $contract['valueTable'] = '';
