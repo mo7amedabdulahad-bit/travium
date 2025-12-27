@@ -268,7 +268,7 @@ class NatarsModel
                     if ($village->num_rows) {
                         $kid = $village->fetch_row()[0];
                         $register->createNewNatarVillage($kid);
-                        $this->VillageToPOP($kid, (int)mt_rand($pop - $twentyPercent, $pop + $twentyPercent));
+                        $this->VillageToPOP($kid, mt_rand((int)($pop - $twentyPercent), (int)($pop + $twentyPercent)));
                     }
                 }
             }
