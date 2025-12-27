@@ -8,7 +8,7 @@ use Core\Helper\PageNavigator;
 use Core\Helper\TimezoneHelper;
 use Core\Helper\WebService;
 use Core\Session;
-use const FILTER_SANITIZE_STRING;
+use const FILTER_SANITIZE_FULL_SPECIAL_CHARS;
 use function filter_var;
 use Game\Formulas;
 use Game\Hero\HeroItems;
@@ -126,7 +126,7 @@ class BerichteCtrl extends GameCtrl
 
     private function filter_reportId($id)
     {
-        $id = filter_var($id, FILTER_SANITIZE_STRING);
+        $id = filter_var($id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $split = explode("|", $id);
         if (sizeof($split) === 2) {
             return [filter_var($split[0], FILTER_SANITIZE_NUMBER_INT), $split[1]];
@@ -182,7 +182,7 @@ class BerichteCtrl extends GameCtrl
             'selectedTabIndex' => $this->selectedTabIndex,
         ];
         if (isset($_GET['id'])) {
-            $this->view->newVillagePrefix['id'] = filter_var($_GET['id'], FILTER_SANITIZE_STRING);
+            $this->view->newVillagePrefix['id'] = filter_var($_GET['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         }
         $isAttackOrSpy = false;
         switch ($notice['type']) {
