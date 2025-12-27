@@ -618,8 +618,9 @@ class Automation
         $config = Config::getInstance();
         $worldId = Config::getProperty("settings", "worldUniqueId");
         $globalDB = GlobalDB::getInstance();
-        $globalDB->query("DELETE FROM preregistration_keys WHERE worldId='{$worldId}'");
-        $globalDB->query("DELETE FROM activation WHERE worldId='{$worldId}' AND used=1");
+        // Global tables don't have worldId - delete all entries (world is ending)
+        $globalDB->query("DELETE FROM preregistration_keys");
+        $globalDB->query("DELETE FROM activation WHERE used=1");
         $globalDB->query("UPDATE gameServers SET finished=1, registerClosed=1 WHERE id='{$worldId}'");
         $automationModel = new AutomationModel();
         $gameWorldDetails = $globalDB->query("SELECT * FROM gameServers WHERE id=$worldId")->fetch_assoc();

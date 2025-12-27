@@ -34,7 +34,7 @@ class PreRegistrationByEmailCtrl
         $db = GlobalDB::getInstance();
         $worldId = Config::getProperty("settings", "worldUniqueId");
         $pre_key = substr(sha1(time() . get_random_string(6)), 0, mt_rand(12, 16));
-        $db->query("INSERT INTO preregistration_keys (worldId, pre_key) VALUES ('$worldId', '$pre_key')");
+        $db->query("INSERT INTO preregistration_keys (pre_key) VALUES ('$worldId', '$pre_key')");
         if (!$db->affectedRows()) {
             return $this->insertPreregistrationCode();
         }
