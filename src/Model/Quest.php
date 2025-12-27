@@ -1474,8 +1474,8 @@ class Quest
     public function __construct()
     {
         $this->qst_battle = explode(",", Session::getInstance()->getQuestBattle() ?? '');
-        $this->qst_economy = explode(",", Session::getInstance()->getQuestEconomy());
-        $this->qst_world = explode(",", Session::getInstance()->getQuestWorld());
+        $this->qst_economy = explode(",", Session::getInstance()->getQuestEconomy() ?? '');
+        $this->qst_world = explode(",", Session::getInstance()->getQuestWorld() ?? '');
         if (Session::getInstance()->getSuccessAdventuresCount() >= 10) {
             $this->setQuestBitwise("battle", 8, 1);
         }
