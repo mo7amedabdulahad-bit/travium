@@ -1,7 +1,7 @@
 <?php
 namespace Model;
 use Core\Database\DB;
-use const FILTER_SANITIZE_STRING;
+
 use function filter_var;
 
 class PlayerNote
@@ -12,7 +12,7 @@ class PlayerNote
     }
     public static function setPlayerNote($my_uid, $uid, $text){
         $db = DB::getInstance();
-        $text = filter_var($db->real_escape_string($text), FILTER_SANITIZE_STRING);
+        $text = filter_var($db->real_escape_string($text), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $id = $db->fetchScalar("SELECT id FROM notes WHERE uid=$my_uid AND to_uid=$uid");
         if($id !== false){
             $db->query("UPDATE notes SET note_text='$text' WHERE id={$id}");
