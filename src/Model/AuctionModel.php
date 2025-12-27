@@ -155,7 +155,7 @@ class AuctionModel
         $max = $this->getInventorySize($uid);
         $available_range = range(1, $max);
         $occupied_places = $db->fetchScalar("SELECT GROUP_CONCAT(placeId) FROM (SELECT placeId FROM `items` WHERE uid=$uid) as x");
-        $occupied_places = explode(",", rtrim($occupied_places, ','));
+        $occupied_places = explode(",", rtrim($occupied_places ?? '', ','));
         $available_range = array_diff($available_range, $occupied_places);
         sort($available_range, SORT_ASC);
         $placeId = $available_range[0];
