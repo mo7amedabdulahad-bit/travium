@@ -44,9 +44,10 @@ class Translator
 
     public static function setLanguage($locale, $restoreDefault = false)
     {
+        $originalLocale = $locale; // Store original for error messages
         $locale = explode("-", $locale);
-        if(sizeof($locale) <> 2){
-            throw new ErrorException("Invalid locale \"$locale\"");
+        if(sizeof($locale) !== 2){
+            throw new ErrorException("Invalid locale \"$originalLocale\"");
         }
         list($language, $country) = $locale;
         $language = strtolower($language);
