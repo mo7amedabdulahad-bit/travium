@@ -1054,7 +1054,7 @@ class Session
 
     public function getSuccessAdventuresCount()
     {
-        return $this->data['success_adventures_count'];
+        return $this->data['success_adventures_count'] ?? 0;
     }
 
     public function hasPlus()
