@@ -42,8 +42,7 @@ class RegisterCtrl extends ApiAbstractCtrl
     private function getActivationByEmail($worldId, $email)
     {
         $db = DB::getInstance();
-        $stmt = $db->prepare("SELECT * FROM activation WHERE world=:wid AND email=:email");
-        $stmt->bindValue('wid', $worldId, PDO::PARAM_INT);
+        $stmt = $db->prepare("SELECT * FROM activation WHERE email=:email");
         $stmt->bindValue('email', $email, PDO::PARAM_STR);
         $stmt->execute();
         if (!$stmt->rowCount()) {
@@ -100,8 +99,7 @@ class RegisterCtrl extends ApiAbstractCtrl
     private function getActivationByActivationCode($worldId, $activationCode)
     {
         $db = DB::getInstance();
-        $stmt = $db->prepare("SELECT * FROM activation WHERE world=:wid AND activationCode=:activationCode");
-        $stmt->bindValue('wid', $worldId, PDO::PARAM_INT);
+        $stmt = $db->prepare("SELECT * FROM activation WHERE activationCode=:activationCode");
         $stmt->bindValue('activationCode', $activationCode, PDO::PARAM_STR);
         $stmt->execute();
         if (!$stmt->rowCount()) {
@@ -234,8 +232,7 @@ class RegisterCtrl extends ApiAbstractCtrl
             $this->response['redirect'] = $server['gameWorldUrl'] . 'activate.php?token=' . $token;
         } else {
             $db = DB::getInstance();
-            $stmt = $db->prepare("INSERT INTO activation (`world`, `name`, `password`, `email`, `activationCode`, `newsletter`, `refUid`, `time`) VALUES (:wid, :username, :password, :email, :activationCode, :newsletter, :refUid, :time)");
-            $stmt->bindValue('wid', $server['id'], PDO::PARAM_INT);
+            $stmt = $db->prepare("INSERT INTO activation (`name`, `password`, `email`, `activationCode`, `newsletter`, `refUid`, `time`) VALUES (:username, :password, :email, :activationCode, :newsletter, :refUid, :time)");
             $stmt->bindValue('username', $username, PDO::PARAM_STR);
             $stmt->bindValue('password', empty($password) ? sha1(microtime() . time()) : '', PDO::PARAM_STR);
             $stmt->bindValue('email', $email, PDO::PARAM_STR);
@@ -265,8 +262,7 @@ class RegisterCtrl extends ApiAbstractCtrl
     private function checkPreRegistrationKey($worldId, $key, $name)
     {
         $db = DB::getInstance();
-        $stmt = $db->prepare("SELECT COUNT(id) FROM preregistration_keys WHERE world=:worldId AND pre_key=:preRegKey");
-        $stmt->bindValue('worldId', $worldId, PDO::PARAM_STR);
+        $stmt = $db->prepare("SELECT COUNT(id) FROM preregistration_keys WHERE pre_key=:preRegKey");
         $stmt->bindValue('preRegKey', $key, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetchColumn();
@@ -275,9 +271,8 @@ class RegisterCtrl extends ApiAbstractCtrl
     private function doesNameExists($activeServerId, PDO $serverDB, $playerName)
     {
         {
-            $stmt = DB::getInstance()->prepare("SELECT COUNT(id) FROM activation WHERE name=:name AND world=:worldId");
+            $stmt = DB::getInstance()->prepare("SELECT COUNT(id) FROM activation WHERE name=:name");
             $stmt->bindValue("name", $playerName, PDO::PARAM_STR);
-            $stmt->bindValue("worldId", $activeServerId, PDO::PARAM_INT);
             $stmt->execute();
             if ((int)$stmt->fetchColumn() > 0) return true;
         }
@@ -298,9 +293,8 @@ class RegisterCtrl extends ApiAbstractCtrl
 
     private function doesEmailExists($activeServerId, PDO $serverDB, $email)
     {
-        $stmt = DB::getInstance()->prepare("SELECT COUNT(id) FROM activation WHERE email=:email AND world=:worldId");
+        $stmt = DB::getInstance()->prepare("SELECT COUNT(id) FROM activation WHERE email=:email");
         $stmt->bindValue("email", $email, PDO::PARAM_STR);
-        $stmt->bindValue("worldId", $activeServerId, PDO::PARAM_INT);
         $stmt->execute();
         if ((int)$stmt->fetchColumn() > 0) return true;
         {
@@ -335,8 +329,7 @@ class RegisterCtrl extends ApiAbstractCtrl
     private function useRegistrationKey($worldId, $key)
     {
         $db = DB::getInstance();
-        $stmt = $db->prepare("UPDATE preregistration_keys SET used=1 WHERE world=:worldId AND pre_key=:preRegKey");
-        $stmt->bindValue('worldId', $worldId, PDO::PARAM_STR);
+        $stmt = $db->prepare("UPDATE preregistration_keys SET used=1 WHERE pre_key=:preRegKey");
         $stmt->bindValue('preRegKey', $key, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetchColumn();
