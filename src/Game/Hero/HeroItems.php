@@ -9,7 +9,7 @@ class HeroItems
 {
     public function getRandomItem()
     {
-        mt_srand(make_seed());
+        mt_srand((int)make_seed());
         $btypes = [
             1 => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
             2 => [82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93],
