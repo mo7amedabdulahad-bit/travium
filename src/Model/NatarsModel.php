@@ -149,7 +149,7 @@ class NatarsModel
         $db = DB::getInstance();
         $try = 0;
         $vRow = $db->query("SELECT pop, capital, owner, isWW FROM vdata WHERE kid=$kid")->fetch_assoc();
-        if ($vRow['isWW']) {
+        if ($vRow['isWW'] || getGameElapsedSeconds() <= 0 || mt_rand(1, (int)(getGameElapsedSeconds() / 86400)) >= 3 || $db->fetchScalar("SELECT COUNT(kid) FROM vdata WHERE owner=3") >= 400) {
             return;
         }
         $race = $db->fetchScalar("SELECT race FROM users WHERE id={$vRow['owner']}");
