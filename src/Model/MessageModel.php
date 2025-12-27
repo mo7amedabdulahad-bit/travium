@@ -188,7 +188,7 @@ class MessageModel
 
     public function getPlayerIdByName($name)
     {
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $db = DB::getInstance();
         $name = $db->real_escape_string($name);
         return $db->fetchScalar("SELECT id FROM users WHERE name='$name'");
