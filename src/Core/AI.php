@@ -31,6 +31,7 @@ class AI_MAIN
     private $resources           = [0, 0, 0, 0];
     private $hero_percents       = [0, 0];
     private $aiBuilder;
+    private $buildings           = [];
     private $training_buildings  = [
         'barracks'      => [],
         'stable'        => [],
