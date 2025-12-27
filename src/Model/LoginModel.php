@@ -48,10 +48,10 @@ class LoginModel
 		$name = $globalDB->real_escape_string($name);
 
 		// Try with 'world' column first (standard schema), fallback to 'worldId'
-		$find = $globalDB->query("SELECT id, name, password FROM activation WHERE world='$worldId' AND used=0 AND (name='$name' OR email='$name')");
+		$find = $globalDB->query("SELECT id, name, password FROM activation WHERE world='$worldId' AND (name='$name' OR email='$name')");
 		if(!$find || $find->num_rows == 0){
 			// Fallback to worldId column for older schemas
-			$find = $globalDB->query("SELECT id, name, password FROM activation WHERE worldId='$worldId' AND used=0 AND (name='$name' OR email='$name')");
+			$find = $globalDB->query("SELECT id, name, password FROM activation WHERE worldId='$worldId' AND (name='$name' OR email='$name')");
 		}
 		if($find && $find->num_rows){
 			return $find->fetch_assoc();

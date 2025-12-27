@@ -476,7 +476,7 @@ class Automation
             $totalCount += $result->num_rows;
             //non-activated emails
             $globalDbConnection = GlobalDB::getAConnection();
-            $result = $globalDbConnection->query("SELECT * FROM activation WHERE used=0 AND worldId={$conf->settings->worldUniqueId}");
+            $result = $globalDbConnection->query("SELECT * FROM activation WHERE worldId={$conf->settings->worldUniqueId}");
             while ($row = $result->fetch_assoc()) {
                 //$row['name']
                 $replace = [
@@ -900,7 +900,7 @@ class Automation
             $interval = getCustom("activationReminderInterval");
             $startTime = $config->game->start_time;
             if ($interval > 0) {
-                $result = $globalDB->query("SELECT * FROM activation WHERE used=0 AND time>0 AND reminded=0 AND " . time() . "-IF(time <= $startTime, $startTime, time) >= $interval AND worldId=" . Config::getProperty("settings",
+                $result = $globalDB->query("SELECT * FROM activation WHERE time>0 AND reminded=0 AND " . time() . "-IF(time <= $startTime, $startTime, time) >= $interval AND worldId=" . Config::getProperty("settings",
                         "worldUniqueId") . "  LIMIT 20");
                 $view = new PHPBatchView("mail/activationReminder");
                 while ($row = $result->fetch_assoc()) {
