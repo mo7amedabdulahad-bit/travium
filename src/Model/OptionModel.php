@@ -250,7 +250,7 @@ class OptionModel
         }
         $globalDB = GlobalDB::getInstance();
         $wId = Config::getProperty("settings", "worldUniqueId");
-        return $globalDB->fetchScalar("SELECT COUNT(id) FROM activation WHERE worldId='{$wId}' AND name='$name' AND used=0");
+        return $globalDB->fetchScalar("SELECT COUNT(id) FROM activation WHERE name='$name'");
     }
 
     public function emailExists($name)
@@ -263,7 +263,7 @@ class OptionModel
         }
         $globalDB = GlobalDB::getInstance();
         $wId = Config::getProperty("settings", "worldUniqueId");
-        return $globalDB->fetchScalar("SELECT COUNT(id) FROM activation WHERE worldId='{$wId}' AND email='$name' AND used=0");
+        return $globalDB->fetchScalar("SELECT COUNT(id) FROM activation WHERE email='$name'");
     }
 
     public function changeName($uid, $name)
