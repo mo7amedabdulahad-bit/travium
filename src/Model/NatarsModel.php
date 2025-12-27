@@ -149,7 +149,7 @@ class NatarsModel
         $db = DB::getInstance();
         $try = 0;
         $vRow = $db->query("SELECT pop, capital, owner, isWW FROM vdata WHERE kid=$kid")->fetch_assoc();
-        if ($vRow['isWW'] || getGameElapsedSeconds() <= 0 || mt_rand(1, (int)(getGameElapsedSeconds() / 86400)) >= 3 || $db->fetchScalar("SELECT COUNT(kid) FROM vdata WHERE owner=3") >= 400) {
+        if ($vRow['isWW']) {
             return;
         }
         $race = $db->fetchScalar("SELECT race FROM users WHERE id={$vRow['owner']}");
@@ -268,7 +268,7 @@ class NatarsModel
                     if ($village->num_rows) {
                         $kid = $village->fetch_row()[0];
                         $register->createNewNatarVillage($kid);
-                        $this->VillageToPOP($kid, mt_rand($pop - $twentyPercent, $pop + $twentyPercent));
+                        $this->VillageToPOP($kid, (int)mt_rand($pop - $twentyPercent, $pop + $twentyPercent));
                     }
                 }
             }
