@@ -120,7 +120,7 @@ class InfoBoxModel
             return $_cache;
         }
         $db = DB::getInstance();
-        $return = trim($db->fetchScalar("SELECT GROUP_CONCAT(infoId) FROM infobox_read WHERE uid=$uid"));
+        $return = trim($db->fetchScalar("SELECT GROUP_CONCAT(infoId) FROM infobox_read WHERE uid=$uid") ?? '');
         $memcache->set("infoBox:read:$uid", $return, 86400);
         return $return;
     }

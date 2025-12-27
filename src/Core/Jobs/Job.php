@@ -49,7 +49,7 @@ class Job
                 $nextLoop = miliseconds();
 
                 while ($loop) {
-                    mt_srand(make_seed());
+                    mt_srand((int)make_seed());
                     $config->dynamic = (object)$db->query("SELECT * FROM config LIMIT 1")->fetch_assoc();
                     if ($config->dynamic->needsRestart == 1) {
                         $loop = false;

@@ -114,7 +114,7 @@ class Automation
     public function processMovementComplete(\mysqli_result $movements)
     {
         $db = DB::getInstance();
-        mt_srand(make_seed());
+        mt_srand((int)make_seed());
         while ($row = $movements->fetch_assoc()) {
             $db->query("DELETE FROM movement WHERE id={$row['id']}");
             if (!$db->affectedRows()) {
