@@ -6,7 +6,8 @@ class AnyCtrl extends AbstractCtrl
     {
         $output = '';
         $this->beforeRender();
-        if(method_exists($this->view, 'output')) {
+        // PHP 8.4 compatible: Check for null before method_exists()
+        if($this->view !== null && method_exists($this->view, 'output')) {
             $output = $this->view->output();
         }
         $this->afterRender();
