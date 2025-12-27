@@ -65,8 +65,8 @@ class SummaryModel
         (SELECT COUNT(id) FROM users WHERE id>1 AND access!=3 AND email_verified=1) `verified`,
         (SELECT COUNT(id) FROM users WHERE id>1 AND last_login_time >= " . (time() - $online_timeout) . ") `real_online`,
         (SELECT COUNT(id) FROM activation) `activating`")->fetch_assoc();
-        // Database schema fix: use worldId (actual column name) without 'used' check
-        $not_activated = $globalDB->fetchScalar("SELECT COUNT(id) FROM activation WHERE worldId=" . getWorldUniqueId());
+        // Database schema fix: activation table has no world/worldId column, count all
+        $not_activated = $globalDB->fetchScalar("SELECT COUNT(id) FROM activation");
         $result['not_activated'] = $not_activated;
         $result['registered'] = ($result['active'] + $result['activating'] + $result['not_activated']);
         $result['online'] = $result['real_online'];
