@@ -64,7 +64,7 @@ class ErrorHandler
     public function handleFatalErrors()
     {
         $error = error_get_last();
-        if ($error["type"] == E_ERROR) {
+        if ($error && isset($error["type"]) && $error["type"] == E_ERROR) {
             $this->handleErrors($error["type"], $error["message"], $error["file"], $error["line"]);
         }
     }

@@ -504,7 +504,7 @@ class Session
 
     public function getQuestBattle()
     {
-        return $this->data['qst_battle'];
+        return $this->data['qst_battle'] ?? null;
     }
 
     public function setQuestBattle($value)
