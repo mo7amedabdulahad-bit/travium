@@ -189,7 +189,7 @@ class premiumFeature extends AjaxBase
         while ($row = $result->fetch_assoc()) {
             $locations[$row['id']] = $row;
         }
-        $selectedLocation = isset($_REQUEST['goldProductLocation']) && !empty($_REQUEST['goldProductLocation']) ? (int)$_REQUEST['goldProductLocation'] : isset($_SESSION[Session::getInstance()->fixSessionPrefix('default_payment_location')]) ? $_SESSION[Session::getInstance()->fixSessionPrefix('default_payment_location')] : $def;
+        $selectedLocation = isset($_REQUEST['goldProductLocation']) && !empty($_REQUEST['goldProductLocation']) ? (int)$_REQUEST['goldProductLocation'] : (isset($_SESSION[Session::getInstance()->fixSessionPrefix('default_payment_location')]) ? $_SESSION[Session::getInstance()->fixSessionPrefix('default_payment_location')] : $def);
         $Found = FALSE;
         foreach ($locations as $location) {
             if ($location['id'] == $selectedLocation) {
@@ -1082,9 +1082,9 @@ class premiumFeature extends AjaxBase
         $prod[3] = max($prod[3], 0); //- crop
         for ($i = 0; $i <= 3; ++$i) {
             if ($i <= 2) {
-                $prod[$i] = $resources[$i] + $prod[$i] > $village->get("maxstore") ? $village->get("maxstore") - $resources[$i] : $prod[$i];
+                $prod[$i] = ($resources[$i] + $prod[$i] > $village->get("maxstore")) ? ($village->get("maxstore") - $resources[$i]) : $prod[$i];
             } else {
-                $prod[$i] = $resources[$i] + $prod[$i] > $village->get("maxcrop") ? $village->get("maxcrop") - $resources[$i] : $prod[$i];
+                $prod[$i] = ($resources[$i] + $prod[$i] > $village->get("maxcrop")) ? ($village->get("maxcrop") - $resources[$i]) : $prod[$i];
             }
         }
         $coins = $config->extraSettings->generalOptions->oneHourOfProduction->coins;
