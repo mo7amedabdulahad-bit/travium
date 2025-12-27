@@ -514,7 +514,7 @@ class Session
 
     public function getQuestWorld()
     {
-        return $this->data['qst_world'];
+        return $this->data['qst_world'] ?? null;
     }
 
     public function updatePackageCodeTry($zero = false)
@@ -596,7 +596,7 @@ class Session
 
     public function getQuestEconomy()
     {
-        return $this->data['qst_economy'];
+        return $this->data['qst_economy'] ?? null;
     }
 
     public function setQuestEconomy($value)
