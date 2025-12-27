@@ -180,7 +180,8 @@ class PaymentProvidersCtrl
             //8 => 'PaySafeCard',
             9 => 'Arianpal',
         ];
-        $locations = $db->query("SELECT * FROM paymentProviders WHERE location={$_SESSION[WebService::fixSessionPrefix('locationId')]} ORDER BY posId ASC");
+        $locationId = isset($_SESSION[WebService::fixSessionPrefix('locationId')]) ? (int)$_SESSION[WebService::fixSessionPrefix('locationId')] : 0;
+        $locations = $db->query("SELECT * FROM paymentProviders WHERE location=$locationId ORDER BY posId ASC");
         while ($row = $locations->fetch_assoc()) {
             $params['content'] .= '<tr>';
             $params['content'] .= '<td>' . $row['providerId'] . '</td>';
