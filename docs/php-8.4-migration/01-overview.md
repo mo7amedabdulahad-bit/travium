@@ -55,6 +55,29 @@ Status: ✅ **Complete**
 
 ---
 
+## Known Issues
+
+### ⚠️ Reports Not Generating
+**Status**: Under investigation  
+**Impact**: Attack/raid reports not appearing after movements complete  
+**Severity**: Medium
+
+**Investigation**: Report generation code verified clean (no PHP 8.4 issues in BattleModel.php, NoticeHelper.php, BerichteCtrl.php). Reports may not be generating because:
+1. No attacks have completed yet to trigger report creation
+2. Possible silent failure in report insertion
+3. Remaining FILTER_SANITIZE_STRING deprecations (100+ files)
+
+**Next Steps**: Send test attacks and verify reports table structure.
+
+### ⚠️ Widespread FILTER_SANITIZE_STRING Usage
+**Status**: Not addressed  
+**Impact**: Deprecation warnings in logs  
+**Severity**: Low
+
+**Details**: 100+ files still use deprecated `FILTER_SANITIZE_STRING` constant. Should be replaced with `FILTER_SANITIZE_FULL_SPECIAL_CHARS` in future update.
+
+---
+
 ## Testing Verification
 
 All critical game functions tested and verified:
