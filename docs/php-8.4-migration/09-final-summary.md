@@ -1,7 +1,7 @@
 # PHP 8.4 Migration - Final Summary & Status
 
 📅 **Migration Date**: December 27, 2025  
-✅ **Total Fixes**: 30  
+✅ **Total Fixes**: 31  
 📊 **Success Rate**: 95% (1 known issue remaining)
 
 ---
@@ -30,7 +30,7 @@ Migrate the Travium game server from PHP 7.3 to PHP 8.4, fixing all compatibilit
 10. **round() mode** - `Formulas.php`
 20. **Nested ternaries** - `premiumFeature.php` (6 locations)
 
-### Database Schema Corrections (10 fixes)
+### Database Schema Corrections (11 fixes)
 9. **LoginModel** - `worldId` → `world` column
 13-15. **SummaryModel** - Removed non-existent `used`, `worldId` from `activation` table
 16. **VerificationListCtrl** - Removed `used` column check
@@ -38,6 +38,7 @@ Migrate the Travium game server from PHP 7.3 to PHP 8.4, fixing all compatibilit
 21. **VerificationListCtrl** - Removed `worldId` filter
 22. **PublicInfoboxCtrl** - Removed `autoType` column
 23-24. **Payment Controllers** - Fixed SQL syntax (empty WHERE values)
+31. **OptionModel** - Removed `worldId`, `used` from global activation queries
 
 ### Parameter Order Fixes (2 fixes)
 11. **BuildCtrl** - Optional parameters last (13 call sites updated)

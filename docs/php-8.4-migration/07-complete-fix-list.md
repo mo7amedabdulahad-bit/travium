@@ -90,6 +90,52 @@
 
 ---
 
+## Detailed Fixes
+
+25. **Fix #25: Admin Panel - Payment Providers SQL**
+   - File: `src/admin/include/Controllers/PaymentProvidersCtrl.php`
+   - Issue: Empty WHERE clause from undefined `$_SESSION['locationId']`
+   - Fix: Add isset check with default 0 value
+   - Commit: `e37bbda`
+
+26. **Fix #26: Automation - mysqli::ping() Deprecated**
+   - File: `src/Core/Database/DB.php` (3 locations)
+   - Issue: mysqli::ping() deprecated in PHP 8.4, reconnect removed in 8.2
+   - Fix: Removed ping() calls, check connection status directly
+   - Commit: `9e51697`
+
+27. **Fix #27: Session - FILTER_SANITIZE_STRING Deprecated**
+   - File: `src/Core/Session.php` (lines 68, 93)
+   - Issue: FILTER_SANITIZE_STRING deprecated in PHP 8.1
+   - Fix: Replace with FILTER_SANITIZE_FULL_SPECIAL_CHARS
+   - Commit: `32b46ea`
+
+28. **Fix #28: Jobs - mt_srand() Float Precision**
+   - Files: `src/Core/Jobs/Job.php`, `src/Core/Automation.php`
+   - Issue: make_seed() returns float, mt_srand() requires int in PHP 8.4
+   - Fix: Cast to int: `mt_srand((int)make_seed())`
+   - Commit: `32b46ea`
+
+29. **Fix #29: InfoBoxModel - trim() Null Parameter**
+   - File: `src/Model/InfoBoxModel.php` (line 123)
+   - Issue: trim() doesn't accept null in PHP 8.1+
+   - Fix: Add null coalescing: `trim($value ?? '')`
+   - Commit: `32b46ea`
+
+30. **Fix #30: mainInclude - str_replace() Null Parameter**
+   - File: `src/mainInclude.php` (line 19)
+   - Issue: str_replace() doesn't accept null in PHP 8.1+
+   - Fix: Change null to '' and add null coalescing for QUERY_STRING
+   - Commit: `32b46ea`
+
+31. **Fix #31: OptionModel - worldId/used Columns**
+   - File: `src/Model/OptionModel.php` (lines 253, 266)
+   - Issue: Global activation table doesn't have worldId or used columns
+   - Fix: Remove worldId and used=0 from nameExists() and emailExists() queries
+   - Commit: `[pending]`
+
+---
+
 ## Testing Checklist
 
 - [x] Game loads without errors
