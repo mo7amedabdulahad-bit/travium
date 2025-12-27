@@ -12,7 +12,7 @@ class VerificationListCtrl
         if (!isServerFinished() && isset($_REQUEST['section']) && $_REQUEST['section'] == 'del' && isset($_REQUEST['id'])) {
             $db->query("DELETE FROM activation WHERE id=" . (int)$_REQUEST['id']);
         }
-        $result = $db->query("SELECT * FROM activation WHERE worldId=" . getWorldUniqueId() . " ORDER BY id");
+        $result = $db->query("SELECT * FROM activation ORDER BY id");
         $params['content'] = null;
         $params['total'] = $db->fetchScalar("SELECT COUNT(id) FROM activation");
         while ($row = $result->fetch_assoc()) {
