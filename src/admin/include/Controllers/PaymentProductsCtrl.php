@@ -161,7 +161,8 @@ class PaymentProductsCtrl
             'content' => '',
         ];
         $db = GlobalDB::getInstance();
-        $locations = $db->query("SELECT * FROM goldProducts WHERE goldProductLocation={$_SESSION[WebService::fixSessionPrefix('locationId')]} ORDER BY goldProductId ASC");
+        $locationId = isset($_SESSION[WebService::fixSessionPrefix('locationId')]) ? (int)$_SESSION[WebService::fixSessionPrefix('locationId')] : 0;
+        $locations = $db->query("SELECT * FROM goldProducts WHERE goldProductLocation=$locationId ORDER BY goldProductId ASC");
         while ($row = $locations->fetch_assoc()) {
             $params['content'] .= '<tr>';
             $params['content'] .= '<td>' . $row['goldProductId'] . '</td>';
