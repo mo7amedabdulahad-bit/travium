@@ -17,11 +17,12 @@ global $twig;
 if(!is_writable(TEMPLATES_PATH . "Cache")){
     die("Cache dir not writable.");
 }
-$loader = new Twig_Loader_Filesystem(TEMPLATES_PATH);
-$twig = new Twig_Environment($loader, array(
+// PHP 8.4 compatible: Use Twig 3.x namespaced classes
+$loader = new \Twig\Loader\FilesystemLoader(TEMPLATES_PATH);
+$twig = new \Twig\Environment($loader, array(
     'cache' => TEMPLATES_PATH . "Cache"
 ));
-$function = new Twig_SimpleFunction('T', function ($t) {
+$function = new \Twig\TwigFunction('T', function ($t) {
     return T($t);
 });
 $twig->addFunction($function);

@@ -1324,7 +1324,8 @@ HTML;
 
     public function recalculateBuildingTimes(){
         usort($this->onLoadBuildings['normal'], function($a, $b){
-            return $a['id'] == $b['id'] ? 0 : $a['id'] > $b['id'] ? 1 : -1;
+            // PHP 8.4 compatible: Parenthesized nested ternary
+            return $a['id'] == $b['id'] ? 0 : ($a['id'] > $b['id'] ? 1 : -1);
         });
         $tmp = [];
         $lastCommence = [
