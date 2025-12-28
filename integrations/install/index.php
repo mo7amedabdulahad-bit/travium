@@ -357,6 +357,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             file_put_contents($includePath . 'config.custom.php', implode("\n", $configCustom) . "\n");
 
+            // CREATE src/config.php (Fix #56) - Required for bootstrap.php
+            $srcConfigSample = $basePath . 'config.sample.php';
+            $srcConfig = $basePath . 'config.php';
+            if (!file_exists($srcConfig) && file_exists($srcConfigSample)) {
+                if (!copy($srcConfigSample, $srcConfig)) {
+                    throw new RuntimeException("Failed to create src/config.php from config.sample.php");
+                }
+            }
+
+
             // Run installer + updater via CLI
             $adminPass = $input['admin_password'];
             $cmd1 = "/usr/bin/php8.4 $installerFile install " . escapeshellarg($adminPass);
