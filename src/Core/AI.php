@@ -386,7 +386,7 @@ class AI
                         // Get the building that was just queued
                         $lastBuild = DB::getInstance()->query("SELECT f.id, f.name, f.level 
                                                                FROM fdata f 
-                                                               WHERE f.vref = {$this->village['kid']} 
+                                                               WHERE f.vref = $kid 
                                                                ORDER BY f.id DESC 
                                                                LIMIT 1")->fetch_assoc();
                         if ($lastBuild) {
@@ -407,7 +407,7 @@ class AI
                         // Get the most recent training
                         $lastTrain = DB::getInstance()->query("SELECT u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11 
                                                                FROM training 
-                                                               WHERE vref = {$this->village['kid']} 
+                                                               WHERE vref = $kid 
                                                                ORDER BY id DESC 
                                                                LIMIT 1")->fetch_assoc();
                         if ($lastTrain) {
