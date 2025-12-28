@@ -380,10 +380,16 @@ class AI
                 
                 if ($roll <= 40) {
                     // 40% chance: Building upgrade
-                    $ai->upgradeBuilding();
+                    $result = $ai->upgradeBuilding();
+                    if ($result) {
+                        \Core\AI\NpcLogger::log($owner, 'BUILD', 'Building upgrade queued', ['success' => true]);
+                    }
                 } elseif ($roll <= 70) {
                     // 30% chance: Train units
-                    $ai->trainUnits();
+                    $result = $ai->trainUnits();
+                    if ($result) {
+                        \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
+                    }
                 } elseif ($roll <= 85) {
                     // 15% chance: Send raid (THE CRITICAL NPC FEATURE!)
                     $raidSent = \Core\AI\RaidAI::processRaid($owner, $kid);
