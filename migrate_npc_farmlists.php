@@ -46,31 +46,41 @@ while ($npc = $npcs->fetch_assoc()) {
     
     echo "Processing NPC: $name (ID: $uid)\n";
     
-    // 1. Grant gold club
-    $hasGold = $db->fetchScalar("SELECT goldclub FROM users WHERE id=$uid");
-    if (!$hasGold || $hasGold < time()) {
-        NpcConfig::grantGoldClub($uid);
-        echo "  ✓ Granted gold club\n";
-        $goldGranted++;
-    } else {
-        echo "  - Already has gold club\n";
-    }
-    
-    // 2. Create farm-list if doesn't exist
-    $hasFarmList = $db->fetchScalar("SELECT COUNT(*) FROM farmlist WHERE owner=$uid");
-    if (!$hasFarmList) {
-        $listId = NpcConfig::createNpcFarmList($uid, $kid);
-        if ($listId) {
-            echo "  ✓ Created farm-list (ID: $listId)\n";
-            $farmListsCreated++;
+    try {
+        // 1. Grant gold club
+        $hasGold = $db->fetchScalar("SELECT goldclub FROM users WHERE id=$uid");
+        if (!$hasGold || $hasGold < time()) {
+            $result = NpcConfig::grantGoldClub($uid);
+            if ($result) {
+                echo "  ✓ Granted gold club\n";
+                $goldGranted++;
+            } else {
+                echo "  ✗ Failed to grant gold club\n";
+            }
         } else {
-            echo "  ✗ Failed to create farm-list\n";
+            echo "  - Already has gold club (expires: " . date('Y-m-d', $hasGold) . ")\n";
         }
-    } else {
-        echo "  - Already has farm-list\n";
+        
+        // 2. Create farm-list if doesn't exist
+        $hasFarmList = $db->fetchScalar("SELECT COUNT(*) FROM farmlist WHERE owner=$uid");
+        if (!$hasFarmList) {
+            $listId = NpcConfig::createNpcFarmList($uid, $kid);
+            if ($listId) {
+                echo "  ✓ Created farm-list (ID: $listId)\n";
+                $farmListsCreated++;
+            } else {
+                echo "  ✗ Failed to create farm-list\n";
+            }
+        } else {
+            echo "  - Already has farm-list\n";
+        }
+        
+        $processed++;
+    } catch (Exception $e) {
+        echo "  ✗ ERROR: " . $e->getMessage() . "\n";
+        echo "  Stack trace: " . $e->getTraceAsString() . "\n";
     }
     
-    $processed++;
     echo "\n";
 }
 

@@ -181,6 +181,14 @@ class Launcher
             $job = [Automation::getInstance(), 'backup'];
             $jobs[] = new Job('mayExitJobs:backup', 360, $job);
         }
+        {
+            // NPC farm-list refresh (daily)
+            $job = function() {
+                $refreshed = \Core\NpcConfig::refreshNpcFarmLists();
+                logEntry("NPC: Refreshed $refreshed farm-lists");
+            };
+            $jobs[] = new Job('routineJobs:npcFarmListRefresh', 24 * 3600, $job);
+        }
         new Job('routineJobs', 20, $jobs, TRUE);
     }
 
