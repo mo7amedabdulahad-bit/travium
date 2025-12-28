@@ -331,11 +331,27 @@ class AutoUpgradeAI
 
     public function upgrade()
     {
-        if ((time()-$this->creationTime) < 5400) {
-            $rand_field = mt_rand(1, 18);
+        // Check if this is an NPC and use personality-driven selection
+        $db = DB::getInstance();
+        $owner = $db->fetchScalar("SELECT owner FROM vdata WHERE kid={$this->kid}");
+        $access = $db->fetchScalar("SELECT access FROM users WHERE id=$owner");
+        
+        // Use PersonalityAI for NPCs (access=3)
+        if ($access == 3) {
+            $rand_field = \Core\AI\PersonalityAI::selectBuildingByPersonality(
+                $owner,
+                $this->buildings,
+                $this->creationTime
+            );
         } else {
-            $rand_field = mt_rand(1, 5) <= 3 ? mt_rand(1, 18) : mt_rand(19, 40);
+            // Original behavior for non-NPCs
+            if ((time()-$this->creationTime) < 5400) {
+                $rand_field = mt_rand(1, 18);
+            } else {
+                $rand_field = mt_rand(1, 5) <= 3 ? mt_rand(1, 18) : mt_rand(19, 40);
+            }
         }
+        
         if ($this->isWW && in_array($rand_field, [21, 26, 30, 31, 32])) return false;
         if ($this->buildings[$rand_field]['item_id'] <= 0) {
             return $this->newBuilding($rand_field);

@@ -359,20 +359,51 @@ class AI
     public static function doSomethingRandom($kid, $count = 1)
     {
         $seconds_past = getGameElapsedSeconds();
+        $db = DB::getInstance();
+        
+        // Check if this is an NPC
+        $owner = $db->fetchScalar("SELECT owner FROM vdata WHERE kid=$kid");
+        $access = $db->fetchScalar("SELECT access FROM users WHERE id=$owner");
+        $isNpc = ($access == 3);
+        
         $ai = new AI_MAIN($kid);
+        
         for ($i = 1; $i <= $count; ++$i) {
-            if (getGameSpeed() <= 10 && $seconds_past <= 1.5 * 86400) {
-                $rnd = mt_rand(1, 5);
-                if ($rnd <= 3) {
+            // NPC decision loop with personality-driven actions
+            if ($isNpc) {
+                $roll = mt_rand(1, 100);
+                
+                if ($roll <= 40) {
+                    // 40% chance: Building upgrade
                     $ai->upgradeBuilding();
+                } elseif ($roll <= 70) {
+                    // 30% chance: Train units
+                    $ai->trainUnits();
+                } elseif ($roll <= 85) {
+                    // 15% chance: Send raid (THE CRITICAL NPC FEATURE!)
+                    \Core\AI\RaidAI::processRaid($owner, $kid);
                 } else {
-                    if (!$ai->upgradeBuilding()) {
-                        $ai->upgradeBuilding();
+                    // 15% chance: Alliance actions (future feature)
+                    // For now, build or train
+                    if ($ai->upgradeBuilding()) {
+                        $ai->trainUnits();
                     }
                 }
             } else {
-                if ($ai->upgradeBuilding()) {
-                    $ai->trainUnits();
+                // Original behavior for non-NPCs
+                if (getGameSpeed() <= 10 && $seconds_past <= 1.5 * 86400) {
+                    $rnd = mt_rand(1, 5);
+                    if ($rnd <= 3) {
+                        $ai->upgradeBuilding();
+                    } else {
+                        if (!$ai->upgradeBuilding()) {
+                            $ai->upgradeBuilding();
+                        }
+                    }
+                } else {
+                    if ($ai->upgradeBuilding()) {
+                        $ai->trainUnits();
+                    }
                 }
             }
         }

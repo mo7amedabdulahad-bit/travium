@@ -31,7 +31,7 @@ class RegisterModel
     public function addFakeUser($names)
     {
         $db = DB::getInstance();
-        $m = new OptionModel();
+        $m =new OptionModel();
         $k = 0;
         if (is_array($names)) {
             $array = $names;
@@ -61,6 +61,10 @@ class RegisterModel
             $countryFlag = AutomationModel::getRandomCountryFlag();
             $db->query("UPDATE users SET countryFlag='$countryFlag', lastCountryFlagCheck=" . time() . " WHERE id=$uid");
             $this->populateUserRank($uid);
+            
+            // Assign random NPC personality and difficulty
+            \Core\NpcConfig::assignRandom($uid);
+            
             ++$k;
         }
         return $k;
