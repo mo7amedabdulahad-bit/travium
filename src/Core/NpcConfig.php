@@ -526,4 +526,129 @@ class NpcConfig
         
         return $targets;
     }
+    
+    /**
+     * Refresh farm-lists for all NPCs (called daily)
+     * Removes failed targets, adds new ones
+     * 
+     * @return int Number of farm-lists refreshed
+     */
+    public static function refreshNpcFarmLists()
+    {
+        $db = DB::getInstance();
+        $refreshed = 0;
+        
+        // Get all NPC farm-lists older than 24 hours
+        $dayAgo = time() - 86400;
+        $query = "SELECT f.id as list_id, f.owner as uid, f.kid
+                  FROM farmlist f
+                  JOIN users u ON f.owner = u.id
+                  WHERE u.access = 3
+                    AND (f.lastRefresh IS NULL OR f.lastRefresh < $dayAgo)
+                  LIMIT 50";
+        
+        $result = $db->query($query);
+        
+        if (!$result || $result->num_rows == 0) {
+            return 0;
+        }
+        
+        while ($row = $result->fetch_assoc()) {
+            $listId = $row['list_id'];
+            $uid = $row['uid'];
+            $kid = $row['kid'];
+            
+            // Remove failed targets (villages that no longer exist, high loss raids)
+            self::removeFailedTargets($listId);
+            
+            // Count remaining targets
+            $remaining = $db->fetchScalar("SELECT COUNT(*) FROM raidlist WHERE lid=$listId");
+            
+            // Add new targets if needed (maintain ~10 targets)
+            if ($remaining < 10) {
+                $needed = 10 - $remaining;
+                $newTargets = self::findInitialFarmTargets($kid, $needed);
+                
+                foreach ($newTargets as $targetKid) {
+                    // Check if already in list
+                    $exists = $db->fetchScalar("SELECT COUNT(*) FROM raidlist WHERE lid=$listId AND kid=$targetKid");
+                    if (!$exists) {
+                        $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
+                                    VALUES ($targetKid, $listId, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+                    }
+                }
+                
+                \Core\AI\NpcLogger::log($uid, 'FARMLIST', "Refreshed farm-list: removed failed, added $needed new targets", [
+                    'list_id' => $listId,
+                    'remaining' => $remaining,
+                    'added' => count($newTargets)
+                ]);
+            }
+            
+            // Update lastRefresh timestamp
+            $db->query("UPDATE farmlist SET lastRefresh=" . time() . " WHERE id=$listId");
+            $refreshed++;
+        }
+        
+        return $refreshed;
+    }
+    
+    /**
+     * Remove failed targets from farm-list
+     * 
+     * @param int $listId Farm-list ID
+     * @return int Number of targets removed
+     */
+    private static function removeFailedTargets($listId)
+    {
+        $db = DB::getInstance();
+        $removed = 0;
+        
+        // Get all targets in this farm-list
+        $targets = $db->query("SELECT id, kid FROM raidlist WHERE lid=$listId");
+        
+        while ($row = $targets->fetch_assoc()) {
+            $slotId = $row['id'];
+            $targetKid = $row['kid'];
+            
+            // Check if target village still exists
+            $exists = $db->fetchScalar("SELECT COUNT(*) FROM vdata WHERE kid=$targetKid");
+            
+            if (!$exists) {
+                // Village doesn't exist anymore - remove
+                $db->query("DELETE FROM raidlist WHERE id=$slotId");
+                $removed++;
+                continue;
+            }
+            
+            // Check recent raid reports for this target
+            // Remove if last 3 raids had >50% losses
+            $recentReports = $db->query("SELECT * FROM ndata 
+                                        WHERE toWref=$targetKid 
+                                          AND type=4 
+                                        ORDER BY time DESC 
+                                        LIMIT 3");
+            
+            $highLossCount = 0;
+            $totalReports = 0;
+            
+            while ($report = $recentReports->fetch_assoc()) {
+                $totalReports++;
+                // Parse report data to check losses
+                // For simplicity, we'll use bounty as success indicator
+                // If bounty = 0 for multiple raids, likely failed/high loss
+                if ($report['bounty'] == 0) {
+                    $highLossCount++;
+                }
+            }
+            
+            // If majority of recent raids failed, remove target
+            if ($totalReports >= 3 && $highLossCount >= 2) {
+                $db->query("DELETE FROM raidlist WHERE id=$slotId");
+                $removed++;
+            }
+        }
+        
+        return $removed;
+    }
 }
