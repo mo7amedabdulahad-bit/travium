@@ -415,7 +415,8 @@ class FarmListModel
         if (!$user->num_rows) return $success;
         $user = $user->fetch_assoc();
         $race = $user['race'];
-        if ($user['silver'] < Config::getProperty("gold", "autoRaidSilver")) {
+        // Skip silver check for NPCs (access=3)
+        if ($user['access'] != 3 && $user['silver'] < Config::getProperty("gold", "autoRaidSilver")) {
             return $success;
         }
         if ($user['vacationActiveTil'] > time()) {

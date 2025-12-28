@@ -287,44 +287,41 @@ class RaidAI
     {
         $db = DB::getInstance();
         
-        // **NEW: Check for farm-list first (NPC Plus feature)**
+        // **Farm-list ONLY for NPCs (no fallback)**
         $farmListId = $db->fetchScalar("SELECT id FROM farmlist WHERE kid=$fromKid AND owner=$uid LIMIT 1");
         
-        if ($farmListId) {
-            // Use the game's built-in farm-list batch-send method
-            NpcLogger::log($uid, 'FARMLIST_RAID', "Sending farm-list raids", [
-                'list_id' => $farmListId,
+        if (!$farmListId) {
+            NpcLogger::log($uid, 'NO_FARMLIST', "NPC has no farm-list", [
                 'village' => $fromKid
             ]);
-            
-            $farmListModel = new \Model\FarmListModel();
-            $sent = $farmListModel->autoRaidFarmList($farmListId, $uid, $fromKid);
-            
-            if ($sent > 0) {
-                NpcLogger::log($uid, 'FARMLIST_SENT', "Farm-list raids sent", [
-                    'list_id' => $farmListId,
-                    'sent' => $sent
-                ]);
-                return true;
-            } else {
-                NpcLogger::log($uid, 'FARMLIST_EMPTY', "No raids sent (no troops/targets)", [
-                    'list_id' => $farmListId
-                ]);
-                return false;
-            }
+            return false;
         }
         
-        // Fallback to single-target raid (old system)
-        NpcLogger::log($uid, 'SINGLE_RAID', "No farm-list - using single target", [
-            'from' => $fromKid,
-            'to' => $toKid
+        // Use the game's built-in farm-list batch-send method
+        NpcLogger::log($uid, 'FARMLIST_RAID', "Sending farm-list raids", [
+            'list_id' => $farmListId,
+            'village' => $fromKid
         ]);
         
-       return self::sendSingleRaid($fromKid, $toKid, $uid, $race, $personality);
+        $farmListModel = new \Model\FarmListModel();
+        $sent = $farmListModel->autoRaidFarmList($farmListId, $uid, $fromKid);
+        
+        if ($sent > 0) {
+            NpcLogger::log($uid, 'FARMLIST_SENT', "Farm-list raids sent", [
+                'list_id' => $farmListId,
+                'sent' => $sent
+            ]);
+            return true;
+        } else {
+            NpcLogger::log($uid, 'FARMLIST_NO_TROOPS', "No raids sent (need troops)", [
+                'list_id' => $farmListId
+            ]);
+            return false;
+        }
     }
     
     /**
-     * Send single raid (old system - fallback)
+     * OLD: Send single raid - REMOVED (farm-lists only now)
      */
     private static function sendSingleRaid($fromKid, $toKid, $uid, $race, $personality)
     {
