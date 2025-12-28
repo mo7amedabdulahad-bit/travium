@@ -366,6 +366,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            // CREATE API config.php (Fix #59) - Required for API to work
+            $apiConfigSample = dirname(__DIR__,2) . '/integrations/api/include/config.sample.php';
+            $apiConfig = dirname(__DIR__,2) . '/integrations/api/include/config.php';
+            if (!file_exists($apiConfig) && file_exists($apiConfigSample)) {
+                if (!copy($apiConfigSample, $apiConfig)) {
+                    throw new RuntimeException("Failed to create API config.php from config.sample.php");
+                }
+            }
+
 
             // Run installer + updater via CLI
             $adminPass = $input['admin_password'];
