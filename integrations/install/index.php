@@ -370,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Run installer + updater via CLI
             $adminPass = $input['admin_password'];
             $cmd1 = "/usr/bin/php8.4 $installerFile install " . escapeshellarg($adminPass);
-            $cmd2 = "/usr/bin/php8.4 $updateFile";
+            $cmd2 = "/usr/bin/php8.4 $updateFile --new-installation";
 
             [$out1,$code1] = run_cmd($cmd1);
             [$out2,$code2] = run_cmd($cmd2);

@@ -40,11 +40,7 @@ if ($currentVersion <= 45) {
     require __DIR__ . "/fixes/fixPopCp.php";
 }
 if ($currentVersion <= 46) {
-    // Check if column exists before adding (Fix #57)
-    $columns = $db->query("SHOW COLUMNS FROM `login_handshake` LIKE 'isSitter'");
-    if ($columns->num_rows == 0) {
-        $db->query("ALTER TABLE `login_handshake` ADD `isSitter` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `token`;");
-    }
+    $db->query("ALTER TABLE `login_handshake` ADD `isSitter` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `token`;");
 }
 if ($currentVersion <= 47) {
     $db->query("ALTER TABLE `vdata` CHANGE `upkeep` `upkeep` BIGINT(50) UNSIGNED NOT NULL DEFAULT '0';");
