@@ -582,7 +582,7 @@ class NpcConfig
     }
     
     /**
-     *Find initial farm targets for an NPC
+     * Find initial farm targets for an NPC
      * 
      * @param int $kid Village ID
      * @param int $limit Maximum targets
@@ -591,8 +591,19 @@ class NpcConfig
     private static function findInitialFarmTargets($kid, $limit = 10)
     {
         $db = DB::getInstance();
-        $xy = \Game\Formulas::kid2xy($kid);
-        $maxDistance = 15;
+        $kid = (int)$kid;
+        $limit = (int)$limit;
+        
+        // Get village coordinates
+        $result = $db->query("SELECT x, y FROM wdata WHERE id=$kid");
+        if (!$result || $result->num_rows == 0) {
+            return [];
+        }
+        
+        $coords = $result->fetch_assoc();
+        $x = (int)$coords['x'];
+        $y = (int)$coords['y'];
+        $maxDistance = 25;
         
         $targets = [];
         
@@ -601,16 +612,20 @@ class NpcConfig
                        FROM wdata w
                        WHERE w.oasistype > 0
                          AND w.occupied = 0
-                         AND ABS(w.x - {$xy['x']}) <= $maxDistance
-                         AND ABS(w.y - {$xy['y']}) <= $maxDistance
+                         AND ABS(w.x - ($x)) <= $maxDistance
+                         AND ABS(w.y - ($y)) <= $maxDistance
+                         AND w.id != $kid
+                       ORDER BY (ABS(w.x - ($x)) + ABS(w.y - ($y)))
                        LIMIT $limit";
         
         $result = $db->query($oasisQuery);
-        while ($row = $result->fetch_assoc()) {
-            $targets[] = $row['kid'];
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $targets[] = (int)$row['kid'];
+            }
         }
         
-        // If not enough oasis, add weak players
+        // If not enough oasis, add player villages
         if (count($targets) < $limit) {
             $remaining = $limit - count($targets);
             $villageQuery = "SELECT v.kid
@@ -618,15 +633,17 @@ class NpcConfig
                             JOIN wdata w ON v.kid = w.id
                             WHERE v.owner > 1
                               AND v.owner != (SELECT owner FROM vdata WHERE kid=$kid)
-                              AND v.pop < 200
-                              AND ABS(w.x - {$xy['x']}) <= $maxDistance
-                              AND ABS(w.y - {$xy['y']}) <= $maxDistance
+                              AND v.owner != 1
+                              AND ABS(w.x - ($x)) <= $maxDistance
+                              AND ABS(w.y - ($y)) <= $maxDistance
                             ORDER BY v.pop ASC
                             LIMIT $remaining";
             
             $result = $db->query($villageQuery);
-            while ($row = $result->fetch_assoc()) {
-                $targets[] = $row['kid'];
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $targets[] = (int)$row['kid'];
+                }
             }
         }
         
