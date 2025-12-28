@@ -397,10 +397,13 @@ class AI
                         \Core\AI\NpcLogger::log($owner, 'RAID', 'Raid attempt failed (cooldown or no targets)', []);
                     }
                 } else {
-                    // 15% chance: Alliance actions (future feature)
-                    // For now, build or train
-                    if ($ai->upgradeBuilding()) {
-                        $ai->trainUnits();
+                    // 15% chance: Alliance actions
+                    $allianceAction = \Core\AI\AllianceAI::processAlliance($owner);
+                    if (!$allianceAction) {
+                        // Fallback: build or train if no alliance action
+                        if ($ai->upgradeBuilding()) {
+                            $ai->trainUnits();
+                        }
                     }
                 }
             } else {
