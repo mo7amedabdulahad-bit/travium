@@ -78,8 +78,8 @@ while ($list = $farmLists->fetch_assoc()) {
     
     while ($target = $targets->fetch_assoc()) {
         $targetKid = $target['kid'];
-        $db->query("INSERT INTO raidlist (kid, lid, t1, t2) 
-                    VALUES ($targetKid, $listId, 3, 3)");
+        $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
+                    VALUES ($targetKid, $listId, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
         $added++;
         echo "    + Added oasis at ({$target['x']},{$target['y']})\n";
     }
@@ -105,8 +105,8 @@ while ($list = $farmLists->fetch_assoc()) {
         
         while ($target = $targets->fetch_assoc()) {
             $targetKid = $target['kid'];
-            $db->query("INSERT INTO raidlist (kid, lid, t1, t2) 
-                        VALUES ($targetKid, $listId, 2, 2)");
+            $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
+                        VALUES ($targetKid, $listId, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
             $added++;
             echo "    + Added village at ({$target['x']},{$target['y']})\n";
         }
