@@ -85,13 +85,14 @@ class NpcConfig
     ];
 
     /**
-     * Assign a personality to an NPC
+     * Assign a personality to an NPC with unique stat variation
      * 
      * @param int $uid User ID
      * @param string $personality Personality type (aggressive, economic, balanced, diplomat, assassin)
+     * @param float $variation Variation percentage (default 0.15 = ±15%)
      * @return bool Success
      */
-    public static function assignPersonality($uid, $personality)
+    public static function assignPersonality($uid, $personality, $variation = 0.15)
     {
         if (!isset(self::PERSONALITIES[$personality])) {
             return false;
@@ -99,9 +100,41 @@ class NpcConfig
 
         $db = DB::getInstance();
         $uid = (int)$uid;
-        $personality = $db->real_escape_string($personality);
+        $personality_escaped = $db->real_escape_string($personality);
 
-        return $db->query("UPDATE users SET npc_personality='$personality' WHERE id=$uid");
+        // Get base stats for this personality
+        $baseStats = self::PERSONALITIES[$personality];
+        
+        // Apply variation to numeric stats (±15% by default)
+        $variedStats = [];
+        foreach ($baseStats as $key => $value) {
+            if (is_numeric($value)) {
+                // Add random variation
+                $min = $value * (1 - $variation);
+                $max = $value * (1 + $variation);
+                $variedStats[$key] = mt_rand((int)$min, (int)$max);
+            } else {
+                // Keep non-numeric values as-is
+                $variedStats[$key] = $value;
+            }
+        }
+        
+        // Get existing npc_info or create new
+        $existingInfo = $db->fetchScalar("SELECT npc_info FROM users WHERE id=$uid");
+        $info = $existingInfo ? json_decode($existingInfo, true) : [];
+        
+        // Store varied stats in npc_info
+        $info['personality_stats'] = $variedStats;
+        $info['variation_seed'] = mt_rand(1000, 9999); // For reproducible behavior
+        $info['personality_assigned_at'] = time();
+        
+        $infoJson = $db->real_escape_string(json_encode($info));
+        
+        // Update personality and varied stats
+        return $db->query("UPDATE users 
+                          SET npc_personality='$personality_escaped', 
+                              npc_info='$infoJson' 
+                          WHERE id=$uid");
     }
 
     /**
