@@ -366,6 +366,11 @@ class AI
         $access = $db->fetchScalar("SELECT access FROM users WHERE id=$owner");
         $isNpc = ($access == 3);
         
+        // Log cycle start for NPCs
+        if ($isNpc) {
+            \Core\AI\NpcLogger::logCycleStart($owner, $count);
+        }
+        
         $ai = new AI_MAIN($kid);
         
         for ($i = 1; $i <= $count; ++$i) {
@@ -381,7 +386,10 @@ class AI
                     $ai->trainUnits();
                 } elseif ($roll <= 85) {
                     // 15% chance: Send raid (THE CRITICAL NPC FEATURE!)
-                    \Core\AI\RaidAI::processRaid($owner, $kid);
+                    $raidSent = \Core\AI\RaidAI::processRaid($owner, $kid);
+                    if (!$raidSent) {
+                        \Core\AI\NpcLogger::log($owner, 'RAID', 'Raid attempt failed (cooldown or no targets)', []);
+                    }
                 } else {
                     // 15% chance: Alliance actions (future feature)
                     // For now, build or train

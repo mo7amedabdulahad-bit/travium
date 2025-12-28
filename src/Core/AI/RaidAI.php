@@ -238,10 +238,24 @@ class RaidAI
      */
     public static function sendRaid($fromKid, $toKid, $uid, $race, $personality)
     {
+        $db = DB::getInstance();
+        
+        // Get target info for logging
+        $targetInfo = $db->query("SELECT v.name, w.x, w.y 
+                                  FROM vdata v 
+                                  JOIN wdata w ON v.kid = w.id 
+                                  WHERE v.kid=$toKid")->fetch_assoc();
+        
+        // Calculate distance for logging
+        $fromXY = \Game\Formulas::kid2xy($fromKid);
+        $toXY = ['x' => $targetInfo['x'], 'y' => $targetInfo['y']];
+        $distance = round(sqrt(pow($fromXY['x'] - $toXY['x'], 2) + pow($fromXY['y'] - $toXY['y'], 2)), 2);
+        
         // Select troops
         $units = self::selectRaidTroops($fromKid, $race, $personality);
         
         if (!$units) {
+            NpcLogger::logFailure($uid, 'RAID', 'No troops available for raiding');
             return false;
         }
         
@@ -313,6 +327,9 @@ class RaidAI
             NpcConfig::incrementCounter($uid, 'raids_sent');
             NpcConfig::updateNpcInfo($uid, 'last_raid_time', time());
             
+            // Log successful raid
+            NpcLogger::logRaid($uid, $fromKid, $toKid, $targetInfo['name'], $distance, $units);
+            
             return true;
         }
         
@@ -337,6 +354,7 @@ class RaidAI
         $config = NpcConfig::getNpcConfig($uid);
         
         if (!$config) {
+            NpcLogger::logFailure($uid, 'RAID', 'No NPC config found');
             return false;
         }
         
@@ -347,14 +365,22 @@ class RaidAI
         $targets = self::findTargets($kid, 20);
         
         if (!$targets || empty($targets)) {
+            NpcLogger::logFailure($uid, 'RAID', 'No valid targets found');
             return false;
         }
         
-        // Select top target (highest score)
+        // Log target selection
         $target = $targets[0];
+        NpcLogger::logTargetSelection($uid, count($targets), $target);
         
         // Send raid
-        return self::sendRaid($kid, $target['kid'], $uid, $race, $config['npc_personality']);
+        $success = self::sendRaid($kid, $target['kid'], $uid, $race, $config['npc_personality']);
+        
+        if (!$success) {
+            NpcLogger::logFailure($uid, 'RAID', 'Failed to send raid (no troops or error)');
+        }
+        
+        return $success;
     }
 
     /**
