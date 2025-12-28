@@ -450,7 +450,7 @@ class NpcConfig
         $db->query("INSERT INTO farmlist (kid, owner, name, auto) 
                     VALUES ($kid, $uid, 'NPC Farm List', 1)");
         
-        $listId = $db->insert_id;
+        $listId = $db->lastInsertId();
         
         if (!$listId) {
             return false;
