@@ -50,95 +50,126 @@ class RaidAI
         $attackerXY = Formulas::kid2xy($kid);
         
         // Find nearby villages AND oasis
-        // Includes: Players, Other NPCs (access=3), Oasis (owner=0)
+        // Villages from vdata, oasis from wdata (they don't have vdata entries!)
+        // Includes: Players, Other NPCs (access=3), Oasis (oasistype > 0, occupied = 0)
         // Excludes: Natars (owner=1) - too powerful
+        
+        // Query 1: Regular villages
         $query = "SELECT v.kid, v.owner, v.name, v.wood, v.clay, v.iron, v.crop, 
                          v.maxstore, v.maxcrop, v.pop, v.created,
-                         w.x, w.y, w.oasistype
+                         w.x, w.y, 0 as oasistype
                   FROM vdata v
                   JOIN wdata w ON v.kid = w.id
                   WHERE v.owner != $attackerUid
-                    AND v.owner != 1
-                    AND w.occupied >= 0
+                    AND v.owner !=1
+                    AND v.owner > 0
+                    AND w.occupied = 1
                     AND ABS(w.x - {$attackerXY['x']}) <= $maxDistance
                     AND ABS(w.y - {$attackerXY['y']}) <= $maxDistance
-                  LIMIT 100";
+                  LIMIT 50";
         
         $result = $db->query($query);
         
-        if (!$result || $result->num_rows == 0) {
-            return false;
-        }
-        
         $targets = [];
         
-        while ($row = $result->fetch_assoc()) {
-            // Check if target has beginner protection (skip protected players only)
-            if ($row['owner'] > 1) { // Only check real players, not Natars or oasis
-                $protection = $db->fetchScalar("SELECT protection FROM users WHERE id={$row['owner']}");
-                if ($protection && $protection >= time()) {
-                    continue; // Skip protected players
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Check if target has beginner protection (skip protected players only)
+                if ($row['owner'] > 1) { // Only check real players, not Natars or oasis
+                    $protection = $db->fetchScalar("SELECT protection FROM users WHERE id={$row['owner']}");
+                    if ($protection && $protection >= time()) {
+                        continue; // Skip protected players
+                    }
                 }
-            }
-            
-            // Check if target is in same alliance (skip allies, but allow NAP attacks)
-            $targetAid = 0;
-            if ($row['owner'] > 1) {
-                $targetAid = $db->fetchScalar("SELECT aid FROM users WHERE id={$row['owner']}");
-            }
-            
-            if ($targetAid && $attackerAid && $targetAid == $attackerAid) {
-                continue; // Don't attack same alliance members
-            }
-            
-            // Check for NAP (non-aggression pact) - optional, can attack NAP
-            // Commented out to allow more aggressive raiding
-            /*
-            if ($targetAid && $attackerAid) {
-                $nap = $db->fetchScalar("SELECT COUNT(id) FROM diplomacy 
-                                        WHERE accepted=1 AND type=1 
-                                        AND ((aid1=$attackerAid AND aid2=$targetAid) 
-                                             OR (aid1=$targetAid AND aid2=$attackerAid))");
-                if ($nap > 0) {
-                    continue; // Don't attack NAP partners
+                
+                // Check if target is in same alliance (skip allies, but allow NAP attacks)
+                $targetAid = 0;
+                if ($row['owner'] > 1) {
+                    $targetAid = $db->fetchScalar("SELECT aid FROM users WHERE id={$row['owner']}");
                 }
+                
+                if ($targetAid && $attackerAid && $targetAid == $attackerAid) {
+                    continue; // Don't attack same alliance members
+                }
+                
+                // Calculate distance
+                $distance = sqrt(
+                    pow($attackerXY['x'] - $row['x'], 2) + 
+                    pow($attackerXY['y'] - $row['y'], 2)
+                );
+                
+                // Estimate loot (resources available)
+                $estimatedLoot = ($row['wood'] + $row['clay'] + $row['iron'] + $row['crop']) * 0.5; // 50% average loot
+                
+                // Calculate attractiveness score
+                // Formula: (Loot * 10) - (Distance * 5) - (Age penalty for new players)
+                $ageDays = ($row['created'] > 0) ? (time() - $row['created']) / 86400 : 0;
+                $agePenalty = ($row['owner'] > 1 && $ageDays > 0 && $ageDays < 7) ? (7 - $ageDays) * 10 : 0; // Newer players less attractive
+                
+                $score = ($estimatedLoot * 10) - ($distance * 5) - $agePenalty;
+                
+                $targets[] = [
+                    'kid' => $row['kid'],
+                    'owner' => $row['owner'],
+                    'name' => $row['name'],
+                    'x' => $row['x'],
+                    'y' => $row['y'],
+                    'distance' => round($distance, 2),
+                    'estimated_loot' => round($estimatedLoot),
+                    'pop' => $row['pop'],
+                    'score' => round($score),
+                    'age_days' => round($ageDays, 1),
+                    'type' => 'village',
+                ];
             }
-            */
-            
-            // Calculate distance
-            $distance = sqrt(
-                pow($attackerXY['x'] - $row['x'], 2) + 
-                pow($attackerXY['y'] - $row['y'], 2)
-            );
-            
-            // Estimate loot (resources available)
-            $estimatedLoot = ($row['wood'] + $row['clay'] + $row['iron'] + $row['crop']) * 0.5; // 50% average loot
-            
-            // Special handling for oasis (owner=0)
-            if ($row['owner'] == 0 && isset($row['oasistype'])) {
-                $estimatedLoot = 500; // Oasis have fixed loot potential
+        }
+        
+        // Query 2: Oasis (separate query since they don't have vdata entries)
+        $oasisQuery = "SELECT w.id as kid, 0 as owner, CONCAT('Oasis ', w.x, '|', w.y) as name,
+                              0 as wood, 0 as clay, 0 as iron, 0 as crop, 0 as maxstore, 0 as maxcrop,
+                              0 as pop, 0 as created, w.x, w.y, w.oasistype
+                       FROM wdata w
+                       WHERE w.oasistype > 0
+                         AND w.occupied = 0
+                         AND w.id != {$kid}
+                         AND ABS(w.x - {$attackerXY['x']}) <= $maxDistance
+                         AND ABS(w.y - {$attackerXY['y']}) <= $maxDistance
+                       LIMIT 50";
+        
+        $oasisResult = $db->query($oasisQuery);
+        
+        if ($oasisResult && $oasisResult->num_rows > 0) {
+            while ($row = $oasisResult->fetch_assoc()) {
+                // Calculate distance
+                $distance = sqrt(
+                    pow($attackerXY['x'] - $row['x'], 2) + 
+                    pow($attackerXY['y'] - $row['y'], 2)
+                );
+                
+                // Oasis have fixed loot potential based on type
+                $estimatedLoot = 500 + ($row['oasistype'] * 50);
+                
+                // Oasis are always attractive (no age penalty)
+                $score = ($estimatedLoot * 10) - ($distance * 5);
+                
+                $targets[] = [
+                    'kid' => $row['kid'],
+                    'owner' => 0,
+                    'name' => $row['name'],
+                    'x' => $row['x'],
+                    'y' => $row['y'],
+                    'distance' => round($distance, 2),
+                    'estimated_loot' => round($estimatedLoot),
+                    'pop' => 0,
+                    'score' => round($score),
+                    'age_days' => 0,
+                    'type' => 'oasis',
+                ];
             }
-            
-            // Calculate attractiveness score
-            // Formula: (Loot * 10) - (Distance * 5) - (Age penalty for new players)
-            $ageDays = ($row['created'] > 0) ? (time() - $row['created']) / 86400 : 0;
-            $agePenalty = ($row['owner'] > 1 && $ageDays > 0 && $ageDays < 7) ? (7 - $ageDays) * 10 : 0; // Newer players less attractive
-            
-            $score = ($estimatedLoot * 10) - ($distance * 5) - $agePenalty;
-            
-            $targets[] = [
-                'kid' => $row['kid'],
-                'owner' => $row['owner'],
-                'name' => $row['name'],
-                'x' => $row['x'],
-                'y' => $row['y'],
-                'distance' => round($distance, 2),
-                'estimated_loot' => round($estimatedLoot),
-                'pop' => $row['pop'],
-                'score' => round($score),
-                'age_days' => round($ageDays, 1),
-                'type' => $row['owner'] == 0 ? 'oasis' : ($row['owner'] == 1 ? 'natar' : 'village'),
-            ];
+        }
+        
+        if (empty($targets)) {
+            return false;
         }
         
         // Sort by score (highest first)
