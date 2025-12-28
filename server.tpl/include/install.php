@@ -11,7 +11,7 @@ if(IS_DEV){
 use Core\Config;
 use Core\Database\DB;
 use Model\InstallerModel;
-mt_srand(make_seed());
+mt_srand((int)make_seed());
 class shell_installer
 {
     public function __construct($password)
