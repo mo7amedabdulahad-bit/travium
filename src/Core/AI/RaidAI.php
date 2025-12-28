@@ -291,13 +291,27 @@ class RaidAI
         $farmListId = $db->fetchScalar("SELECT id FROM farmlist WHERE kid=$fromKid AND owner=$uid LIMIT 1");
         
         if ($farmListId) {
-            // Use farm-list system - raid all targets in list
-            NpcLogger::log($uid, 'FARMLIST_RAID', "Using farm-list for raids", [
+            // Use the game's built-in farm-list batch-send method
+            NpcLogger::log($uid, 'FARMLIST_RAID', "Sending farm-list raids", [
                 'list_id' => $farmListId,
                 'village' => $fromKid
             ]);
             
-            return self::sendFarmListRaids($fromKid, $farmListId, $uid, $race);
+            $farmListModel = new \Model\FarmListModel();
+            $sent = $farmListModel->autoRaidFarmList($farmListId, $uid, $fromKid);
+            
+            if ($sent > 0) {
+                NpcLogger::log($uid, 'FARMLIST_SENT', "Farm-list raids sent", [
+                    'list_id' => $farmListId,
+                    'sent' => $sent
+                ]);
+                return true;
+            } else {
+                NpcLogger::log($uid, 'FARMLIST_EMPTY', "No raids sent (no troops/targets)", [
+                    'list_id' => $farmListId
+                ]);
+                return false;
+            }
         }
         
         // Fallback to single-target raid (old system)
@@ -307,96 +321,6 @@ class RaidAI
         ]);
         
        return self::sendSingleRaid($fromKid, $toKid, $uid, $race, $personality);
-    }
-    
-    /**
-     * Send raids using farm-list
-     */
-    private static function sendFarmListRaids($fromKid, $listId, $uid, $race)
-    {
-        $db = DB::getInstance();
-        
-        // Get all targets from farm-list
-        $targets = $db->query("SELECT kid, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 
-                               FROM raidlist 
-                               WHERE lid=$listId");
-        
-        if (!$targets || $targets->num_rows == 0) {
-            NpcLogger::log($uid, 'FARMLIST_EMPTY', "Farm-list has no targets", ['list_id' => $listId]);
-            return false;
-        }
-        
-        $sent = 0;
-        while ($target = $targets->fetch_assoc()) {
-            $toKid = $target['kid'];
-            
-            // Build troops array from u1-u10
-            $troops = [];
-            for ($i = 1; $i <= 10; $i++) {
-                $troops[] = (int)$target["u$i"];
-            }
-            
-            // Send the raid with farm-list troops
-            if (self::executeFarmListRaid($fromKid, $toKid, $uid, $race, $troops)) {
-                $sent++;
-            }
-        }
-        
-        NpcLogger::log($uid, 'FARMLIST_SENT', "Sent farm-list raids", [
-            'list_id' => $listId,
-            'sent' => $sent,
-            'total' => $targets->num_rows
-        ]);
-        
-        return $sent > 0;
-    }
-    
-    /**
-     * Execute single farm-list raid with specified troops
-     */
-    private static function executeFarmListRaid($fromKid, $toKid, $uid, $race, $troops)
-    {
-        $db = DB::getInstance();
-        
-        // Check if target village still exists
-        $targetExists = $db->fetchScalar("SELECT COUNT(*) FROM vdata WHERE kid=$toKid");
-        if (!$targetExists) {
-            return false;
-        }
-        
-        // Get available units in village
-        $units = $db->query("SELECT * FROM units WHERE kid=$fromKid")->fetch_assoc();
-        if (!$units) {
-            return false;
-        }
-        
-        // Validate troops are available
-        $canSend = true;
-        for ($i = 1; $i <= 10; $i++) {
-            if ($troops[$i-1] > ($units["u$i"] ?? 0)) {
-                $canSend = false;
-                break;
-            }
-        }
-        
-        if (!$canSend) {
-            return false; // Not enough troops
-        }
-        
-        // Send the raid
-        $movement = new MovementsModel();
-        $movement->sendMovement(
-            3,  // Attack type (raid)
-            $toKid,
-            $troops,
-            $fromKid,
-            $uid,
-            null,
-            null,
-            false
-        );
-        
-        return true;
     }
     
     /**
