@@ -187,6 +187,25 @@ class NpcConfig
     }
 
     /**
+     * Get randomized iteration count for a difficulty with variation
+     * 
+     * Adds natural variation to make NPCs feel less robotic
+     * 
+     * @param string $difficulty Difficulty level
+     * @param float $variation Variation percentage (default 0.2 = ±20%)
+     * @return int Number of iterations with random variation applied
+     */
+    public static function getRandomizedIterations($difficulty, $variation = 0.2)
+    {
+        $base = self::getIterationCount($difficulty);
+        
+        $min = (int)($base * (1 - $variation));
+        $max = (int)($base * (1 + $variation));
+        
+        return mt_rand($min, $max);
+    }
+
+    /**
      * Get NPC configuration from database
      * 
      * @param int $uid User ID

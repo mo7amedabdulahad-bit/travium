@@ -36,11 +36,20 @@ class FakeUserModel
         $checkInterval = 200;
         $time = time() - $checkInterval;
         $now = time();
-        $results = $db->query("SELECT kid, lastVillageCheck FROM vdata v WHERE lastVillageCheck < $time AND (SELECT access FROM users WHERE id=v.owner)=3 LIMIT $limit");
+        $results = $db->query("SELECT v.kid, v.lastVillageCheck, v.owner, u.npc_difficulty 
+                               FROM vdata v 
+                               JOIN users u ON v.owner = u.id 
+                               WHERE v.lastVillageCheck < $time 
+                                 AND u.access=3 
+                               LIMIT $limit");
         while ($row = $results->fetch_assoc()) {
             $db->query("UPDATE vdata SET lastVillageCheck=$now WHERE kid={$row['kid']}");
             if ($row['lastVillageCheck'] <= 10) continue;
-            $count = ceil(($now - $row['lastVillageCheck']) / $interval);
+            
+            // Use difficulty-based iteration count instead of time-based calculation
+            $difficulty = $row['npc_difficulty'] ?? 'beginner';
+            $count = \Core\NpcConfig::getRandomizedIterations($difficulty);
+            
             AI::doSomethingRandom($row['kid'], $count);
         }
     }
