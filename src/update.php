@@ -331,4 +331,4 @@ patchDone:
 if (!$isInstall) {
     Notification::notifyReal("Game world \"" . getWorldId() . "\" - \"" . Config::getProperty("settings", "serverName") . "\" was patched to version " . PATCH_VERSION);
 }
-$db->query("UPDATE config SET patchVersion=" . PATCH_VERSION . ", maintenance=0");
+$db->query("UPDATE config SET patchVersion=" . PATCH_VERSION);
