@@ -173,6 +173,9 @@ class NpcConfig
 
         self::assignPersonality($uid, $personality);
         self::assignDifficulty($uid, $difficulty);
+        
+        // Grant gold club for farm-list access (permanent)
+        self::grantGoldClub($uid);
 
         // Initialize npc_info JSON
         $initialInfo = json_encode([
@@ -412,5 +415,115 @@ class NpcConfig
         $max = max($min + 300, $max); // Ensure max > min by at least 5 minutes
         
         return ['min' => $min, 'max' => $max];
+    }
+    
+    /**
+     * Grant permanent gold club to an NPC for farm-list access
+     * 
+     * @param int $uid User ID
+     * @return bool Success
+     */
+    public static function grantGoldClub($uid)
+    {
+        $db = DB::getInstance();
+        $uid = (int)$uid;
+        
+        // Grant gold club with far-future expiry (permanent for NPCs)
+        $farFuture = time() + (365 * 100 * 86400); // 100 years
+        
+        return $db->query("UPDATE users SET goldclub=$farFuture WHERE id=$uid");
+    }
+    
+    /**
+     * Create farm-list for an NPC with initial targets
+     * 
+     * @param int $uid User ID
+     * @param int $kid Village ID
+     * @return int|false Farm-list ID or false on failure
+     */
+    public static function createNpcFarmList($uid, $kid)
+    {
+        $db = DB::getInstance();
+        $uid = (int)$uid;
+        $kid = (int)$kid;
+        
+        // Create farm-list
+        $db->query("INSERT INTO farmlist (kid, owner, name, auto) 
+                    VALUES ($kid, $uid, 'NPC Farm List', 1)");
+        
+        $listId = $db->insert_id;
+        
+        if (!$listId) {
+            return false;
+        }
+        
+        // Find initial targets (oasis and weak players nearby)
+        $targets = self::findInitialFarmTargets($kid, 10);
+        
+        // Add targets to farm-list
+        foreach ($targets as $targetKid) {
+            // Default troops (adjust based on race later)
+            $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
+                        VALUES ($targetKid, $listId, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+        }
+        
+        \Core\AI\NpcLogger::log($uid, 'FARMLIST', "Created farm-list with " . count($targets) . " targets", [
+            'list_id' => $listId,
+            'targets' => count($targets)
+        ]);
+        
+        return $listId;
+    }
+    
+    /**
+     *Find initial farm targets for an NPC
+     * 
+     * @param int $kid Village ID
+     * @param int $limit Maximum targets
+     * @return array Array of target kids
+     */
+    private static function findInitialFarmTargets($kid, $limit = 10)
+    {
+        $db = DB::getInstance();
+        $xy = \Game\Formulas::kid2xy($kid);
+        $maxDistance = 15;
+        
+        $targets = [];
+        
+        // Get oasis within range
+        $oasisQuery = "SELECT w.id as kid
+                       FROM wdata w
+                       WHERE w.oasistype > 0
+                         AND w.occupied = 0
+                         AND ABS(w.x - {$xy['x']}) <= $maxDistance
+                         AND ABS(w.y - {$xy['y']}) <= $maxDistance
+                       LIMIT $limit";
+        
+        $result = $db->query($oasisQuery);
+        while ($row = $result->fetch_assoc()) {
+            $targets[] = $row['kid'];
+        }
+        
+        // If not enough oasis, add weak players
+        if (count($targets) < $limit) {
+            $remaining = $limit - count($targets);
+            $villageQuery = "SELECT v.kid
+                            FROM vdata v
+                            JOIN wdata w ON v.kid = w.id
+                            WHERE v.owner > 1
+                              AND v.owner != (SELECT owner FROM vdata WHERE kid=$kid)
+                              AND v.pop < 200
+                              AND ABS(w.x - {$xy['x']}) <= $maxDistance
+                              AND ABS(w.y - {$xy['y']}) <= $maxDistance
+                            ORDER BY v.pop ASC
+                            LIMIT $remaining";
+            
+            $result = $db->query($villageQuery);
+            while ($row = $result->fetch_assoc()) {
+                $targets[] = $row['kid'];
+            }
+        }
+        
+        return $targets;
     }
 }
