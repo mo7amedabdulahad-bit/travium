@@ -264,9 +264,15 @@ class NpcConfig
             $row['npc_info'] = json_decode($row['npc_info'], true);
         }
 
-        // Add personality stats
+        // Use varied stats if available, otherwise fall back to base stats
         if ($row['npc_personality']) {
-            $row['personality_stats'] = self::getPersonalityStats($row['npc_personality']);
+            if (isset($row['npc_info']['personality_stats'])) {
+                // Use varied stats from npc_info (new system with variation)
+                $row['personality_stats'] = $row['npc_info']['personality_stats'];
+            } else {
+                // Fall back to base stats (old NPCs without variation)
+                $row['personality_stats'] = self::getPersonalityStats($row['npc_personality']);
+            }
         }
 
         // Add iteration count
