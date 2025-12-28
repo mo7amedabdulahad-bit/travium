@@ -480,6 +480,49 @@ class NpcConfig
         // Clamp between 40% and 95%
         return max(0.4, min(0.95, $rate));
     }
+    
+    /**
+     * Get preferred units for an NPC based on personality and race
+     * 
+     * @param string $personality NPC personality
+     * @param int $race Race (1=Romans, 2=Teutons, 3=Gauls)
+     * @return array Array of preferred unit IDs in priority order
+     */
+    public static function getPreferredUnits($personality, $race)
+    {
+        // Unit preferences by personality and race
+        // Format: [personality][race] = [unit_ids in priority order]
+        
+        $preferences = [
+            'aggressive' => [
+                1 => [1, 2, 6],      // Romans: Legionnaire, Praetorian, Imperator
+                2 => [21, 22, 26],   // Teutons: Clubswinger, Spearman, Paladin
+                3 => [11, 12, 16],   // Gauls: Phalanx, Swordsman, Haeduan
+            ],
+            'economic' => [
+                1 => [4, 5, 3],      // Romans: Praetorian, Imperian, defensive
+                2 => [23, 24, 22],   // Teutons: Axeman, Scout, Spearman
+                3 => [14, 15, 13],   // Gauls: Druid Rider, Haeduan, Pathfinder
+            ],
+            'balanced' => [
+                1 => [2, 1, 6],      // Romans: Mix of offense/defense
+                2 => [22, 21, 26],   // Teutons: Mix
+                3 => [12, 11, 16],   // Gauls: Mix
+            ],
+            'diplomat' => [
+                1 => [4, 5, 8],      // Romans: Defensive + Senator
+                2 => [23, 22, 27],   // Teutons: Defensive + Chief
+                3 => [14, 15, 18],   // Gauls: Defensive + Chieftain
+            ],
+            'assassin' => [
+                1 => [3, 7, 6],      // Romans: Scouts + fast units
+                2 => [24, 26, 25],   // Teutons: Scouts + cavalry
+                3 => [13, 16, 17],   // Gauls: Scouts + fast units
+            ],
+        ];
+        
+        return $preferences[$personality][$race] ?? [];
+    }
 
     /**
      * Grant permanent gold club to an NPC for farm-list access

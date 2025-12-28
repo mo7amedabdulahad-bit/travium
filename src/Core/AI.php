@@ -141,16 +141,50 @@ class AI_MAIN
 
     public function trainUnits()
     {
-        $unit = $this->chooseUnit();
-        if ($unit === FALSE) return false; //no unit can be trained
-        (new TrainingModel())->addTraining($this->village['kid'],
-            $unit['building']['item_id'],
-            $unit['nr'],
-            $unit['count'],
-            $unit['training_time']);
-        //remove resources
-        $this->takeResources($unit['costs']);
-        return true;
+        // Get available units based on training buildings
+        $available = $this->training_buildings['available'];
+        if (!sizeof($available)) {
+            return 0;
+        }
+        
+        // For NPCs: use personality-based unit preferences
+        if ($this->user['access'] == 3) {
+            $config = NpcConfig::getNpcConfig($this->user['id']);
+            if ($config) {
+                $preferredUnits = NpcConfig::getPreferredUnits(
+                    $config['npc_personality'], 
+                    $this->user['race']
+                );
+                
+                // Try to train preferred units in order
+                foreach ($preferredUnits as $unitId) {
+                    // Check if unit is available/researched
+                    if (!in_array($unitId, $available)) {
+                        continue;
+                    }
+                    
+                    // Check if we can afford it
+                    $canTrain = $this->maxUnitsOf($unitId);
+                    if ($canTrain > 0) {
+                        // Train between 1-5 units of this type
+                        $count = min($canTrain, mt_rand(1, 5));
+                        $this->unitBuilder->add($unitId, $count);
+                        return 1;
+                    }
+                }
+            }
+        }
+        
+        // Fallback to random for non-NPCs or if no preferred units available
+        $unitId = $available[mt_rand(0, sizeof($available) - 1)];
+        $canTrain = $this->maxUnitsOf($unitId);
+        if ($canTrain <= 0) {
+            return 0;
+        }
+        
+        $count = min($canTrain, mt_rand(1, 5));
+        $this->unitBuilder->add($unitId, $count);
+        return 1;
     }
 
     private function chooseUnit()
