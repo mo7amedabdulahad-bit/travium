@@ -418,6 +418,70 @@ class NpcConfig
     }
     
     /**
+     * Get dynamic resource spending rate for an NPC village
+     * 
+     * Early villages spend more to grow faster
+     * Late villages conserve for armies/raids
+     * Personality adjusts spending behavior
+     * 
+     * @param int $uid User ID
+     * @param int $kid Village ID
+     * @return float Spending rate (0.4 to 0.95)
+     */
+    public static function getResourceSpendingRate($uid, $kid)
+    {
+        $db = DB::getInstance();
+        $uid = (int)$uid;
+        $kid = (int)$kid;
+        
+        // Get NPC config
+        $config = self::getNpcConfig($uid);
+        if (!$config) {
+            return 0.66; // Default 66% for non-NPCs
+        }
+        
+        $personality = $config['npc_personality'];
+        
+        // Get village age
+        $created = $db->fetchScalar("SELECT created FROM vdata WHERE kid=$kid");
+        if (!$created) {
+            return 0.66;
+        }
+        
+        $ageDays = (time() - $created) / 86400;
+        
+        // Base rate by village age
+        if ($ageDays < 3) {
+            // Early: 0-3 days old - spend aggressively to grow
+            $baseRate = 0.85;
+        } elseif ($ageDays < 7) {
+            // Mid: 3-7 days old - moderate spending
+            $baseRate = 0.70;
+        } elseif ($ageDays < 14) {
+            // Late-mid: 7-14 days old - start conserving
+            $baseRate = 0.60;
+        } else {
+            // Late: 14+ days old - conserve for armies
+            $baseRate = 0.50;
+        }
+        
+        // Personality modifiers
+        $personalityMod = [
+            'aggressive' => 0.10,   // +10% more aggressive spending
+            'economic' => -0.15,    // -15% more conservative
+            'balanced' => 0,        // No modifier
+            'diplomat' => -0.10,    // -10% more conservative
+            'assassin' => 0.05      // +5% slightly more aggressive
+        ];
+        
+        $modifier = $personalityMod[$personality] ?? 0;
+        $rate = $baseRate + $modifier;
+        
+        // Clamp between 40% and 95%
+        return max(0.4, min(0.95, $rate));
+    }
+
+    /**
      * Grant permanent gold club to an NPC for farm-list access
      * 
      * @param int $uid User ID

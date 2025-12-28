@@ -66,14 +66,33 @@ class AI_MAIN
         $this->smithy = $db->query("SELECT * FROM smithy WHERE kid=$kid")->fetch_assoc();
         $this->smithyUpgradesCount = (int)$db->fetchScalar("SELECT COUNT(id) FROM research WHERE mode=0 AND kid=$kid");
 
+        $this->resources = [
+            $this->village['wood'],
+            $this->village['clay'],
+            $this->village['iron'],
+            $this->village['crop'],
+        ];
+        
+        // Apply dynamic resource spending rate for NPCs
+        if ($this->user['access'] == 3) {
+            $spendingRate = NpcConfig::getResourceSpendingRate($this->user['id'], $kid);
+            
+            // Adjust available resources based on spending rate
+            for ($i = 0; $i < 4; $i++) {
+                $this->resources[$i] = (int)($this->resources[$i] * $spendingRate);
+            }
+        }
+        
         $this->buildings = (new VillageModel())->getBuildingsAssoc($kid);
         $this->populateTrainingBuildings();
-        $this->aiBuilder = new AutoUpgradeAI($kid,
-            $this->resources,
-            $this->buildings,
-            $this->user['plus'] > time(),
-            $this->user['race'],
-            $this->village);
+        $this->aiBuilder   = new AIAutoUpgradeAI($this->village, $this->user, $this->resources, $this->slots);
+        $this->unitBuilder = new UnitBuilder($kid, $this->user, $this->resources);
+        $fakeUserInfo = [
+            'id' => $this->user['id'],
+            'race' => $this->user['race'],
+            'kid' => $kid,
+        ];
+        $this->masterBuilder = new MasterBuilder($kid, $this->village,$fakeUserInfo);
         if (self::SKIP_WORKERS) {
             $this->aiBuilder->skipWorkers();
         }
