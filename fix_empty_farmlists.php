@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Fix Empty Farm-Lists: Add targets to NPC farm-lists
+ * Fix Empty Farm-Lists: Add targets to NPC farm-lists (v2 - with debug)
  */
 
 require_once __DIR__ . '/servers/s1/include/env.php';
@@ -9,12 +9,12 @@ require_once SRC_PATH_PROD . '/bootstrap.php';
 
 use Core\Database\DB;
 
-echo "===== Populating NPC Farm-Lists =====\n\n";
+echo "===== Populating NPC Farm-Lists (Debug Mode) =====\n\n";
 
 $db = DB::getInstance();
 
 // Get all NPC farm-lists
-$farmLists = $db->query("SELECT f.id, f.owner, f.kid 
+$farmLists = $db->query("SELECT f.id, f.owner, f.kid, u.name
                          FROM farmlist f
                          JOIN users u ON f.owner = u.id
                          WHERE u.access = 3");
@@ -30,11 +30,12 @@ while ($list = $farmLists->fetch_assoc()) {
     $listId = $list['id'];
     $uid = $list['owner'];
     $kid = $list['kid'];
+    $name = $list['name'];
+    
+    echo "Processing: $name (UID: $uid, List ID: $listId, Village: $kid)\n";
     
     // Check current target count
     $currentCount = $db->fetchScalar("SELECT COUNT(*) FROM raidlist WHERE lid=$listId");
-    
-    echo "Farm-list ID $listId (Owner: $uid, Village: $kid)\n";
     echo "  Current targets: $currentCount\n";
     
     if ($currentCount >= 10) {
@@ -43,63 +44,75 @@ while ($list = $farmLists->fetch_assoc()) {
     }
     
     // Get village coordinates
-    $coords = $db->query("SELECT x, y FROM wdata WHERE id=$kid")->fetch_assoc();
-    if (!$coords) {
-        echo "  ✗ Village not found\n\n";
+    $result = $db->query("SELECT x, y FROM wdata WHERE id=$kid");
+    if (!$result || $result->num_rows == 0) {
+        echo "  ✗ Village not found in wdata\n\n";
         continue;
     }
     
+    $coords = $result->fetch_assoc();
     $x = $coords['x'];
     $y = $coords['y'];
-    $needed = 10 - $currentCount;
-    $maxDistance = 20;
+    echo "  Village location: ($x, $y)\n";
     
-    // Find oasis targets
-    $oasisQuery = "SELECT w.id as kid
+    $needed = 10 - $currentCount;
+    $maxDistance = 25;
+    $added = 0;
+    
+    // Try to find ANY nearby targets (oasis or villages)
+    echo "  Searching for targets within $maxDistance tiles...\n";
+    
+    // First try oasis
+    $oasisQuery = "SELECT w.id as kid, w.x, w.y, w.oasistype
                    FROM wdata w
                    WHERE w.oasistype > 0
                      AND w.occupied = 0
-                     AND ABS(w.x - $x) <= $maxDistance
-                     AND ABS(w.y - $y) <= $maxDistance
-                     AND NOT EXISTS (SELECT 1 FROM raidlist WHERE kid = w.id AND lid = $listId)
-                   ORDER BY (ABS(w.x - $x) + ABS(w.y - $y))
+                     AND ABS(w.x - ($x)) <= $maxDistance
+                     AND ABS(w.y - ($y)) <= $maxDistance
+                     AND w.id != $kid
+                   ORDER BY (ABS(w.x - ($x)) + ABS(w.y - ($y)))
                    LIMIT $needed";
     
     $targets = $db->query($oasisQuery);
-    $added = 0;
+    echo "    Oasis found: " . $targets->num_rows . "\n";
     
     while ($target = $targets->fetch_assoc()) {
         $targetKid = $target['kid'];
-        $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
-                    VALUES ($targetKid, $listId, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+        $db->query("INSERT INTO raidlist (kid, lid, t1, t2) 
+                    VALUES ($targetKid, $listId, 3, 3)");
         $added++;
+        echo "    + Added oasis at ({$target['x']},{$target['y']})\n";
     }
     
-    // If not enough oasis, add weak players
+    // If still need more, try player villages
     if ($added < $needed) {
         $remaining = $needed - $added;
-        $villageQuery = "SELECT v.kid
+        echo "    Looking for $remaining player villages...\n";
+        
+        $villageQuery = "SELECT v.kid, w.x, w.y
                         FROM vdata v
                         JOIN wdata w ON v.kid = w.id
-                        WHERE v.owner > 3
+                        WHERE v.owner > 1
                           AND v.owner != $uid
-                          AND v.pop < 200
-                          AND ABS(w.x - $x) <= $maxDistance
-                          AND ABS(w.y - $y) <= $maxDistance
-                          AND NOT EXISTS (SELECT 1 FROM raidlist WHERE kid = v.kid AND lid = $listId)
+                          AND v.owner != 1
+                          AND ABS(w.x - ($x)) <= $maxDistance
+                          AND ABS(w.y - ($y)) <= $maxDistance
                         ORDER BY v.pop ASC
                         LIMIT $remaining";
         
         $targets = $db->query($villageQuery);
+        echo "    Player villages found: " . $targets->num_rows . "\n";
+        
         while ($target = $targets->fetch_assoc()) {
             $targetKid = $target['kid'];
-            $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
-                        VALUES ($targetKid, $listId, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+            $db->query("INSERT INTO raidlist (kid, lid, t1, t2) 
+                        VALUES ($targetKid, $listId, 2, 2)");
             $added++;
+            echo "    + Added village at ({$target['x']},{$target['y']})\n";
         }
     }
     
-    echo "  ✓ Added $added targets\n\n";
+    echo "  ✓ Total added: $added targets\n\n";
     $processed++;
 }
 
