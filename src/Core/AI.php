@@ -383,13 +383,54 @@ class AI
                     // 60% chance: Building upgrade (increased from 40%)
                     $result = $ai->upgradeBuilding();
                     if ($result) {
-                        \Core\AI\NpcLogger::log($owner, 'BUILD', 'Building upgrade queued', ['success' => true]);
+                        // Get the building that was just queued
+                        $lastBuild = DB::getInstance()->query("SELECT f.id, f.name, f.level 
+                                                               FROM fdata f 
+                                                               WHERE f.vref = {$this->village['kid']} 
+                                                               ORDER BY f.id DESC 
+                                                               LIMIT 1")->fetch_assoc();
+                        if ($lastBuild) {
+                            \Core\AI\NpcLogger::log($owner, 'BUILD', "Upgrading {$lastBuild['name']} to level " . ($lastBuild['level'] + 1), [
+                                'building' => $lastBuild['name'],
+                                'current_level' => $lastBuild['level'],
+                                'target_level' => $lastBuild['level'] + 1,
+                                'field_id' => $lastBuild['id']
+                            ]);
+                        } else {
+                            \Core\AI\NpcLogger::log($owner, 'BUILD', 'Building upgrade queued', ['success' => true]);
+                        }
                     }
                 } else {
                     // 40% chance: Train units (increased from 30%)
                     $result = $ai->trainUnits();
                     if ($result) {
-                        \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
+                        // Get the most recent training
+                        $lastTrain = DB::getInstance()->query("SELECT u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11 
+                                                               FROM training 
+                                                               WHERE vref = {$this->village['kid']} 
+                                                               ORDER BY id DESC 
+                                                               LIMIT 1")->fetch_assoc();
+                        if ($lastTrain) {
+                            $trainedUnits = [];
+                            $totalUnits = 0;
+                            for ($u = 1; $u <= 11; $u++) {
+                                if ($lastTrain["u$u"] > 0) {
+                                    $trainedUnits["unit_$u"] = $lastTrain["u$u"];
+                                    $totalUnits += $lastTrain["u$u"];
+                                }
+                            }
+                            
+                            if ($totalUnits > 0) {
+                                \Core\AI\NpcLogger::log($owner, 'TRAIN', "Training $totalUnits units", [
+                                    'total' => $totalUnits,
+                                    'units' => $trainedUnits
+                                ]);
+                            } else {
+                                \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
+                            }
+                        } else {
+                            \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
+                        }
                     }
                 }
             } else {
