@@ -374,36 +374,22 @@ class AI
         $ai = new AI_MAIN($kid);
         
         for ($i = 1; $i <= $count; ++$i) {
-            // NPC decision loop with personality-driven actions
+            // NPC decision loop - DETERMINISTIC build/train only
+            // Raids and alliances are handled separately by interval-based checks in FakeUserModel
             if ($isNpc) {
                 $roll = mt_rand(1, 100);
                 
-                if ($roll <= 40) {
-                    // 40% chance: Building upgrade
+                if ($roll <= 60) {
+                    // 60% chance: Building upgrade (increased from 40%)
                     $result = $ai->upgradeBuilding();
                     if ($result) {
                         \Core\AI\NpcLogger::log($owner, 'BUILD', 'Building upgrade queued', ['success' => true]);
                     }
-                } elseif ($roll <= 70) {
-                    // 30% chance: Train units
+                } else {
+                    // 40% chance: Train units (increased from 30%)
                     $result = $ai->trainUnits();
                     if ($result) {
                         \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
-                    }
-                } elseif ($roll <= 85) {
-                    // 15% chance: Send raid (THE CRITICAL NPC FEATURE!)
-                    $raidSent = \Core\AI\RaidAI::processRaid($owner, $kid);
-                    if (!$raidSent) {
-                        \Core\AI\NpcLogger::log($owner, 'RAID', 'Raid attempt failed (cooldown or no targets)', []);
-                    }
-                } else {
-                    // 15% chance: Alliance actions
-                    $allianceAction = \Core\AI\AllianceAI::processAlliance($owner);
-                    if (!$allianceAction) {
-                        // Fallback: build or train if no alliance action
-                        if ($ai->upgradeBuilding()) {
-                            $ai->trainUnits();
-                        }
                     }
                 }
             } else {
