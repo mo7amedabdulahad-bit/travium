@@ -569,8 +569,8 @@ class NpcConfig
         // Add targets to farm-list
         foreach ($targets as $targetKid) {
             // Default troops (adjust based on race later)
-            $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
-                        VALUES ($targetKid, $listId, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+            $db->query("INSERT INTO raidlist (kid, lid, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10) 
+                        VALUES ($targetKid, $listId, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0)");
         }
         
         \Core\AI\NpcLogger::log($uid, 'FARMLIST', "Created farm-list with " . count($targets) . " targets", [
