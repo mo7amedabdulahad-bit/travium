@@ -24,38 +24,25 @@ class NpcLogger
      */
     public static function log($uid, $action, $details, $data = [])
     {
-        $db = \Core\Database\DB::getInstance();
-        $npcInfo = $db->query("SELECT name, npc_personality, npc_difficulty 
-                               FROM users WHERE id=$uid")->fetch_assoc();
-        
-        if (!$npcInfo) {
-            return;
-        }
-        
         $timestamp = date('Y-m-d H:i:s');
-        $personality = $npcInfo['npc_personality'] ?? 'unknown';
-        $difficulty = $npcInfo['npc_difficulty'] ?? 'unknown';
-        $name = $npcInfo['name'];
         
-        // Format: [TIME] [NPC_NAME] [PERSONALITY/DIFFICULTY] ACTION: Details
+        // Format: [TIME] [NPC_UID] ACTION: Details
         $logLine = sprintf(
-            "[%s] [%s] [%s/%s] %s: %s",
+            "[%s] [NPC:%d] %s: %s",
             $timestamp,
-            $name,
-            strtoupper($personality),
-            strtoupper($difficulty),
+            $uid,
             strtoupper($action),
             $details
         );
         
         // Add data if present
         if (!empty($data)) {
-            $logLine .= " | Data: " . json_encode($data);
+            $logLine .= " | " . json_encode($data);
         }
         
         $logLine .= "\n";
         
-        // Write to log file
+        // Write to log file (suppress errors if file not writable)
         @file_put_contents(self::$logFile, $logLine, FILE_APPEND);
         
         // Also log to detailed log

@@ -307,6 +307,11 @@ class NpcConfig
     /**
      * Get raid frequency in seconds for a personality
      * 
+     * Uses server speed to calculate appropriate raid cooldowns:
+     * - Base frequency at 1x speed: 6 hours
+     * - Scales down with server speed (25x server = 6/25 = 0.24 hours = ~14 minutes)
+     * - Modified by personality multiplier
+     * 
      * @param string $personality Personality type
      * @return array ['min' => int, 'max' => int] Min and max seconds between raids
      */
@@ -314,22 +319,40 @@ class NpcConfig
     {
         $stats = self::getPersonalityStats($personality);
         if (!$stats) {
-            return ['min' => 14400, 'max' => 28800]; // Default 4-8 hours
+            $personality = 'balanced'; // Default
+            $stats = self::PERSONALITIES['balanced'];
         }
 
         $frequency = $stats['raid_frequency'];
-
-        switch ($frequency) {
-            case 'high':
-                return ['min' => 3600, 'max' => 10800];  // 1-3 hours
-            case 'medium':
-                return ['min' => 7200, 'max' => 18000];  // 2-5 hours
-            case 'low':
-                return ['min' => 43200, 'max' => 86400]; // 12-24 hours
-            case 'very_low':
-                return ['min' => 86400, 'max' => 172800]; // 24-48 hours
-            default:
-                return ['min' => 14400, 'max' => 28800]; // 4-8 hours
-        }
+        
+        // Get server speed (function from game core)
+        $gameSpeed = function_exists('getGameSpeed') ? getGameSpeed() : 1;
+        $gameSpeed = max(1, $gameSpeed); // Ensure minimum 1x
+        
+        // Base cooldown at 1x speed: 6 hours (21600 seconds)
+        $baseCooldown = 21600;
+        
+        // Calculate speed-adjusted base cooldown
+        $speedAdjustedBase = $baseCooldown / $gameSpeed;
+        
+        // Personality multipliers (relative to base)
+        $multipliers = [
+            'high' => ['min' => 0.15, 'max' => 0.3],      // Aggressive: 15-30% of base
+            'medium' => ['min' => 0.35, 'max' => 0.7],    // Assassin/Balanced: 35-70% of base
+            'low' => ['min' => 1.0, 'max' => 2.0],        // Economic: 100-200% of base
+            'very_low' => ['min' => 2.0, 'max' => 3.0],   // Diplomat: 200-300% of base
+        ];
+        
+        $mult = $multipliers[$frequency] ?? $multipliers['medium'];
+        
+        $min = (int)($speedAdjustedBase * $mult['min']);
+        $max = (int)($speedAdjustedBase * $mult['max']);
+        
+        // Ensure minimums (prevent raids every second on ultra-fast servers)
+        $absoluteMin = 300; // 5 minutes minimum
+        $min = max($absoluteMin, $min);
+        $max = max($min + 300, $max); // Ensure max > min by at least 5 minutes
+        
+        return ['min' => $min, 'max' => $max];
     }
 }
