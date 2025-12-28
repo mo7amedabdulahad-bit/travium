@@ -428,10 +428,11 @@ class NpcConfig
         $db = DB::getInstance();
         $uid = (int)$uid;
         
-        // Grant gold club with far-future expiry (permanent for NPCs)
-        $farFuture = time() + (365 * 100 * 86400); // 100 years
+        // Grant gold club with max INT value (permanent for NPCs)
+        // Using 2147483647 (max signed INT) instead of far-future timestamp
+        $permanent = 2147483647;
         
-        return $db->query("UPDATE users SET goldclub=$farFuture WHERE id=$uid");
+        return $db->query("UPDATE users SET goldclub=$permanent WHERE id=$uid");
     }
     
     /**
