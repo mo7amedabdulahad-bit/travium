@@ -78,10 +78,14 @@ while ($list = $farmLists->fetch_assoc()) {
     
     while ($target = $targets->fetch_assoc()) {
         $targetKid = $target['kid'];
-        $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
+        $result = $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
                     VALUES ($targetKid, $listId, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
-        $added++;
-        echo "    + Added oasis at ({$target['x']},{$target['y']})\n";
+        if ($result) {
+            $added++;
+            echo "    + Added oasis at ({$target['x']},{$target['y']}) - kid: $targetKid\n";
+        } else {
+            echo "    ✗ FAILED to add oasis: " . $db->error . "\n";
+        }
     }
     
     // If still need more, try player villages
