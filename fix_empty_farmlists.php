@@ -82,8 +82,8 @@ while ($list = $farmLists->fetch_assoc()) {
                 $targetKid = $target['kid'];
                 echo "      Attempting to add oasis kid=$targetKid...\n";
                 
-                $result = $db->query("INSERT INTO raidlist (kid, lid, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10) 
-                            VALUES ($targetKid, $listId, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0)");
+                $result = $db->query("INSERT INTO raidlist (kid, lid, distance, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10) 
+                            VALUES ($targetKid, $listId, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0)");
                 
                 if ($result) {
                     $added++;
@@ -119,8 +119,8 @@ while ($list = $farmLists->fetch_assoc()) {
         
         while ($target = $targets->fetch_assoc()) {
             $targetKid = $target['kid'];
-            $db->query("INSERT INTO raidlist (kid, lid, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10) 
-                        VALUES ($targetKid, $listId, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0)");
+            $db->query("INSERT INTO raidlist (kid, lid, distance, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10) 
+                        VALUES ($targetKid, $listId, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0)");
             $added++;
             echo "    + Added village at ({$target['x']},{$target['y']})\n";
         }
