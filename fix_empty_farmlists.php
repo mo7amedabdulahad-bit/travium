@@ -73,19 +73,26 @@ while ($list = $farmLists->fetch_assoc()) {
                    ORDER BY (ABS(w.x - ($x)) + ABS(w.y - ($y)))
                    LIMIT $needed";
     
-    $targets = $db->query($oasisQuery);
     echo "    Oasis found: " . $targets->num_rows . "\n";
     
-    while ($target = $targets->fetch_assoc()) {
-        $targetKid = $target['kid'];
-        $result = $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
-                    VALUES ($targetKid, $listId, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
-        if ($result) {
-            $added++;
-            echo "    + Added oasis at ({$target['x']},{$target['y']}) - kid: $targetKid\n";
-        } else {
-            echo "    ✗ FAILED to add oasis: " . $db->error . "\n";
+    try {
+        while ($target = $targets->fetch_assoc()) {
+            $targetKid = $target['kid'];
+            echo "      Attempting to add oasis kid=$targetKid...\n";
+            
+            $result = $db->query("INSERT INTO raidlist (kid, lid, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) 
+                        VALUES ($targetKid, $listId, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+            
+            if ($result) {
+                $added++;
+                echo "      ✓ Added oasis at ({$target['x']},{$target['y']}) - kid: $targetKid\n";
+            } else {
+                echo "      ✗ FAILED to add oasis - query returned false\n";
+            }
         }
+    } catch (Exception $e) {
+        echo "    ✗ ERROR in loop: " . $e->getMessage() . "\n";
+        echo "    Stack: " . $e->getTraceAsString() . "\n";
     }
     
     // If still need more, try player villages
