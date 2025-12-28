@@ -55,48 +55,108 @@ class FakeUserModel
         
         // === INTERVAL-BASED RAID PROCESSING ===
         // Process raids separately based on cooldown intervals, not probability
-        $raidResults = $db->query("SELECT v.kid, v.owner, u.npc_personality,
+        \Core\AI\NpcLogger::log(0, 'SYSTEM', 'Starting raid interval processing', []);
+        
+        $raidResults = $db->query("SELECT v.kid, v.owner, u.name, u.npc_personality,
                                           JSON_EXTRACT(u.npc_info, '$.last_raid_time') as last_raid
                                    FROM vdata v
                                    JOIN users u ON v.owner = u.id
                                    WHERE u.access=3
                                    LIMIT 10");
         
-        while ($row = $raidResults->fetch_assoc()) {
-            $lastRaid = $row['last_raid'] ?? 0;
-            $raidFreq = \Core\NpcConfig::getRaidFrequency($row['npc_personality']);
+        if (!$raidResults) {
+            \Core\AI\NpcLogger::log(0, 'ERROR', 'Raid query failed: ' . $db->error, []);
+        } else {
+            $raidCount = $raidResults->num_rows;
+            \Core\AI\NpcLogger::log(0, 'SYSTEM', "Found $raidCount NPC villages for raid check", []);
             
-            // Deterministic: only raid if interval has passed
-            if (time() - $lastRaid >= $raidFreq['min']) {
-                \Core\AI\RaidAI::processRaid($row['owner'], $row['kid']);
+            while ($row = $raidResults->fetch_assoc()) {
+                $lastRaid = $row['last_raid'] ?? 0;
+                $raidFreq = \Core\NpcConfig::getRaidFrequency($row['npc_personality']);
+                $timeSince = time() - $lastRaid;
+                
+                \Core\AI\NpcLogger::log($row['owner'], 'RAID_CHECK', "Interval check: {$timeSince}s since last raid (min: {$raidFreq['min']}s)", [
+                    'kid' => $row['kid'],
+                    'last_raid' => $lastRaid,
+                    'time_since' => $timeSince,
+                    'min_interval' => $raidFreq['min']
+                ]);
+                
+                // Deterministic: only raid if interval has passed
+                if ($timeSince >= $raidFreq['min']) {
+                    \Core\AI\NpcLogger::log($row['owner'], 'RAID_TRIGGER', "Interval ready - triggering raid for {$row['name']}", []);
+                    
+                    try {
+                        $result = \Core\AI\RaidAI::processRaid($row['owner'], $row['kid']);
+                        if ($result) {
+                            \Core\AI\NpcLogger::log($row['owner'], 'RAID_SUCCESS', 'Raid processed successfully', []);
+                        } else {
+                            \Core\AI\NpcLogger::log($row['owner'], 'RAID_SKIP', 'Raid not sent (no targets/troops/config)', []);
+                        }
+                    } catch (\Exception $e) {
+                        \Core\AI\NpcLogger::log($row['owner'], 'RAID_ERROR', 'Exception during raid: ' . $e->getMessage(), []);
+                    }
+                } else {
+                    $waitTime = $raidFreq['min'] - $timeSince;
+                    \Core\AI\NpcLogger::log($row['owner'], 'RAID_WAIT', "Cooldown active - wait {$waitTime}s more", []);
+                }
             }
         }
         
         // === INTERVAL-BASED ALLIANCE PROCESSING ===
         // Process alliance checks separately, pre-filtered to NPCs without alliances
-        $allianceResults = $db->query("SELECT u.id, u.npc_personality,
+        \Core\AI\NpcLogger::log(0, 'SYSTEM', 'Starting alliance interval processing', []);
+        
+        $allianceResults = $db->query("SELECT u.id, u.name, u.npc_personality,
                                               JSON_EXTRACT(u.npc_info, '$.last_alliance_check') as last_check
                                        FROM users u
                                        WHERE u.access=3
                                          AND u.aid = 0
                                        LIMIT 5");
         
-        while ($row = $allianceResults->fetch_assoc()) {
-            $lastCheck = $row['last_check'] ?? 0;
-            $cooldown = mt_rand(86400, 172800); // 24-48 hours
+        if (!$allianceResults) {
+            \Core\AI\NpcLogger::log(0, 'ERROR', 'Alliance query failed: ' . $db->error, []);
+        } else {
+            $allianceCount = $allianceResults->num_rows;
+            \Core\AI\NpcLogger::log(0, 'SYSTEM', "Found $allianceCount NPCs without alliances for alliance check", []);
             
-            // Deterministic: only check if cooldown passed
-            if (time() - $lastCheck >= $cooldown) {
-                $config = \Core\NpcConfig::getNpcConfig($row['id']);
-                $tendency = $config['personality_stats']['alliance_tendency'] ?? 50;
+            while ($row = $allianceResults->fetch_assoc()) {
+                $lastCheck = $row['last_check'] ?? 0;
+                $cooldown = mt_rand(86400, 172800); // 24-48 hours
+                $timeSince = time() - $lastCheck;
                 
-                // Roll personality dice ONCE per cooldown period
-                if (mt_rand(1, 100) <= $tendency) {
-                    \Core\AI\AllianceAI::processAlliance($row['id']);
+                \Core\AI\NpcLogger::log($row['id'], 'ALLIANCE_CHECK', "Cooldown check: {$timeSince}s since last check", [
+                    'last_check' => $lastCheck,
+                    'cooldown' => $cooldown,
+                    'time_since' => $timeSince
+                ]);
+                
+                // Deterministic: only check if cooldown passed
+                if ($timeSince >= $cooldown) {
+                    $config = \Core\NpcConfig::getNpcConfig($row['id']);
+                    $tendency = $config['personality_stats']['alliance_tendency'] ?? 50;
+                    $roll = mt_rand(1, 100);
+                    
+                    \Core\AI\NpcLogger::log($row['id'], 'ALLIANCE_ROLL', "Personality roll: $roll vs tendency: $tendency", [
+                        'roll' => $roll,
+                        'tendency' => $tendency
+                    ]);
+                    
+                    // Roll personality dice ONCE per cooldown period
+                    if ($roll <= $tendency) {
+                        try {
+                            \Core\AI\AllianceAI::processAlliance($row['id']);
+                        } catch (\Exception $e) {
+                            \Core\AI\NpcLogger::log($row['id'], 'ALLIANCE_ERROR', 'Exception during alliance process: ' . $e->getMessage(), []);
+                        }
+                    } else {
+                        // Update cooldown even if decided not to join
+                        \Core\NpcConfig::updateNpcInfo($row['id'], 'last_alliance_check', time());
+                        \Core\AI\NpcLogger::log($row['id'], 'ALLIANCE_DECLINED', "Decided not to join (roll: $roll failed vs $tendency)", []);
+                    }
                 } else {
-                    // Update cooldown even if decided not to join
-                    \Core\NpcConfig::updateNpcInfo($row['id'], 'last_alliance_check', time());
-                    \Core\AI\NpcLogger::log($row['id'], 'ALLIANCE', 'Decided not to join (personality roll failed)', ['tendency' => $tendency]);
+                    $waitTime = $cooldown - $timeSince;
+                    \Core\AI\NpcLogger::log($row['id'], 'ALLIANCE_WAIT', "Cooldown active - wait " . round($waitTime/3600, 1) . " hours more", []);
                 }
             }
         }
