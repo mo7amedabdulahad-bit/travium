@@ -287,11 +287,24 @@ class RaidAI
     {
         $db = DB::getInstance();
         
-        // Get target info for logging
+        // Get target info for logging (works for both villages and oasis)
         $targetInfo = $db->query("SELECT v.name, w.x, w.y 
                                   FROM vdata v 
                                   JOIN wdata w ON v.kid = w.id 
                                   WHERE v.kid=$toKid")->fetch_assoc();
+        
+        // If not found in vdata (e.g., oasis), check wdata directly
+        if (!$targetInfo) {
+            $targetInfo = $db->query("SELECT CONCAT('Oasis ', w.x, '|', w.y) as name, w.x, w.y
+                                      FROM wdata w
+                                      WHERE w.id=$toKid")->fetch_assoc();
+        }
+        
+        // Fallback if still not found
+        if (!$targetInfo) {
+            NpcLogger::logFailure($uid, 'RAID', 'Target village/oasis not found', ['toKid' => $toKid]);
+            return false;
+        }
         
         // Calculate distance for logging
         $fromXY = \Game\Formulas::kid2xy($fromKid);
