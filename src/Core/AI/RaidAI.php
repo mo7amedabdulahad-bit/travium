@@ -50,13 +50,15 @@ class RaidAI
         $attackerXY = Formulas::kid2xy($kid);
         
         // Find nearby villages AND oasis
-        // Includes: Players, Natars (owner=1), Oasis (owner=0), Other NPCs (access=3)
+        // Includes: Players, Other NPCs (access=3), Oasis (owner=0)
+        // Excludes: Natars (owner=1) - too powerful
         $query = "SELECT v.kid, v.owner, v.name, v.wood, v.clay, v.iron, v.crop, 
                          v.maxstore, v.maxcrop, v.pop, v.created,
                          w.x, w.y, w.oasistype
                   FROM vdata v
                   JOIN wdata w ON v.kid = w.id
                   WHERE v.owner != $attackerUid
+                    AND v.owner != 1
                     AND w.occupied >= 0
                     AND ABS(w.x - {$attackerXY['x']}) <= $maxDistance
                     AND ABS(w.y - {$attackerXY['y']}) <= $maxDistance
