@@ -428,11 +428,9 @@ class NpcConfig
         $db = DB::getInstance();
         $uid = (int)$uid;
         
-        // Grant gold club for 10 years (effectively permanent for NPCs)
-        // Using 10 years to avoid INT overflow on smaller column types
-        $tenYears = time() + (365 * 10 * 86400);
-        
-        return $db->query("UPDATE users SET goldclub=$tenYears WHERE id=$uid");
+        // Grant gold club (permanent server-wide flag)
+        // Set to 1 = active/permanent
+        return $db->query("UPDATE users SET goldclub=1 WHERE id=$uid");
     }
     
     /**
