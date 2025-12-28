@@ -12,6 +12,9 @@
  * Usage: php debug_npc_system.php
  */
 
+// Define IS_DEV constant before bootstrap
+define('IS_DEV', true);
+
 require_once __DIR__ . '/src/bootstrap.php';
 
 use Core\NpcConfig;

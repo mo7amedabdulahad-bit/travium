@@ -10,6 +10,9 @@
  * Usage: php update_existing_fake_users.php
  */
 
+// Define IS_DEV constant before bootstrap
+define('IS_DEV', true);
+
 require_once __DIR__ . '/src/bootstrap.php';
 
 use Core\NpcConfig;

@@ -8,6 +8,9 @@
  * Usage: php test_personality_ai.php
  */
 
+// Define IS_DEV constant before bootstrap
+define('IS_DEV', true);
+
 require_once __DIR__ . '/src/bootstrap.php';
 
 use Core\AI\PersonalityAI;
