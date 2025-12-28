@@ -8,8 +8,9 @@
  * Usage: php test_personality_ai.php
  */
 
-// Define IS_DEV constant before bootstrap
+// Define required constants before bootstrap
 define('IS_DEV', true);
+define('ERROR_LOG_FILE', __DIR__ . '/error.log');
 
 require_once __DIR__ . '/src/bootstrap.php';
 

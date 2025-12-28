@@ -12,8 +12,9 @@
  * Usage: php debug_npc_system.php
  */
 
-// Define IS_DEV constant before bootstrap
+// Define required constants before bootstrap
 define('IS_DEV', true);
+define('ERROR_LOG_FILE', __DIR__ . '/error.log');
 
 require_once __DIR__ . '/src/bootstrap.php';
 
