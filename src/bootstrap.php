@@ -47,7 +47,7 @@ require_once INCLUDE_PATH . "functions.general.php";
 global $config;
 $cache = Caching::getInstance();
 $config = Config::getInstance();
-if (!property_exists($config, 'db')) {
+if (!$config || !property_exists($config, 'db')) {
     die("Installation is not completed.");
 }
 $db = DB::getInstance();
