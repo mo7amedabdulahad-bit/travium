@@ -394,17 +394,53 @@ class AllianceCtrl extends GameCtrl
         $view = new PHPBatchView("alliance/optionChangeDesc");
         $db = DB::getInstance();
         
+        // **DEBUG: Log incoming POST data**
+        error_log("processAllianceChangeDesc called");
+        error_log("POST data: " . print_r($_POST, true));
+        error_log("Has permission: " . ($this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC) ? 'YES' : 'NO'));
+        
         // **FIX: Process POST to save alliance description**
         if (isset($_POST['a']) && $_POST['a'] == 3) {
-            // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
-            $_POST['be1'] = $db->real_escape_string($_POST['be1']);
-            $_POST['be2'] = $db->real_escape_string($_POST['be2']);
-            if (StringChecker::isValidMessage($_POST['be1']) && StringChecker::isValidMessage($_POST['be2'])) {
-                $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
-                $this->selectedAllianceData['desc1'] = $_POST['be1'];
-                $this->selectedAllianceData['desc2'] = $_POST['be2'];
-                $view->vars['note'] = T("Alliance", "Changes saved");
+            error_log("POST[a] == 3 - checking permissions");
+            
+            if (!$this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC)) {
+                error_log("BLOCKED: No permission to change alliance description!");
+                $view->vars['error'] = "You don't have permission to change alliance description";
+            } else {
+                error_log("Permission OK - processing save");
+                
+                // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+                $_POST['be1'] = $db->real_escape_string($_POST['be1'] ?? '');
+                $_POST['be2'] = $db->real_escape_string($_POST['be2'] ?? '');
+                
+                error_log("After sanitization - be1 length: " . strlen($_POST['be1']) . ", be2 length: " . strlen($_POST['be2']));
+                
+                $valid1 = StringChecker::isValidMessage($_POST['be1']);
+                $valid2 = StringChecker::isValidMessage($_POST['be2']);
+                
+                error_log("Validation - be1: " . ($valid1 ? 'VALID' : 'INVALID') . ", be2: " . ($valid2 ? 'VALID' : 'INVALID'));
+                
+                if ($valid1 && $valid2) {
+                    error_log("Both valid - executing UPDATE query");
+                    $result = $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
+                    error_log("UPDATE result: " . ($result ? 'SUCCESS' : 'FAILED') . ", affected rows: " . $db->affectedRows());
+                    
+                    if ($result) {
+                        $this->selectedAllianceData['desc1'] = $_POST['be1'];
+                        $this->selectedAllianceData['desc2'] = $_POST['be2'];
+                        $view->vars['note'] = T("Alliance", "Changes saved");
+                        error_log("Save complete - showing success message");
+                    } else {
+                        error_log("DATABASE ERROR: " . $db->error);
+                        $view->vars['error'] = "Database error occurred";
+                    }
+                } else {
+                    error_log("Validation failed!");
+                    $view->vars['error'] = "Invalid content";
+                }
             }
+        } else {
+            error_log("No POST data or wrong action");
         }
         
         $view->vars['desc1'] = $this->selectedAllianceData['desc1'];
