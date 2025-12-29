@@ -15,6 +15,8 @@ class FakeUserModel
     public function handleFakeUsers()
     {
         if (!$this->canRun()) return;
+        \Core\AI\NpcLogger::log(0, 'DEBUG', 'handleFakeUsers: canRun passed', []);
+        
         $db = DB::getInstance();
         $interval = mt_rand(3600, 10800);
         $stmt = $db->query("SELECT id FROM users WHERE access=3 AND lastHeroExpCheck <= " . (time() - $interval) . " LIMIT 10");
@@ -23,6 +25,9 @@ class FakeUserModel
             $exp = mt_rand(10, 50) * ceil(getGameSpeed() / 100);
             $db->query("UPDATE hero SET exp=exp+$exp WHERE uid={$row['id']}");
         }
+        
+        \Core\AI\NpcLogger::log(0, 'DEBUG', 'handleFakeUsers: hero exp done', []);
+        
         if (getGameSpeed() <= 10) {
             $interval = mt_rand(600, 3600);
         } else if (getGameSpeed() <= 100) {
@@ -42,6 +47,9 @@ class FakeUserModel
                                WHERE v.lastVillageCheck < $time 
                                  AND u.access=3 
                                LIMIT $limit");
+        
+        \Core\AI\NpcLogger::log(0, 'DEBUG', 'handleFakeUsers: village query done, rows=' . $results->num_rows, []);
+        
         while ($row = $results->fetch_assoc()) {
             $db->query("UPDATE vdata SET lastVillageCheck=$now WHERE kid={$row['kid']}");
             if ($row['lastVillageCheck'] <= 10) continue;
@@ -52,6 +60,8 @@ class FakeUserModel
             
             AI::doSomethingRandom($row['kid'], $count);
         }
+        
+        \Core\AI\NpcLogger::log(0, 'DEBUG', 'handleFakeUsers: AI cycles complete, starting raids', []);
         
         // === INTERVAL-BASED RAID PROCESSING ===
         // Process raids separately based on cooldown intervals, not probability
