@@ -1,6 +1,11 @@
 -- Migration: Add NPC columns to users table
 -- Date: 2025-12-28
 -- Phase: NPC Foundation - Database Schema Extension
+--
+-- ⚠️ NOTE: This migration is for EXISTING installations only (before 2025-12-29).
+-- Fresh installs after 2025-12-29 already have these columns in T4.4.sql base schema.
+-- Running this on a fresh install will fail since columns already exist.
+--
 -- Purpose: Add personality and difficulty columns for intelligent NPC system
 
 -- Add NPC personality column

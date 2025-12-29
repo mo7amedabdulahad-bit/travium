@@ -1512,6 +1512,11 @@ CREATE TABLE IF NOT EXISTS `users`
   `sit2Uid`                                          INT(11) UNSIGNED      NOT NULL DEFAULT '0',
   `sit2Permissions`                                  SMALLINT(3) UNSIGNED  NOT NULL DEFAULT '87',
   `goldclub`                                         TINYINT(1) UNSIGNED   NOT NULL DEFAULT '0',
+  `npc_personality`                                  ENUM('aggressive','economic','balanced','diplomat','assassin') NULL DEFAULT NULL COMMENT 'NPC personality type determining behavior patterns',
+  `npc_difficulty`                                   ENUM('beginner','intermediate','advanced','expert') NULL DEFAULT NULL COMMENT 'NPC difficulty level determining action frequency',
+  `npc_info`                                         JSON                  NULL DEFAULT NULL COMMENT 'NPC extended configuration and state data',
+  `last_npc_action`                                  INT(11) UNSIGNED      NULL DEFAULT NULL COMMENT 'Unix timestamp of last NPC processing',
+
   `escape`                                           TINYINT(1) UNSIGNED   NOT NULL DEFAULT '0',
   `total_attack_points`                              BIGINT(255) UNSIGNED  NOT NULL DEFAULT '0',
   `total_defense_points`                             BIGINT(255) UNSIGNED  NOT NULL DEFAULT '0',
@@ -1570,6 +1575,10 @@ CREATE TABLE IF NOT EXISTS `users`
   KEY `statistics` (`countryFlag`, `total_attack_points`, `total_defense_points`, `week_attack_points`,
                     `week_defense_points`, `week_robber_points`, `oldRank`, `total_pop`, `total_villages`,
                     `max_off_point`, `max_def_point`, `hidden`),
+  KEY `npc_processing` (`access`, `last_npc_action`),
+  KEY `npc_personality` (`npc_personality`),
+  KEY `npc_difficulty` (`npc_difficulty`),
+
   UNIQUE KEY (`uuid`)
 )
   ENGINE = InnoDB
