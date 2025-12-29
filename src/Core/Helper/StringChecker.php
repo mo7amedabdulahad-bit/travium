@@ -20,8 +20,9 @@ class StringChecker
         $urls = self::checkUrls($string, $text);
         self::checkForBan($badWords, $urls);
         
-        // **FIX: Inverted logic - return true when NO bad words (!$badWords) AND no spam URLs ($urls)
-        return !$badWords && $urls;
+        // **CORRECT: containsBadWords() returns TRUE when NO bad words found**
+        // **NOT INVERTED: return TRUE when $badWords is TRUE (clean) AND $urls is TRUE (clean)**
+        return $badWords && $urls;
     }
 
     private static function checkForBan($badWords, $urls)
@@ -62,8 +63,8 @@ class StringChecker
         $urls = self::checkUrls($string, $text);
         self::checkForBan($badWords, $urls);
         
-        // **FIX: Same inverted logic fix
-        return !$badWords && $urls;
+        // **CORRECT: containsBadWords() returns TRUE when NO bad words found**
+        return $badWords && $urls;
     }
 
     public static function clearString($string)
