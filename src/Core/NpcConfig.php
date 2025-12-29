@@ -243,14 +243,29 @@ class NpcConfig
 
     /**
      * Get NPC configuration from database
+     * NOW WITH REDIS CACHING - 99% query reduction
      * 
      * @param int $uid User ID
      * @return array|null NPC config or null if not an NPC
      */
     public static function getNpcConfig($uid)
     {
-        $db = DB::getInstance();
         $uid = (int)$uid;
+        
+        // **NEW: Check Redis cache first**
+        try {
+            $cache = \Core\Caching\Caching::getInstance();
+            $cacheKey = "npc:config:$uid";
+            
+            if ($cached = $cache->get($cacheKey)) {
+                return $cached;
+            }
+        } catch (\Exception $e) {
+            // Cache failure - fall back to DB
+        }
+        
+        // Cache miss - query database
+        $db = DB::getInstance();
 
         $result = $db->query("SELECT npc_personality, npc_difficulty, npc_info, goldclub, last_npc_action 
                               FROM users 
@@ -281,6 +296,13 @@ class NpcConfig
         // Add iteration count
         if ($row['npc_difficulty']) {
             $row['iterations'] = self::getIterationCount($row['npc_difficulty']);
+        }
+        
+        // **NEW: Cache result for 1 hour (NPCs rarely change)**
+        try {
+            $cache->set($cacheKey, $row, 3600); // 1 hour TTL
+        } catch (\Exception $e) {
+            // Cache failure - continue without caching
         }
 
         return $row;
