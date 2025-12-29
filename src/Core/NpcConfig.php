@@ -634,8 +634,10 @@ class NpcConfig
         $totalAvailable = 0;
         
         // Count total available preferred units
+        // NOTE: preferredUnits contains unit IDs (1-100+), need to convert to unit numbers (1-10)
         foreach ($preferredUnits as $unitId) {
-            $unitNr = ($unitId - 1) % 10 + 1; // Convert to u1-u10
+            // Convert unit ID to unit number: ID 1-10 = Romans u1-u10, ID 11-20 = Teutons u1-u10, etc.
+            $unitNr = (($unitId - 1) % 10) + 1;
             $totalAvailable += ($available["u$unitNr"] ?? 0);
         }
         
@@ -644,14 +646,14 @@ class NpcConfig
         }
         
         // Calculate how many to send
-        $totalToSend = floor($totalAvailable * $percent);
+        $totalToSend = max(1, floor($totalAvailable * $percent)); // At least 1 troop
         
         // Distribute across preferred units (prioritize first)
         $remaining = $totalToSend;
         foreach ($preferredUnits as $unitId) {
             if ($remaining <= 0) break;
             
-            $unitNr = ($unitId - 1) % 10 + 1;
+            $unitNr = (($unitId - 1) % 10) + 1;
             $have = $available["u$unitNr"] ?? 0;
             
             if ($have > 0) {
