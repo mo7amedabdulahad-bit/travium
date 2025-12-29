@@ -523,6 +523,124 @@ class NpcConfig
         
         return $preferences[$personality][$race] ?? [];
     }
+    
+    /**
+     * Get raid strategy for NPC based on personality and difficulty
+     * 
+     * Returns troop allocation percentages for farm-list and single raids,
+     * plus minimum reserve to keep home for defense.
+     * 
+     * @param string $personality NPC personality
+     * @param string $difficulty Difficulty level (easy/medium/hard)
+     * @return array ['farmlist' => [min%, max%], 'single' => [min%, max%], 'reserve' => %]
+     */
+    public static function getRaidStrategy($personality, $difficulty = 'medium')
+    {
+        // 5 personalities × 3 difficulties = 15 unique raid behaviors
+        $strategies = [
+            'aggressive' => [
+                'easy'   => ['farmlist' => [55, 75], 'single' => [65, 80], 'reserve' => 27, 'threshold_mult' => 1.0],
+                'medium' => ['farmlist' => [70, 90], 'single' => [80, 95], 'reserve' => 15, 'threshold_mult' => 1.0],
+                'hard'   => ['farmlist' => [85, 100], 'single' => [90, 100], 'reserve' => 7, 'threshold_mult' => 1.0],
+            ],
+            'economic' => [
+                'easy'   => ['farmlist' => [15, 35], 'single' => [25, 45], 'reserve' => 67, 'threshold_mult' => 1.5],
+                'medium' => ['farmlist' => [30, 50], 'single' => [40, 60], 'reserve' => 55, 'threshold_mult' => 1.5],
+                'hard'   => ['farmlist' => [45, 65], 'single' => [55, 75], 'reserve' => 40, 'threshold_mult' => 1.5],
+            ],
+            'balanced' => [
+                'easy'   => ['farmlist' => [35, 55], 'single' => [45, 60], 'reserve' => 47, 'threshold_mult' => 1.2],
+                'medium' => ['farmlist' => [50, 70], 'single' => [60, 75], 'reserve' => 35, 'threshold_mult' => 1.2],
+                'hard'   => ['farmlist' => [65, 85], 'single' => [75, 90], 'reserve' => 20, 'threshold_mult' => 1.2],
+            ],
+            'diplomat' => [
+                'easy'   => ['farmlist' => [10, 30], 'single' => [15, 35], 'reserve' => 75, 'threshold_mult' => 2.0],
+                'medium' => ['farmlist' => [20, 40], 'single' => [30, 50], 'reserve' => 65, 'threshold_mult' => 2.0],
+                'hard'   => ['farmlist' => [35, 55], 'single' => [45, 65], 'reserve' => 50, 'threshold_mult' => 2.0],
+            ],
+            'assassin' => [
+                'easy'   => ['farmlist' => [25, 45], 'single' => [55, 70], 'reserve' => 45, 'threshold_mult' => 0.8],
+                'medium' => ['farmlist' => [40, 60], 'single' => [70, 85], 'reserve' => 35, 'threshold_mult' => 0.8],
+                'hard'   => ['farmlist' => [55, 75], 'single' => [85, 95], 'reserve' => 20, 'threshold_mult' => 0.8],
+            ],
+        ];
+        
+        return $strategies[$personality][$difficulty] ?? $strategies['balanced']['medium'];
+    }
+    
+    /**
+     * Calculate troop threshold based on server age
+     * Determines "substantial troops" requirement for raiding
+     * 
+     * @return int Minimum troops needed to trigger raids
+     */
+    public static function getTroopThreshold()
+    {
+        $db = DB::getInstance();
+        
+        // Get server start time
+        $serverStart = $db->fetchScalar("SELECT MIN(created) FROM vdata WHERE owner > 1");
+        if (!$serverStart) {
+            return 20; // Default for new servers
+        }
+        
+        $serverAge = (time() - $serverStart) / 86400; // Days
+        
+        // Threshold increases with server age
+        return match(true) {
+            $serverAge < 7 => 20,   // Early game
+            $serverAge < 30 => 50,  // Mid game
+            default => 100          // Late game
+        };
+    }
+    
+    /**
+     * Calculate dynamic raid troops based on strategy
+     * 
+     * @param array $available Available troops [u1-u10]
+     * @param array $strategy Strategy from getRaidStrategy()
+     * @param array $preferredUnits Preferred unit IDs
+     * @param string $attackType 'farmlist' or 'single'
+     * @return array Troops to send [unitId => count]
+     */
+    public static function calculateRaidTroops($available, $strategy, $preferredUnits, $attackType = 'farmlist')
+    {
+        // Get percentage range for this attack type
+        $percent = mt_rand($strategy[$attackType][0], $strategy[$attackType][1]) / 100;
+        
+        $toSend = [];
+        $totalAvailable = 0;
+        
+        // Count total available preferred units
+        foreach ($preferredUnits as $unitId) {
+            $unitNr = ($unitId - 1) % 10 + 1; // Convert to u1-u10
+            $totalAvailable += ($available["u$unitNr"] ?? 0);
+        }
+        
+        if ($totalAvailable == 0) {
+            return []; // No troops available
+        }
+        
+        // Calculate how many to send
+        $totalToSend = floor($totalAvailable * $percent);
+        
+        // Distribute across preferred units (prioritize first)
+        $remaining = $totalToSend;
+        foreach ($preferredUnits as $unitId) {
+            if ($remaining <= 0) break;
+            
+            $unitNr = ($unitId - 1) % 10 + 1;
+            $have = $available["u$unitNr"] ?? 0;
+            
+            if ($have > 0) {
+                $send = min($have, $remaining);
+                $toSend[$unitNr] = $send;
+                $remaining -= $send;
+            }
+        }
+        
+        return $toSend;
+    }
 
     /**
      * Grant permanent gold club to an NPC for farm-list access
