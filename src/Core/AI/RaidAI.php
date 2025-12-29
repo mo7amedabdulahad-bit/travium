@@ -285,35 +285,45 @@ class RaidAI
      */
     public static function sendRaid($fromKid, $toKid, $uid, $race, $personality)
     {
+        error_log("[NPC_DEBUG] sendRaid() START: fromKid=$fromKid, toKid=$toKid, uid=$uid");
+        
         $db = DB::getInstance();
         
         // **Farm-list ONLY for NPCs (no fallback)**
         $farmListId = $db->fetchScalar("SELECT id FROM farmlist WHERE kid=$fromKid AND owner=$uid LIMIT 1");
         
+        error_log("[NPC_DEBUG] Farmlist check: " . ($farmListId ? "Found ID=$farmListId" : "NOT FOUND"));
+        
         if (!$farmListId) {
             // **NEW: Auto-create farm-list for this village**
+            error_log("[NPC_DEBUG] Auto-creating farmlist for village $fromKid");
+            
             NpcLogger::log($uid, 'AUTO_CREATE_FARMLIST', "No farm-list found - auto-creating", [
                 'village' => $fromKid
             ]);
             
             try {
                 NpcConfig::createNpcFarmList($uid, $fromKid);
+                error_log("[NPC_DEBUG] createNpcFarmList() called");
                 
                 // Fetch the newly created farm-list ID
                 $farmListId = $db->fetchScalar("SELECT id FROM farmlist WHERE kid=$fromKid AND owner=$uid LIMIT 1");
                 
                 if ($farmListId) {
+                    error_log("[NPC_DEBUG] Farmlist created successfully! ID=$farmListId");
                     NpcLogger::log($uid, 'FARMLIST_CREATED', "Farm-list auto-created successfully", [
                         'list_id' => $farmListId,
                         'village' => $fromKid
                     ]);
                 } else {
+                    error_log("[NPC_DEBUG] ERROR: Farmlist creation returned but ID still not found!");
                     NpcLogger::log($uid, 'FARMLIST_FAILED', "Failed to create farm-list", [
                         'village' => $fromKid
                     ]);
                     return false;
                 }
             } catch (\Exception $e) {
+                error_log("[NPC_DEBUG] EXCEPTION creating farmlist: " . $e->getMessage());
                 NpcLogger::log($uid, 'FARMLIST_ERROR', "Exception creating farm-list: " . $e->getMessage(), [
                     'village' => $fromKid
                 ]);
@@ -322,6 +332,8 @@ class RaidAI
         }
         
         // Use the game's built-in farm-list batch-send method
+        error_log("[NPC_DEBUG] Calling autoRaidFarmList() with list_id=$farmListId");
+        
         NpcLogger::log($uid, 'FARMLIST_RAID', "Sending farm-list raids", [
             'list_id' => $farmListId,
             'village' => $fromKid
@@ -330,6 +342,8 @@ class RaidAI
         $farmListModel = new \Model\FarmListModel();
         $sent = $farmListModel->autoRaidFarmList($farmListId, $uid, $fromKid);
         
+        error_log("[NPC_DEBUG] autoRaidFarmList() returned: $sent raids sent");
+        
         if ($sent > 0) {
             NpcLogger::log($uid, 'FARMLIST_SENT', "Farm-list raids sent", [
                 'list_id' => $farmListId,
@@ -337,6 +351,7 @@ class RaidAI
             ]);
             return true;
         } else {
+            error_log("[NPC_DEBUG] No raids sent - likely no troops or empty farmlist");
             NpcLogger::log($uid, 'FARMLIST_NO_TROOPS', "No raids sent (need troops)", [
                 'list_id' => $farmListId
             ]);
