@@ -101,15 +101,36 @@ class AllianceCtrl extends GameCtrl
     private function showAllianceProfile()
     {
         $action = isset($_GET['action']) && in_array($_GET['action'], ['description', 'members']) ? $_GET['action'] : ($this->session->getFavoriteTab("allyPageProfile") == 0 ? 'description' : 'members');
+        
+        // **DEBUG: Log profile page POST processing**
+        error_log("showAllianceProfile - checking for POST save");
+        error_log("POST[a]: " . ($_POST['a'] ?? 'not set'));
+        error_log("Has permission: " . ($this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC) ? 'YES' : 'NO'));
+        
         if (isset($_POST['a']) && $_POST['a'] == 3 && $this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC)) {
+            error_log("Profile page - processing description save");
             $db = DB::getInstance();
+            
             // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
-            $_POST['be1'] = $db->real_escape_string($_POST['be1']);
-            $_POST['be2'] = $db->real_escape_string($_POST['be2']);
-            if (StringChecker::isValidMessage($_POST['be1']) && StringChecker::isValidMessage($_POST['be2'])) {
-                $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
+            $_POST['be1'] = $db->real_escape_string($_POST['be1'] ?? '');
+            $_POST['be2'] = $db->real_escape_string($_POST['be2'] ?? '');
+            
+            error_log("After sanitization - be1 length: " . strlen($_POST['be1']) . ", be2 length: " . strlen($_POST['be2']));
+            
+            $valid1 = StringChecker::isValidMessage($_POST['be1']);
+            $valid2 = StringChecker::isValidMessage($_POST['be2']);
+            
+            error_log("Validation - be1: " . ($valid1 ? 'VALID' : 'INVALID') . ", be2: " . ($valid2 ? 'VALID' : 'INVALID'));
+            
+            if ($valid1 && $valid2) {
+                error_log("Both valid - executing UPDATE on profile page");
+                $result = $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
+                error_log("UPDATE result: " . ($result ? 'SUCCESS' : 'FAILED') . ", affected rows: " . $db->affectedRows());
+                
                 $this->selectedAllianceData['desc1'] = $_POST['be1'];
                 $this->selectedAllianceData['desc2'] = $_POST['be2'];
+            } else {
+                error_log("Validation FAILED on profile page!");
             }
         }
         $view = new PHPBatchView("alliance/Profile");
