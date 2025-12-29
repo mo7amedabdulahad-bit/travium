@@ -185,7 +185,10 @@ class FakeUserModel
         
         while ($row = $results->fetch_assoc()) {
             $db->query("UPDATE vdata SET lastVillageCheck=$now WHERE kid={$row['kid']}");
-            if ($row['lastVillageCheck'] <= 10) continue;
+            
+            // Skip ONLY villages that are brand new (created in last 10 seconds)
+            // Allow lastVillageCheck=0 (never run before) to proceed
+            if ($row['lastVillageCheck'] > 0 && $row['lastVillageCheck'] > ($now - 10)) continue;
             
             $difficulty = $row['npc_difficulty'] ?? 'beginner';
             $count = \Core\NpcConfig::getRandomizedIterations($difficulty);
