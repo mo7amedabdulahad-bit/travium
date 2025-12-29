@@ -14,7 +14,17 @@ class FakeUserModel
 {
     public function handleFakeUsers()
     {
-        if (!$this->canRun()) return;
+        // CRITICAL DEBUG LOGGING
+        error_log("[NPC_DEBUG] handleFakeUsers() called at " . date('Y-m-d H:i:s'));
+        
+        if (!$this->canRun()) {
+            error_log("[NPC_DEBUG] canRun() returned FALSE - NPCs cannot process!");
+            error_log("[NPC_DEBUG] getGameElapsedSeconds: " . getGameElapsedSeconds());
+            error_log("[NPC_DEBUG] fakeAccountProcess: " . \Core\Config::getProperty("dynamic", "fakeAccountProcess"));
+            return;
+        }
+        
+        error_log("[NPC_DEBUG] canRun() passed - starting NPC processing");
         \Core\AI\NpcLogger::log(0, 'DEBUG', 'handleFakeUsers: canRun passed', []);
         
         $db = DB::getInstance();
@@ -22,6 +32,7 @@ class FakeUserModel
         // === DO RAIDS/ALLIANCES FIRST (before slow AI cycles) ===
         
         // === INTERVAL-BASED RAID PROCESSING ===
+        error_log("[NPC_DEBUG] Starting raid interval processing");
         \Core\AI\NpcLogger::log(0, 'SYSTEM', 'Starting raid interval processing', []);
         
         $raidResults = $db->query("SELECT v.kid, v.owner, u.name, u.npc_personality,
@@ -32,6 +43,11 @@ class FakeUserModel
                                    LIMIT 10");
         
         if (!$raidResults) {
+            error_log("[NPC_DEBUG] Raid query FAILED: " . $db->error);
+            \Core\AI\NpcLogger::log(0, 'ERROR', 'Raid query failed: ' . $db->error, []);
+        } else {
+            $raidCount = $raidResults->num_rows;
+            error_log("[NPC_DEBUG] Found $raidCount NPC villages for raid check");
             \Core\AI\NpcLogger::log(0, 'ERROR', 'Raid query failed: ' . $db->error, []);
         } else {
             $raidCount = $raidResults->num_rows;
