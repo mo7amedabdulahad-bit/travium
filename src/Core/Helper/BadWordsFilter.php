@@ -26,6 +26,11 @@ class BadWordsFilter
     public function censorString($string, $mainString)
     {
         foreach ($this->badWords as $link) {
+            // **FIX: Skip empty words (happens when badWordsFilter.txt is empty)**
+            if (empty($link) || trim($link) === '') {
+                continue;
+            }
+            
             if (!empty($string) && strpos($string, $link) !== FALSE) {
                 Notification::notify("bad words detected!",
                     "Player " . Session::getInstance()->getName() . " is trying to use bad words $link.");
