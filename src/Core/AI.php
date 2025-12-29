@@ -55,7 +55,7 @@ class AI_MAIN
         $this->village = $village->fetch_assoc();
         if ($this->village['isWW']) return;
 
-        $this->user = $db->query("SELECT race, plus, fasterTraining FROM users WHERE id={$this->village['owner']}")->fetch_assoc();
+        $this->user = $db->query("SELECT race, plus, fasterTraining, access FROM users WHERE id={$this->village['owner']}")->fetch_assoc();
 
         $this->calculateResources();
 
