@@ -271,6 +271,17 @@ log "Importing database maindb..."
 mysql -u maindb -p"${DB_PASS}" maindb < "${HTDOCS}/maindb.sql"
 
 #####################################
+# Apply NPC Migrations
+#####################################
+log "Applying NPC system migrations..."
+if [[ -f "${HTDOCS}/migrations/002_add_npc_columns.sql" ]]; then
+  mysql -u maindb -p"${DB_PASS}" maindb < "${HTDOCS}/migrations/002_add_npc_columns.sql"
+  ok "NPC migrations applied."
+else
+  log "No NPC migrations found, skipping."
+fi
+
+#####################################
 # Patch config & frontend keys
 #####################################
 log "Patching config and frontend keys..."
