@@ -204,6 +204,12 @@ class Launcher
             $job = [$fakeModel, 'handleFakeUserExpands'];
             $jobs[] = new Job('AIProgress:handleFakeUserExpands', 45, $job);
         }
+        {
+            // **NEW: Daily farm-list refresh**
+            $farmListModel = new \Model\FarmListModel();
+            $job = [$farmListModel, 'refreshNpcFarmLists'];
+            $jobs[] = new Job('AIProgress:refreshFarmLists', 86400, $job); // 24 hours
+        }
         $natarsModel = new NatarsModel();
         {
             $job = [$natarsModel, 'handleNatarVillages'];
