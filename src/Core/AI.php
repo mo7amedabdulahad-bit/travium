@@ -141,14 +141,31 @@ class AI_MAIN
 
     public function trainUnits()
     {
+        $isNpc = ($this->user['access'] ?? 0) == 3;
+        $owner = $this->village['owner'] ?? 0;
+        
         // Get available units based on training buildings
         $available = $this->training_buildings['available'];
         if (!sizeof($available)) {
+            if ($isNpc) {
+                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', 'No training buildings available', [
+                    'barracks' => sizeof($this->training_buildings['barracks']),
+                    'stable' => sizeof($this->training_buildings['stable']),
+                    'workshop' => sizeof($this->training_buildings['workshop'])
+                ]);
+            }
             return 0;
         }
         
+        if ($isNpc) {
+            \Core\AI\NpcLogger::log($owner, 'TRAIN_ATTEMPT', 'Attempting to train units', [
+                'available_unit_types' => $available,
+                'resources' => $this->resources
+            ]);
+        }
+        
         // For NPCs: use personality-based unit preferences
-        if ($this->user['access'] == 3) {
+        if ($isNpc) {
             $config = NpcConfig::getNpcConfig($this->user['id']);
             if ($config) {
                 $preferredUnits = NpcConfig::getPreferredUnits(
@@ -156,34 +173,69 @@ class AI_MAIN
                     $this->user['race']
                 );
                 
+                \Core\AI\NpcLogger::log($owner, 'TRAIN_PREFS', 'Checking preferred units', [
+                    'preferred' => $preferredUnits,
+                    'available' => $available
+                ]);
+                
                 // Try to train preferred units in order
                 foreach ($preferredUnits as $unitId) {
                     // Check if unit is available/researched
                     if (!in_array($unitId, $available)) {
+                        \Core\AI\NpcLogger::log($owner, 'TRAIN_SKIP', "Unit $unitId not available/researched", []);
                         continue;
                     }
                     
-                    // Check if we can afford it
-                    $canTrain = $this->maxUnitsOf($unitId);
+                    // Check if we can afford it (FIXED: was maxUnitsOf, should be maxUnits)
+                    $canTrain = $this->maxUnits($unitId);
                     if ($canTrain > 0) {
                         // Train between 1-5 units of this type
                         $count = min($canTrain, mt_rand(1, 5));
                         $this->unitBuilder->add($unitId, $count);
+                        \Core\AI\NpcLogger::log($owner, 'TRAIN_SUCCESS', "Training $count x unit $unitId", [
+                            'unit_id' => $unitId,
+                            'count' => $count,
+                            'max_possible' => $canTrain
+                        ]);
                         return 1;
+                    } else {
+                        \Core\AI\NpcLogger::log($owner, 'TRAIN_NO_RES', "Not enough resources for unit $unitId", [
+                            'unit_id' => $unitId,
+                            'resources' => $this->resources
+                        ]);
                     }
                 }
+                
+                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', 'No preferred units affordable', [
+                    'preferred_units' => $preferredUnits,
+                    'resources' => $this->resources
+                ]);
+            } else {
+                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', 'No NPC config found', []);
             }
         }
         
         // Fallback to random for non-NPCs or if no preferred units available
         $unitId = $available[mt_rand(0, sizeof($available) - 1)];
-        $canTrain = $this->maxUnitsOf($unitId);
+        $canTrain = $this->maxUnits($unitId);  // FIXED: was maxUnitsOf
         if ($canTrain <= 0) {
+            if ($isNpc) {
+                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', "Cannot afford random unit $unitId", [
+                    'unit_id' => $unitId,
+                    'resources' => $this->resources
+                ]);
+            }
             return 0;
         }
         
         $count = min($canTrain, mt_rand(1, 5));
         $this->unitBuilder->add($unitId, $count);
+        if ($isNpc) {
+            \Core\AI\NpcLogger::log($owner, 'TRAIN_SUCCESS', "Training $count x unit $unitId (fallback)", [
+                'unit_id' => $unitId,
+                'count' => $count
+            ]);
+        }
         return 1;
     }
 
@@ -285,10 +337,24 @@ class AI_MAIN
 
     public function upgradeBuilding($count = 1)
     {
+        $isNpc = ($this->user['access'] ?? 0) == 3;
+        $owner = $this->village['owner'] ?? 0;
+        
         $effects = 0;
         for ($i = 1; $i <= $count; ++$i) {
             if (method_exists($this->aiBuilder, 'upgrade')) {
-                $effects += $this->aiBuilder->upgrade();
+                $result = $this->aiBuilder->upgrade();
+                if ($result > 0) {
+                    $effects += $result;
+                } else if ($isNpc && $i == 1) {
+                    // Only log first failure to avoid spam
+                    \Core\AI\NpcLogger::log($owner, 'BUILD_FAIL', 'AI Builder upgrade returned 0', [
+                        'resources' => $this->resources,
+                        'aiBuilder_exists' => true
+                    ]);
+                }
+            } else if ($isNpc && $i == 1) {
+                \Core\AI\NpcLogger::log($owner, 'BUILD_FAIL', 'AI Builder has no upgrade method', []);
             }
         }
         return $effects;
@@ -452,6 +518,10 @@ class AI
                         } else {
                             \Core\AI\NpcLogger::log($owner, 'BUILD', 'Building upgrade queued', ['success' => true]);
                         }
+                    } else {
+                        \Core\AI\NpcLogger::log($owner, 'BUILD_SKIP', 'No buildings can be upgraded (check BUILD_FAIL logs)', [
+                            'iteration' => $i
+                        ]);
                     }
                 } else {
                     // 40% chance: Train units (increased from 30%)
@@ -484,6 +554,10 @@ class AI
                         } else {
                             \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
                         }
+                    } else {
+                        \Core\AI\NpcLogger::log($owner, 'TRAIN_SKIP', 'No units can be trained (check TRAIN_FAIL logs)', [
+                            'iteration' => $i
+                        ]);
                     }
                 }
             } else {
