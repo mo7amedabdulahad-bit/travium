@@ -102,36 +102,39 @@ class AllianceCtrl extends GameCtrl
     {
         $action = isset($_GET['action']) && in_array($_GET['action'], ['description', 'members']) ? $_GET['action'] : ($this->session->getFavoriteTab("allyPageProfile") == 0 ? 'description' : 'members');
         
-        // **DEBUG: Log profile page POST processing**
-        error_log("showAllianceProfile - checking for POST save");
-        error_log("POST[a]: " . ($_POST['a'] ?? 'not set'));
-        error_log("Has permission: " . ($this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC) ? 'YES' : 'NO'));
+        // **DEBUG: Log to file instead of error_log**
+        $logFile = '/tmp/alliance_desc_debug.log';
+        file_put_contents($logFile, date('[Y-m-d H:i:s] ') . "showAllianceProfile called\n", FILE_APPEND);
+        file_put_contents($logFile, "POST[a]: " . ($_POST['a'] ?? 'not set') . "\n", FILE_APPEND);
+        file_put_contents($logFile, "Has permission: " . ($this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC) ? 'YES' : 'NO') . "\n", FILE_APPEND);
         
         if (isset($_POST['a']) && $_POST['a'] == 3 && $this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC)) {
-            error_log("Profile page - processing description save");
+            file_put_contents($logFile, "Processing description save\n", FILE_APPEND);
             $db = DB::getInstance();
             
             // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
             $_POST['be1'] = $db->real_escape_string($_POST['be1'] ?? '');
             $_POST['be2'] = $db->real_escape_string($_POST['be2'] ?? '');
             
-            error_log("After sanitization - be1 length: " . strlen($_POST['be1']) . ", be2 length: " . strlen($_POST['be2']));
+            file_put_contents($logFile, "be1 length: " . strlen($_POST['be1']) . ", be2 length: " . strlen($_POST['be2']) . "\n", FILE_APPEND);
             
             $valid1 = StringChecker::isValidMessage($_POST['be1']);
             $valid2 = StringChecker::isValidMessage($_POST['be2']);
             
-            error_log("Validation - be1: " . ($valid1 ? 'VALID' : 'INVALID') . ", be2: " . ($valid2 ? 'VALID' : 'INVALID'));
+            file_put_contents($logFile, "Validation - be1: " . ($valid1 ? 'VALID' : 'INVALID') . ", be2: " . ($valid2 ? 'VALID' : 'INVALID') . "\n", FILE_APPEND);
             
             if ($valid1 && $valid2) {
-                error_log("Both valid - executing UPDATE on profile page");
+                file_put_contents($logFile, "Executing UPDATE query\n", FILE_APPEND);
                 $result = $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
-                error_log("UPDATE result: " . ($result ? 'SUCCESS' : 'FAILED') . ", affected rows: " . $db->affectedRows());
+                file_put_contents($logFile, "UPDATE result: " . ($result ? 'SUCCESS' : 'FAILED') . ", affected rows: " . $db->affectedRows() . "\n", FILE_APPEND);
                 
                 $this->selectedAllianceData['desc1'] = $_POST['be1'];
                 $this->selectedAllianceData['desc2'] = $_POST['be2'];
             } else {
-                error_log("Validation FAILED on profile page!");
+                file_put_contents($logFile, "Validation FAILED!\n", FILE_APPEND);
             }
+        } else {
+            file_put_contents($logFile, "Not processing (no POST or no permission)\n", FILE_APPEND);
         }
         $view = new PHPBatchView("alliance/Profile");
         $view->vars['action'] = $action;
