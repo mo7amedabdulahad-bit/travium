@@ -411,10 +411,11 @@ class FarmListModel
         $calc->setFrom($kid);
         $move = new MovementsModel();
         $slots = $db->query("SELECT * FROM raidlist WHERE lid=$lid");
-        $user = $db->query("SELECT race, protection, access, vacationActiveTil, silver FROM users WHERE id=$owner");
+        $user = $db->query("SELECT race, protection, access, vacationActiveTil, silver, npc_personality, npc_difficulty FROM users WHERE id=$owner");
         if (!$user->num_rows) return $success;
         $user = $user->fetch_assoc();
         $race = $user['race'];
+        
         // Skip silver check for NPCs (access=3)
         if ($user['access'] != 3 && $user['silver'] < Config::getProperty("gold", "autoRaidSilver")) {
             return $success;
@@ -422,9 +423,24 @@ class FarmListModel
         if ($user['vacationActiveTil'] > time()) {
             return $success;
         }
+        
+        // **NEW: Get NPC strategy for dynamic troop allocation**
+        $isNpc = ($user['access'] == 3);
+        $strategy = null;
+        $preferredUnits = [];
+        
+        if ($isNpc && $user['npc_personality']) {
+            $strategy = \Core\NpcConfig::getRaidStrategy(
+                $user['npc_personality'], 
+                $user['npc_difficulty'] ?? 'medium'
+            );
+            $preferredUnits = \Core\NpcConfig::getPreferredUnits($user['npc_personality'], $race);
+        }
+        
         Log::addLog($owner,
             "autoraid:before:$lid:$kid",
             sprintf("Troops: %s", implode(",", array_values(array_filter_units($this->getVillageUnits($kid))))));
+            
         while ($row = $slots->fetch_assoc()) {
             $calc->hasCata($row['u8'] > 0);
             $canRaid = TRUE;
@@ -435,21 +451,44 @@ class FarmListModel
             if ($user['protection'] > time() && !$this->isNatarOrUnOccupiedOasis($row['kid'])) {
                 continue;
             }
+            
             $unitsToSend = array_fill(1, 11, 0);
             $units = $db->query("SELECT * FROM units WHERE kid=$kid")->fetch_assoc();
-            for ($i = 1; $i <= 10; ++$i) {
-                $v = $row['u' . $i];
-                if ($units['u' . $i] < $v) {
-                    $canRaid = FALSE;
-                    break;
+            
+            // **NEW: Dynamic troop calculation for NPCs**
+            if ($isNpc && $strategy && !empty($preferredUnits)) {
+                // Use personality-based dynamic allocation
+                $troopsToSend = \Core\NpcConfig::calculateRaidTroops($units, $strategy, $preferredUnits, 'farmlist');
+                
+                if (empty($troopsToSend)) {
+                    continue; // No troops available
+                }
+                
+                // Map to unitsToSend array and validate
+                foreach ($troopsToSend as $unitNr => $count) {
+                    if ($units["u$unitNr"] < $count) {
+                        $canRaid = FALSE;
+                        break;
+                    }
+                    $unitsToSend[$unitNr] = $count;
+                }
+            } else {
+                // OLD: Static allocation from raidlist for regular players
+                for ($i = 1; $i <= 10; ++$i) {
+                    $v = $row['u' . $i];
+                    if ($units['u' . $i] < $v) {
+                        $canRaid = FALSE;
+                        break;
+                    }
                 }
             }
+            
             if (!$canRaid) {
                 continue;
             }
             $modified_units = [];
             for ($i = 1; $i <= 10; ++$i) {
-                $v = abs((int)$row['u' . $i]);
+                $v = $isNpc ? ($unitsToSend[$i] ?? 0) : abs((int)$row['u' . $i]);
                 if (!$v) {
                     continue;
                 }
