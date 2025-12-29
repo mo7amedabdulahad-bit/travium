@@ -391,6 +391,19 @@ class AllianceCtrl extends GameCtrl
     {
         $view = new PHPBatchView("alliance/optionChangeDesc");
         $db = DB::getInstance();
+        
+        // **FIX: Process POST to save alliance description**
+        if (isset($_POST['a']) && $_POST['a'] == 3) {
+            $_POST['be1'] = $db->real_escape_string(filter_var($_POST['be1'], FILTER_SANITIZE_STRING));
+            $_POST['be2'] = $db->real_escape_string(filter_var($_POST['be2'], FILTER_SANITIZE_STRING));
+            if (StringChecker::isValidMessage($_POST['be1']) && StringChecker::isValidMessage($_POST['be2'])) {
+                $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
+                $this->selectedAllianceData['desc1'] = $_POST['be1'];
+                $this->selectedAllianceData['desc2'] = $_POST['be2'];
+                $view->vars['note'] = T("Alliance", "Changes saved");
+            }
+        }
+        
         $view->vars['desc1'] = $this->selectedAllianceData['desc1'];
         $view->vars['desc2'] = $this->selectedAllianceData['desc2'];
         $medals = $db->query("SELECT * FROM allimedal WHERE aid={$this->selectedAllianceID} ORDER BY week, category");
