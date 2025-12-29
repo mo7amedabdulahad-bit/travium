@@ -31,6 +31,9 @@ class changeVillageName extends AjaxBase
             return;
         }
         if($name == Village::getInstance()->getName() || empty($name)) {
+            if (!isset($this->response['data'])) {
+                $this->response['data'] = [];
+            }
             $this->response['data']['name'] = Village::getInstance()->getName();
             return;
         }
