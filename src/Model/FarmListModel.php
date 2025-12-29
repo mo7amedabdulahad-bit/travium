@@ -500,6 +500,12 @@ class FarmListModel
                 $modified_units[$i] += $v;
                 $speeds[] = Formulas::uSpeed(nrToUnitId($i, $race));
             }
+            
+            // Skip if no troops to actually send
+            if (empty($modified_units)) {
+                continue;
+            }
+            
             ++$success;
             $calc->setTo($row['kid']);
             $calc->setMinSpeed($speeds);
