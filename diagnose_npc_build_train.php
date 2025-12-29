@@ -7,7 +7,7 @@
  */
 
 // Bootstrap the game environment
-require_once(__DIR__ . '/src/Autoloader.php');
+require_once(__DIR__ . '/servers/s1/include/Autoloader.php');
 
 use Core\Database\DB;
 use Core\AI;
