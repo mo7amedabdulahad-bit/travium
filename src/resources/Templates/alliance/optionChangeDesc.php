@@ -1,5 +1,5 @@
 <h4 class="round"><?=T("Alliance", "Change alliance description");?></h4>
-<form id="SettingsFormular" method="post" action="allianz.php?s=5&o=3">
+<form id="SettingsFormular" method="post" action="allianz.php">
     <textarea class="editDescription editDescription1" tabindex="1" name="be1"><?=$vars['desc1'];?></textarea>
     <textarea class="editDescription editDescription2" tabindex="2" name="be2"><?=$vars['desc2'];?></textarea>
 
@@ -31,6 +31,7 @@
     <?php endif;?>
     <p class="btn">
         <input type="hidden" name="a" value="3">
+        <input type="hidden" name="s" value="1">
         <button type="submit" value="save" name="s1" id="btn_save" class="green disabled" tabindex="3" disabled="">
             <div class="button-container addHoverClick">
                 <div class="button-background">
