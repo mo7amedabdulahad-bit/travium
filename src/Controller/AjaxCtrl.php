@@ -21,8 +21,10 @@ class AjaxCtrl extends AnyCtrl
     {
         parent::__construct();
         $response = ["response" => ['error' => FALSE, 'errorMsg' => NULL, 'data' => [],],];
-        if (isset($_GET['cmd'])) {
-            $cmd = filter_var($_GET['cmd'], FILTER_SANITIZE_STRING);
+        
+        // **FIX: Check $_REQUEST instead of just $_GET (JavaScript sends via POST)**
+        if (isset($_REQUEST['cmd'])) {
+            $cmd = filter_var($_REQUEST['cmd'], FILTER_SANITIZE_STRING);
             $response = ["response" => ['error' => FALSE, 'errorMsg' => NULL, 'data' => [],],];
             if (!in_array($cmd, ['news', 'configuration'])) {
                 $this->checkAjaxToken($response);
