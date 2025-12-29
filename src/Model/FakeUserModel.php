@@ -48,9 +48,6 @@ class FakeUserModel
         } else {
             $raidCount = $raidResults->num_rows;
             error_log("[NPC_DEBUG] Found $raidCount NPC villages for raid check");
-            \Core\AI\NpcLogger::log(0, 'ERROR', 'Raid query failed: ' . $db->error, []);
-        } else {
-            $raidCount = $raidResults->num_rows;
             \Core\AI\NpcLogger::log(0, 'SYSTEM', "Found $raidCount NPC villages for raid check", []);
             
             while ($row = $raidResults->fetch_assoc()) {
