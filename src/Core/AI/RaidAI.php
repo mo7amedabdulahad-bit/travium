@@ -291,10 +291,34 @@ class RaidAI
         $farmListId = $db->fetchScalar("SELECT id FROM farmlist WHERE kid=$fromKid AND owner=$uid LIMIT 1");
         
         if (!$farmListId) {
-            NpcLogger::log($uid, 'NO_FARMLIST', "NPC has no farm-list", [
+            // **NEW: Auto-create farm-list for this village**
+            NpcLogger::log($uid, 'AUTO_CREATE_FARMLIST', "No farm-list found - auto-creating", [
                 'village' => $fromKid
             ]);
-            return false;
+            
+            try {
+                NpcConfig::createNpcFarmList($uid, $fromKid);
+                
+                // Fetch the newly created farm-list ID
+                $farmListId = $db->fetchScalar("SELECT id FROM farmlist WHERE kid=$fromKid AND owner=$uid LIMIT 1");
+                
+                if ($farmListId) {
+                    NpcLogger::log($uid, 'FARMLIST_CREATED', "Farm-list auto-created successfully", [
+                        'list_id' => $farmListId,
+                        'village' => $fromKid
+                    ]);
+                } else {
+                    NpcLogger::log($uid, 'FARMLIST_FAILED', "Failed to create farm-list", [
+                        'village' => $fromKid
+                    ]);
+                    return false;
+                }
+            } catch (\Exception $e) {
+                NpcLogger::log($uid, 'FARMLIST_ERROR', "Exception creating farm-list: " . $e->getMessage(), [
+                    'village' => $fromKid
+                ]);
+                return false;
+            }
         }
         
         // Use the game's built-in farm-list batch-send method
