@@ -469,15 +469,22 @@ class RaidAI
      */
     public static function processRaid($uid, $kid)
     {
+        error_log("[NPC_DEBUG] processRaid() called for uid=$uid, kid=$kid");
+        
         // Check if should raid
         if (!self::shouldRaid($uid)) {
+            error_log("[NPC_DEBUG] shouldRaid() returned FALSE - skipping raid");
+            NpcLogger::log($uid, 'RAID_COOLDOWN', 'Raid on cooldown - waiting for interval', []);
             return false;
         }
+        
+        error_log("[NPC_DEBUG] shouldRaid() passed - proceeding with raid");
         
         // Get NPC config
         $config = NpcConfig::getNpcConfig($uid);
         
         if (!$config) {
+            error_log("[NPC_DEBUG] getNpcConfig() returned NULL!");
             NpcLogger::logFailure($uid, 'RAID', 'No NPC config found');
             return false;
         }
@@ -485,23 +492,33 @@ class RaidAI
         $db = DB::getInstance();
         $race = $db->fetchScalar("SELECT race FROM users WHERE id=$uid");
         
+        error_log("[NPC_DEBUG] Finding targets for kid=$kid");
+        
         // Find targets
         $targets = self::findTargets($kid, 20);
         
         if (!$targets || empty($targets)) {
+            error_log("[NPC_DEBUG] No targets found!");
             NpcLogger::logFailure($uid, 'RAID', 'No valid targets found');
             return false;
         }
+        
+        error_log("[NPC_DEBUG] Found " . count($targets) . " targets");
         
         // Log target selection
         $target = $targets[0];
         NpcLogger::logTargetSelection($uid, count($targets), $target);
         
+        error_log("[NPC_DEBUG] Calling sendRaid() to target kid={$target['kid']}");
+        
         // Send raid
         $success = self::sendRaid($kid, $target['kid'], $uid, $race, $config['npc_personality']);
         
         if (!$success) {
+            error_log("[NPC_DEBUG] sendRaid() returned FALSE!");
             NpcLogger::logFailure($uid, 'RAID', 'Failed to send raid (no troops or error)');
+        } else {
+            error_log("[NPC_DEBUG] sendRaid() SUCCESS!");
         }
         
         return $success;
