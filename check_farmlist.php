@@ -21,16 +21,16 @@ if ($result && $result->num_rows > 0) {
         echo "  List ID: {$row['id']}, Name: {$row['name']}, Village: {$row['kid']}, Owner: {$row['owner']}\n";
         
         // Check how many slots are in this farmlist
-        $slots = $mysqli->query("SELECT COUNT(*) as count FROM farmlist_slots WHERE list_id={$row['id']}")->fetch_assoc();
+        $slots = $mysqli->query("SELECT COUNT(*) as count FROM raidlist WHERE lid={$row['id']}")->fetch_assoc();
         echo "    Slots: {$slots['count']}\n";
         
         // Check if slots have targets
         if ($slots['count'] > 0) {
-            $targets = $mysqli->query("SELECT kid FROM farmlist_slots WHERE list_id={$row['id']} LIMIT 3");
+            $targets = $mysqli->query("SELECT towkid FROM raidlist WHERE lid={$row['id']} LIMIT 3");
             echo "    Sample targets: ";
             $kids = [];
             while ($t = $targets->fetch_assoc()) {
-                $kids[] = $t['kid'];
+                $kids[] = $t['towkid'];
             }
             echo implode(', ', $kids) . "\n";
         }
