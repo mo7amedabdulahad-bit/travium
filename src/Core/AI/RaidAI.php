@@ -488,7 +488,16 @@ class RaidAI
         
         // **NEW: Check for Rally Point (building type 16, 26, 36) - required for farm-lists**
         $db = DB::getInstance();
-        $rallyPoint = $db->fetchScalar("SELECT f1 FROM fdata WHERE vref=$kid AND (f1=16 OR f1=26 OR f1=36) LIMIT 1");
+        // fdata stores buildings in f1-f40 and types in f1t-f40t
+        // Check if ANY building slot has Rally Point type (16, 26, or 36)
+        $rallyPoint = $db->fetchScalar("SELECT 1 FROM fdata WHERE kid=$kid AND (
+            f19t=16 OR f20t=16 OR f21t=16 OR f22t=16 OR f23t=16 OR f24t=16 OR f25t=16 OR f26t=16 OR f27t=16 OR f28t=16 OR
+            f29t=16 OR f30t=16 OR f31t=16 OR f32t=16 OR f33t=16 OR f34t=16 OR f35t=16 OR f36t=16 OR f37t=16 OR f38t=16 OR f39t=16 OR f40t=16 OR
+            f19t=26 OR f20t=26 OR f21t=26 OR f22t=26 OR f23t=26 OR f24t=26 OR f25t=26 OR f26t=26 OR f27t=26 OR f28t=26 OR
+            f29t=26 OR f30t=26 OR f31t=26 OR f32t=26 OR f33t=26 OR f34t=26 OR f35t=26 OR f36t=26 OR f37t=26 OR f38t=26 OR f39t=26 OR f40t=26 OR
+            f19t=36 OR f20t=36 OR f21t=36 OR f22t=36 OR f23t=36 OR f24t=36 OR f25t=36 OR f26t=36 OR f27t=36 OR f28t=36 OR
+            f29t=36 OR f30t=36 OR f31t=36 OR f32t=36 OR f33t=36 OR f34t=36 OR f35t=36 OR f36t=36 OR f37t=36 OR f38t=36 OR f39t=36 OR f40t=36
+        ) LIMIT 1");
         
         if (!$rallyPoint) {
             error_log("[NPC_DEBUG] No Rally Point (type 16/26/36) - cannot use farm-lists");
@@ -499,7 +508,7 @@ class RaidAI
             return false;
         }
         
-        error_log("[NPC_DEBUG] Rally Point check passed (type=$rallyPoint)");
+        error_log("[NPC_DEBUG] Rally Point check passed");
         
         // **NEW: Check if NPC has ANY troops (prevent raiding with 0 troops)**
         $totalTroops = $db->fetchScalar("SELECT (u1+u2+u3+u4+u5+u6+u7+u8+u9+u10) as total FROM units WHERE kid=$kid");
