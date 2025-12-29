@@ -488,9 +488,9 @@ class RaidAI
         
         // **NEW: Check for Rally Point (building type 16, 26, 36) - required for farm-lists**
         $db = DB::getInstance();
-        $rallyPoint = $db->fetchScalar("SELECT level FROM fdata WHERE vref=$kid AND type IN (16, 26, 36) LIMIT 1");
+        $rallyPoint = $db->fetchScalar("SELECT f1 FROM fdata WHERE vref=$kid AND (f1=16 OR f1=26 OR f1=36) LIMIT 1");
         
-        if (!$rallyPoint || $rallyPoint < 1) {
+        if (!$rallyPoint) {
             error_log("[NPC_DEBUG] No Rally Point (type 16/26/36) - cannot use farm-lists");
             NpcLogger::log($uid, 'RAID_NO_RP', 'Cannot raid without Rally Point - build it first', [
                 'kid' => $kid,
@@ -499,7 +499,7 @@ class RaidAI
             return false;
         }
         
-        error_log("[NPC_DEBUG] Rally Point check passed (level=$rallyPoint)");
+        error_log("[NPC_DEBUG] Rally Point check passed (type=$rallyPoint)");
         
         // **NEW: Check if NPC has ANY troops (prevent raiding with 0 troops)**
         $totalTroops = $db->fetchScalar("SELECT (u1+u2+u3+u4+u5+u6+u7+u8+u9+u10) as total FROM units WHERE kid=$kid");
