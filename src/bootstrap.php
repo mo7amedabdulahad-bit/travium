@@ -40,6 +40,11 @@ define("INCLUDE_PATH", __DIR__ . DIRECTORY_SEPARATOR);
 define("RESOURCES_PATH", INCLUDE_PATH . "resources" . DIRECTORY_SEPARATOR);
 define("LOCALE_PATH", RESOURCES_PATH . "Translation" . DIRECTORY_SEPARATOR);
 define("TEMPLATES_PATH", RESOURCES_PATH . "Templates" . DIRECTORY_SEPARATOR);
+
+// Define IS_DEV and ERROR_LOG_FILE before loading ErrorHandler
+define("IS_DEV", false); // Set to true for development mode with verbose errors
+define("ERROR_LOG_FILE", INCLUDE_PATH . "error_log.log");
+
 require_once INCLUDE_PATH . "Core" . DIRECTORY_SEPARATOR . 'Autoloader.php';
 require_once INCLUDE_PATH . "functions.general.php";
 
