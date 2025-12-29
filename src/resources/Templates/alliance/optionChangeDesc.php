@@ -32,7 +32,7 @@
     <p class="btn">
         <input type="hidden" name="a" value="3">
         <input type="hidden" name="s" value="1">
-        <button type="submit" value="save" name="s1" id="btn_save" class="green disabled" tabindex="3" disabled="">
+        <button type="submit" value="save" name="s1" id="btn_save" class="green" tabindex="3">
             <div class="button-container addHoverClick">
                 <div class="button-background">
                     <div class="buttonStart">
