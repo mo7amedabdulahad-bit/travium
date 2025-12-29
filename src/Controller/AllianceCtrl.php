@@ -103,8 +103,9 @@ class AllianceCtrl extends GameCtrl
         $action = isset($_GET['action']) && in_array($_GET['action'], ['description', 'members']) ? $_GET['action'] : ($this->session->getFavoriteTab("allyPageProfile") == 0 ? 'description' : 'members');
         if (isset($_POST['a']) && $_POST['a'] == 3 && $this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC)) {
             $db = DB::getInstance();
-            $_POST['be1'] = $db->real_escape_string(filter_var($_POST['be1'], FILTER_SANITIZE_STRING));
-            $_POST['be2'] = $db->real_escape_string(filter_var($_POST['be2'], FILTER_SANITIZE_STRING));
+            // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+            $_POST['be1'] = $db->real_escape_string($_POST['be1']);
+            $_POST['be2'] = $db->real_escape_string($_POST['be2']);
             if (StringChecker::isValidMessage($_POST['be1']) && StringChecker::isValidMessage($_POST['be2'])) {
                 $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
                 $this->selectedAllianceData['desc1'] = $_POST['be1'];
@@ -180,8 +181,9 @@ class AllianceCtrl extends GameCtrl
     {
         if ($this->selectedAllianceID == $this->session->getAllianceId() && isset($_POST['a']) && $_POST['a'] == 7 && $this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC)) {
             $db = DB::getInstance();
-            $_POST['info1'] = $db->real_escape_string(filter_var($_POST['info1'], FILTER_SANITIZE_STRING));
-            $_POST['info2'] = $db->real_escape_string(filter_var($_POST['info2'], FILTER_SANITIZE_STRING));
+            // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+            $_POST['info1'] = $db->real_escape_string($_POST['info1']);
+            $_POST['info2'] = $db->real_escape_string($_POST['info2']);
             $db->query("UPDATE alidata SET info1='{$_POST['info1']}', info2='{$_POST['info2']}' WHERE id={$this->selectedAllianceID}");
             $_REQUEST['s'] = 7;
             $this->selectedAllianceData['info1'] = $_POST['info1'];
@@ -394,8 +396,9 @@ class AllianceCtrl extends GameCtrl
         
         // **FIX: Process POST to save alliance description**
         if (isset($_POST['a']) && $_POST['a'] == 3) {
-            $_POST['be1'] = $db->real_escape_string(filter_var($_POST['be1'], FILTER_SANITIZE_STRING));
-            $_POST['be2'] = $db->real_escape_string(filter_var($_POST['be2'], FILTER_SANITIZE_STRING));
+            // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+            $_POST['be1'] = $db->real_escape_string($_POST['be1']);
+            $_POST['be2'] = $db->real_escape_string($_POST['be2']);
             if (StringChecker::isValidMessage($_POST['be1']) && StringChecker::isValidMessage($_POST['be2'])) {
                 $db->query("UPDATE alidata SET desc1='{$_POST['be1']}', desc2='{$_POST['be2']}' WHERE id={$this->selectedAllianceID}");
                 $this->selectedAllianceData['desc1'] = $_POST['be1'];
