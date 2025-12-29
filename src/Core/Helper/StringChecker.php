@@ -58,7 +58,7 @@ class StringChecker
     public static function isValidMessage($text)
     {
         $string = self::clearString($text);
-        if (empty($string)) return false; // Empty messages are INVALID
+        if (empty($string)) return true; // Empty messages/descriptions ARE VALID
         $badWords = (new BadWordsFilter())->containsBadWords($string, $text);
         $urls = self::checkUrls($string, $text);
         self::checkForBan($badWords, $urls);
