@@ -501,6 +501,20 @@ class RaidAI
         
         error_log("[NPC_DEBUG] Rally Point check passed (level=$rallyPoint)");
         
+        // **NEW: Check if NPC has ANY troops (prevent raiding with 0 troops)**
+        $totalTroops = $db->fetchScalar("SELECT (u1+u2+u3+u4+u5+u6+u7+u8+u9+u10) as total FROM units WHERE kid=$kid");
+        
+        if ($totalTroops == 0) {
+            error_log("[NPC_DEBUG] No troops available (total=0) - cannot raid");
+            NpcLogger::log($uid, 'RAID_NO_TROOPS', 'Cannot raid with 0 troops - waiting for training', [
+                'kid' => $kid,
+                'note' => 'AI will auto-train troops in next cycle'
+            ]);
+            return false;
+        }
+        
+        error_log("[NPC_DEBUG] Troop check passed (total=$totalTroops troops)");
+        
         // Check if should raid
         if (!self::shouldRaid($uid)) {
             error_log("[NPC_DEBUG] shouldRaid() returned FALSE - skipping raid");
