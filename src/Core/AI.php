@@ -488,6 +488,29 @@ class AI
         // Log cycle start for NPCs
         if ($isNpc) {
             \Core\AI\NpcLogger::logCycleStart($owner, $count);
+            
+            // **NEW: Check if NPC has ANY troops at all (for clean installs)**
+            $totalTroops = $db->fetchScalar("SELECT (u1+u2+u3+u4+u5+u6+u7+u8+u9+u10) as total FROM units WHERE kid=$kid");
+            
+            if ($totalTroops == 0) {
+                // NEW NPC - prioritize training first troops!
+                \Core\AI\NpcLogger::log($owner, 'FIRST_TROOPS', 'New NPC detected (0 troops) - auto-training initial units', [
+                    'kid' => $kid
+                ]);
+                
+                $ai = new AI_MAIN($kid);
+                
+                // Force train units (skip building for first cycle to prioritize troops)
+                $result = $ai->trainUnits();
+                
+                if ($result) {
+                    \Core\AI\NpcLogger::log($owner, 'FIRST_TROOPS_SUCCESS', 'Initial troops queued for training', []);
+                } else {
+                    \Core\AI\NpcLogger::log($owner, 'FIRST_TROOPS_FAIL', 'Failed to train initial troops - check resources/buildings', []);
+                }
+                
+                return; // Skip rest of cycle to prioritize troops
+            }
         }
         
         $ai = new AI_MAIN($kid);

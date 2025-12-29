@@ -486,6 +486,21 @@ class RaidAI
     {
         error_log("[NPC_DEBUG] processRaid() called for uid=$uid, kid=$kid");
         
+        // **NEW: Check for Rally Point (building type 16, 26, 36) - required for farm-lists**
+        $db = DB::getInstance();
+        $rallyPoint = $db->fetchScalar("SELECT level FROM fdata WHERE vref=$kid AND type IN (16, 26, 36) LIMIT 1");
+        
+        if (!$rallyPoint || $rallyPoint < 1) {
+            error_log("[NPC_DEBUG] No Rally Point (type 16/26/36) - cannot use farm-lists");
+            NpcLogger::log($uid, 'RAID_NO_RP', 'Cannot raid without Rally Point - build it first', [
+                'kid' => $kid,
+                'required_building' => 'Rally Point (type 16, 26, or 36)'
+            ]);
+            return false;
+        }
+        
+        error_log("[NPC_DEBUG] Rally Point check passed (level=$rallyPoint)");
+        
         // Check if should raid
         if (!self::shouldRaid($uid)) {
             error_log("[NPC_DEBUG] shouldRaid() returned FALSE - skipping raid");
@@ -504,7 +519,6 @@ class RaidAI
             return false;
         }
         
-        $db = DB::getInstance();
         $race = $db->fetchScalar("SELECT race FROM users WHERE id=$uid");
         
         error_log("[NPC_DEBUG] Finding targets for kid=$kid");
