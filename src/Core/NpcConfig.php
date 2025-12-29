@@ -507,7 +507,7 @@ class NpcConfig
      * Get preferred units for an NPC based on personality and race
      * 
      * @param string $personality NPC personality
-     * @param int $race Race (1=Romans, 2=Teutons, 3=Gauls)
+     * @param int $race Race (1=Romans, 2=Teutons, 3=Gauls, 6=Egyptians, 7=Huns)
      * @return array Array of preferred unit IDs in priority order
      */
     public static function getPreferredUnits($personality, $race)
@@ -520,26 +520,36 @@ class NpcConfig
                 1 => [1, 2, 6],      // Romans: Legionnaire, Praetorian, Imperator
                 2 => [21, 22, 26],   // Teutons: Clubswinger, Spearman, Paladin
                 3 => [11, 12, 16],   // Gauls: Phalanx, Swordsman, Haeduan
+                6 => [52, 55, 56],   // Egyptians: Ash Warden, Anhur Guard, Resheph Chariot
+                7 => [61, 62, 65],   // Huns: Mercenary, Bowman, Steppe Rider
             ],
             'economic' => [
                 1 => [4, 5, 3],      // Romans: Praetorian, Imperian, defensive
                 2 => [23, 24, 22],   // Teutons: Axeman, Scout, Spearman
                 3 => [14, 15, 13],   // Gauls: Druid Rider, Haeduan, Pathfinder
+                6 => [54, 55, 52],   // Egyptians: Sopdu Explorer, Anhur Guard, Ash Warden
+                7 => [64, 66, 62],   // Huns: Spotter, Marksman, Bowman
             ],
             'balanced' => [
                 1 => [2, 1, 6],      // Romans: Mix of offense/defense
                 2 => [22, 21, 26],   // Teutons: Mix
                 3 => [12, 11, 16],   // Gauls: Mix
+                6 => [55, 52, 56],   // Egyptians: Anhur Guard, Ash Warden, Resheph Chariot
+                7 => [65, 61, 66],   // Huns: Steppe Rider, Mercenary, Marksman
             ],
             'diplomat' => [
                 1 => [4, 5, 8],      // Romans: Defensive + Senator
                 2 => [23, 22, 27],   // Teutons: Defensive + Chief
                 3 => [14, 15, 18],   // Gauls: Defensive + Chieftain
+                6 => [52, 55, 60],   // Egyptians: Defensive + Nomarch
+                7 => [62, 65, 70],   // Huns: Defensive + Khan
             ],
             'assassin' => [
                 1 => [3, 7, 6],      // Romans: Scouts + fast units
                 2 => [24, 26, 25],   // Teutons: Scouts + cavalry
                 3 => [13, 16, 17],   // Gauls: Scouts + fast units
+                6 => [54, 56, 55],   // Egyptians: Sopdu Explorer, Resheph Chariot, Anhur Guard
+                7 => [64, 65, 66],   // Huns: Spotter, Steppe Rider, Marksman
             ],
         ];
         
