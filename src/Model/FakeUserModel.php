@@ -51,8 +51,19 @@ class FakeUserModel
             \Core\AI\NpcLogger::log(0, 'SYSTEM', "Found $raidCount NPC villages for raid check", []);
             
             while ($row = $raidResults->fetch_assoc()) {
+                error_log("[NPC_DEBUG] Processing NPC village kid={$row['kid']}, owner={$row['owner']}, name={$row['name']}");
+                
                 $lastRaid = $row['last_raid'] ?? 0;
-                $raidFreq = \Core\NpcConfig::getRaidFrequency($row['npc_personality']);
+                error_log("[NPC_DEBUG] Getting raid frequency for personality: {$row['npc_personality']}");
+                
+                try {
+                    $raidFreq = \Core\NpcConfig::getRaidFrequency($row['npc_personality']);
+                    error_log("[NPC_DEBUG] Raid frequency: min={$raidFreq['min']}s");
+                } catch (\Exception $e) {
+                    error_log("[NPC_DEBUG] ERROR getting raid frequency: " . $e->getMessage());
+                    continue;
+                }
+                
                 $timeSince = time() - $lastRaid;
                 
                 \Core\AI\NpcLogger::log($row['owner'], 'RAID_CHECK', "Interval check: {$timeSince}s since last raid (min: {$raidFreq['min']}s)", [
@@ -63,6 +74,7 @@ class FakeUserModel
                 ]);
                 
                 if ($timeSince >= $raidFreq['min']) {
+                    error_log("[NPC_DEBUG] Raid interval ready - processing raid");
                     \Core\AI\NpcLogger::log($row['owner'], 'RAID_TRIGGER', "Interval ready - triggering raid for {$row['name']}", []);
                     
                     try {
@@ -73,10 +85,15 @@ class FakeUserModel
                             \Core\AI\NpcLogger::log($row['owner'], 'RAID_SKIP', 'Raid not sent (no targets/troops/config)', []);
                         }
                     } catch (\Exception $e) {
+                        error_log("[NPC_DEBUG] EXCEPTION during raid: " . $e->getMessage());
                         \Core\AI\NpcLogger::log($row['owner'], 'RAID_ERROR', 'Exception during raid: ' . $e->getMessage(), []);
                     }
+                } else {
+                    error_log("[NPC_DEBUG] Raid on cooldown - skipping");
                 }
             }
+            
+            error_log("[NPC_DEBUG] Finished raid processing loop");
         }
         
         // === INTERVAL-BASED ALLIANCE PROCESSING ===
