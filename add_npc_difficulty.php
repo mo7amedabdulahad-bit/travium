@@ -19,20 +19,32 @@ $checkCol = $db->query("SHOW COLUMNS FROM npc_info LIKE 'npc_difficulty'");
 if ($checkCol && $checkCol->num_rows > 0) {
     echo "✓ npc_difficulty column already exists\n";
 } else {
-    // Add column
-    $db->query("ALTER TABLE npc_info ADD COLUMN npc_difficulty VARCHAR(10) DEFAULT 'medium' AFTER npc_personality");
-    echo "✓ Added npc_difficulty column\n";
+    // Add column with proper default
+    echo "Adding npc_difficulty column...\n";
+    $result = $db->query("ALTER TABLE npc_info ADD COLUMN npc_difficulty VARCHAR(10) NOT NULL DEFAULT 'medium' AFTER npc_personality");
     
-    // Update existing NPCs randomly
-    $npcs = $db->query("SELECT uid FROM npc_info");
-    if ($npcs) {
-        $difficulties = ['easy', 'medium', 'hard'];
-        while ($row = $npcs->fetch_assoc()) {
-            $difficulty = $difficulties[array_rand($difficulties)];
-            $db->query("UPDATE npc_info SET npc_difficulty='$difficulty' WHERE uid={$row['uid']}");
+    if ($result) {
+        echo "✓ Added npc_difficulty column\n";
+        
+        // Update existing NPCs randomly
+        $npcs = $db->query("SELECT uid FROM npc_info");
+        if ($npcs && $npcs->num_rows > 0) {
+            $difficulties = ['easy', 'medium', 'hard'];
+            $updated = 0;
+            while ($row = $npcs->fetch_assoc()) {
+                $difficulty = $difficulties[array_rand($difficulties)];
+                if ($db->query("UPDATE npc_info SET npc_difficulty='$difficulty' WHERE uid={$row['uid']}")) {
+                    $updated++;
+                }
+            }
+            echo "✓ Updated $updated existing NPCs with random difficulties\n";
+        } else {
+            echo "✓ No existing NPCs to update\n";
         }
-        echo "✓ Updated " . $npcs->num_rows . " existing NPCs with random difficulties\n";
+    } else {
+        echo "✗ Failed to add column: " . $db->error() . "\n";
     }
 }
 
 echo "\n===== Complete =====\n";
+
