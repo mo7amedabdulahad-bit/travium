@@ -74,7 +74,7 @@ class AI_MAIN
         ];
         
         // Apply dynamic resource spending rate for NPCs
-        if ($this->user['access'] == 3) {
+        if (($this->user['access'] ?? 0) == 3) {
             $spendingRate = NpcConfig::getResourceSpendingRate($this->user['id'], $kid);
             
             // Adjust available resources based on spending rate
