@@ -119,6 +119,11 @@ class StringChecker
             $cache->set("filteredUrlsCache", $invalidPages, 2 * 86400);
         }
         foreach ($invalidPages as $link) {
+            // **FIX: Skip empty links (happens when filteredUrls.txt is empty)**
+            if (empty($link) || trim($link) === '') {
+                continue;
+            }
+            
             $split = explode(".", $link);
             if (!empty($string) && strpos($string, $link) !== FALSE || (strpos($string, $split[0]) !== FALSE && (strpos($string,
                             $split[1]) !== FALSE || strpos($string, '.' . $split[1]) !== FALSE))) {
