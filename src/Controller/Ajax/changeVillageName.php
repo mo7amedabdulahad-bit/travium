@@ -53,6 +53,11 @@ class changeVillageName extends AjaxBase
         $name = str_replace("'", '`', $name);
         $name = $db->real_escape_string(htmlspecialchars($name, ENT_QUOTES));
         $db->query("UPDATE vdata SET name='$name' WHERE kid=$did");
+        
+        // Ensure response data is properly set
+        if (!isset($this->response['data'])) {
+            $this->response['data'] = [];
+        }
         $this->response['data']['name'] = $name;
         $this->response['data']['did'] = $did;
         $this->response['reload'] = TRUE;
