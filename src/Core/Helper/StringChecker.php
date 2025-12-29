@@ -15,11 +15,13 @@ class StringChecker
     public static function isValidName($text)
     {
         $string = self::clearString($text);
-        if (empty($string)) return true;
+        if (empty($string)) return false; // Empty names are INVALID
         $badWords = (new BadWordsFilter())->containsBadWords($string, $text);
         $urls = self::checkUrls($string, $text);
         self::checkForBan($badWords, $urls);
-        return $badWords && $urls;
+        
+        // **FIX: Inverted logic - return true when NO bad words (!$badWords) AND no spam URLs ($urls)
+        return !$badWords && $urls;
     }
 
     private static function checkForBan($badWords, $urls)
@@ -55,11 +57,13 @@ class StringChecker
     public static function isValidMessage($text)
     {
         $string = self::clearString($text);
-        if (empty($string)) return true;
+        if (empty($string)) return false; // Empty messages are INVALID
         $badWords = (new BadWordsFilter())->containsBadWords($string, $text);
         $urls = self::checkUrls($string, $text);
         self::checkForBan($badWords, $urls);
-        return $badWords && $urls;
+        
+        // **FIX: Same inverted logic fix
+        return !$badWords && $urls;
     }
 
     public static function clearString($string)
