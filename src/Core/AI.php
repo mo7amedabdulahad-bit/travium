@@ -18,6 +18,7 @@ use function nrToUnitId;
 use function shuffle;
 use function unitIdToNr;
 
+#[\AllowDynamicProperties]
 class AI_MAIN
 {
     const RESOURCES_RATE = 2 / 3;
