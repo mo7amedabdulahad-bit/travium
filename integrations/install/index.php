@@ -76,6 +76,17 @@ $defaults = [
     'auto_reinstall_start_after' => 86400,
     'startTimeDT'             => (new DateTime('+1 hour'))->format('Y-m-d\TH:i'),
     'admin_password'          => '',
+    
+    // Skirmish Mode defaults
+    'installation_mode'       => 'multiplayer',  // 'multiplayer' or 'skirmish'
+    'player_username'         => '',
+    'player_email'            => '',
+    'player_password'         => '',
+    'player_tribe'            => 1,  // 1=Romans, 2=Teutons, 3=Gauls
+    'player_quadrant'         => 'NE',  // NW, NE, SW, SE
+    'npc_count'               => 10,
+    'artifacts_day'           => 30,
+    'ww_day'                  => 60,
 ];
 
 // AJAX: check if world path exists
@@ -132,6 +143,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'auto_reinstall_start_after' => (int)$g('auto_reinstall_start_after', $defaults['auto_reinstall_start_after']),
         'admin_password'          => (string)$g('admin_password', ''),
         'startTimeDT'             => (string)$g('startTimeDT', $defaults['startTimeDT']),
+        
+        // Skirmish Mode inputs
+        'installation_mode'       => in_array($g('installation_mode'), ['multiplayer', 'skirmish']) ? $g('installation_mode') : 'multiplayer',
+        'player_username'         => trim((string)$g('player_username', '')),
+        'player_email'            => trim((string)$g('player_email', '')),
+        'player_password'         => (string)$g('player_password', ''),
+        'player_tribe'            => max(1, min(3, (int)$g('player_tribe', 1))),  // 1-3 only
+        'player_quadrant'         => in_array($g('player_quadrant'), ['NW','NE','SW','SE']) ? $g('player_quadrant') : 'NE',
+        'npc_count'               => max(0, min(100, (int)$g('npc_count', 10))),  // 0-100
+        'artifacts_day'           => max(30, min(365, (int)$g('artifacts_day', 30))),  // 30-365
+        'ww_day'                  => max(60, min(365, (int)$g('ww_day', 60))),  // 60-365
     ];
 
     if (!preg_match('~^[a-z0-9-]{1,32}$~', $input['worldId'])) {
@@ -148,6 +170,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($input['speed'] <= 0 || $input['roundLength'] <= 0 || $input['mapSize'] <= 0) {
         $errors[] = "Speed, round length and map size must be positive.";
+    }
+
+    // Skirmish Mode validation
+    if ($input['installation_mode'] === 'skirmish') {
+        // Player account validation
+        if ($input['player_username'] === '' || strlen($input['player_username']) < 3 || strlen($input['player_username']) > 20) {
+            $errors[] = "Skirmish: Player username must be 3-20 characters.";
+        }
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $input['player_username'])) {
+            $errors[] = "Skirmish: Player username can only contain letters, numbers, underscore and dash.";
+        }
+        if ($input['player_email'] === '' || !filter_var($input['player_email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Skirmish: Valid player email is required.";
+        }
+        if ($input['player_password'] === '' || strlen($input['player_password']) < 8) {
+            $errors[] = "Skirmish: Player password must be at least 8 characters.";
+        }
+        // WW must be after Artifacts
+        if ($input['ww_day'] < $input['artifacts_day']) {
+            $errors[] = "Skirmish: Wonder of the World must appear after Artifacts.";
+        }
     }
 
     // Compute start timestamp
