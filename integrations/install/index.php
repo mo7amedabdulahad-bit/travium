@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'player_username'         => trim((string)$g('player_username', '')),
         'player_email'            => trim((string)$g('player_email', '')),
         'player_password'         => (string)$g('player_password', ''),
-        'player_tribe'            => max(1, min(3, (int)$g('player_tribe', 1))),  // 1-3 only
+        'player_tribe'            => max(1, min(5, (int)$g('player_tribe', 1))),  // 1-5 (all tribes)
         'player_quadrant'         => in_array($g('player_quadrant'), ['NW','NE','SW','SE']) ? $g('player_quadrant') : 'NE',
         'npc_count'               => max(0, min(100, (int)$g('npc_count', 10))),  // 0-100
         'artifacts_day'           => max(30, min(365, (int)$g('artifacts_day', 30))),  // 30-365
@@ -525,6 +525,7 @@ function run_cmd(string $cmd): array {
     input[type=text],
     input[type=number],
     input[type=password],
+    input[type=email],
     input[type=datetime-local],
     select {
         width:100%; padding:12px 4px;
@@ -751,6 +752,8 @@ function run_cmd(string $cmd): array {
                                 <option value="1" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 1)?>>Romans (Balanced)</option>
                                 <option value="2" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 2)?>>Teutons (Offensive)</option>
                                 <option value="3" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 3)?>>Gauls (Defensive)</option>
+                                <option value="4" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 4)?>>Huns (Fast Cavalry)</option>
+                                <option value="5" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 5)?>>Egyptians (Expansion)</option>
                             </select>
                         </div>
                     </div>
