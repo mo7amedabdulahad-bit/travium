@@ -573,6 +573,31 @@ function run_cmd(string $cmd): array {
         border:1px solid var(--glass-brd);
         padding:10px; border-radius:10px; color:#dfe4ea; overflow:auto; max-height:220px;
     }
+    
+    /* Skirmish Mode Styles */
+    .mode-toggle {
+        display:flex; gap:16px; align-items:center; justify-content:center; margin-bottom:20px;
+    }
+    .mode-toggle label {
+        display:flex; align-items:center; gap:8px; padding:12px 20px; border-radius:12px;
+        border:2px solid rgba(255,255,255,0.18); background:rgba(255,255,255,0.05);
+        cursor:pointer; transition:all 0.3s ease; font-size:14px; font-weight:500;
+    }
+    .mode-toggle input[type=radio] { margin:0; cursor:pointer; }
+    .mode-toggle label:hover {
+        background:rgba(255,255,255,0.08); border-color:rgba(165,140,255,0.5);
+    }
+    .mode-toggle input[type=radio]:checked + span { color:var(--accent); }
+    .mode-toggle label:has(input:checked) {
+        border-color:var(--accent); background:rgba(165,140,255,0.15);
+    }
+    .skirmish-only { display:none; }
+    .npc-warning {
+        background:rgba(255,165,0,0.15); border:1px solid rgba(255,165,0,0.3);
+        color:#ffd494; padding:10px 12px; border-radius:10px; margin-top:8px;
+        font-size:12px; display:none;
+    }
+
 </style>
 </head>
 <body>
@@ -629,6 +654,18 @@ function run_cmd(string $cmd): array {
         <?php endif; ?>
 
         <form method="post" autocomplete="off" novalidate>
+            <!-- Installation Mode Toggle -->
+            <div class="mode-toggle">
+                <label>
+                    <input type="radio" name="installation_mode" value="multiplayer" <?=($_POST['installation_mode'] ?? $defaults['installation_mode']) === 'multiplayer' ? 'checked' : ''?>>
+                    <span>🌐 Multiplayer Server</span>
+                </label>
+                <label>
+                    <input type="radio" name="installation_mode" value="skirmish" <?=($_POST['installation_mode'] ?? $defaults['installation_mode']) === 'skirmish' ? 'checked' : ''?>>
+                    <span>⚔️ Skirmish Mode</span>
+                </label>
+            </div>
+
             <div class="grid">
                 <div class="panel">
                     <h3>Game DB (per-world)</h3>
@@ -686,6 +723,92 @@ function run_cmd(string $cmd): array {
                         <div>
                             <label>Map Size</label>
                             <input name="mapSize" type="number" min="1" step="1" value="<?=htmlspecialchars((string)($_POST['mapSize'] ?? $defaults['mapSize']))?>">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SKIRMISH ONLY: Player Account -->
+                <div class="panel skirmish-only">
+                    <h3>⚔️ Player Account</h3>
+                    <div class="row2">
+                        <div>
+                            <label>Username</label>
+                            <input name="player_username" type="text" value="<?=htmlspecialchars($_POST['player_username'] ?? $defaults['player_username'])?>" placeholder="YourName">
+                        </div>
+                        <div>
+                            <label>Email</label>
+                            <input name="player_email" type="email" value="<?=htmlspecialchars($_POST['player_email'] ?? $defaults['player_email'])?>" placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div class="row2">
+                        <div>
+                            <label>Password</label>
+                            <input name="player_password" type="password" value="<?=htmlspecialchars($_POST['player_password'] ?? $defaults['player_password'])?>" placeholder="Min 8 characters">
+                        </div>
+                        <div>
+                            <label>Tribe</label>
+                            <select name="player_tribe">
+                                <option value="1" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 1)?>>Romans (Balanced)</option>
+                                <option value="2" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 2)?>>Teutons (Offensive)</option>
+                                <option value="3" <?=sel($_POST['player_tribe'] ?? $defaults['player_tribe'], 3)?>>Gauls (Defensive)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label>Starting Quadrant</label>
+                    <div class="row2">
+                        <label class="switch" style="flex:1; justify-content:center;">
+                            <input type="radio" name="player_quadrant" value="NW" <?=($_POST['player_quadrant'] ?? $defaults['player_quadrant']) === 'NW' ? 'checked' : ''?>>
+                            <span>↖️ NW (Northwest)</span>
+                        </label>
+                        <label class="switch" style="flex:1; justify-content:center;">
+                            <input type="radio" name="player_quadrant" value="NE" <?=($_POST['player_quadrant'] ?? $defaults['player_quadrant']) === 'NE' ? 'checked' : ''?>>
+                            <span>↗️ NE (Northeast)</span>
+                        </label>
+                    </div>
+                    <div class="row2">
+                        <label class="switch" style="flex:1; justify-content:center;">
+                            <input type="radio" name="player_quadrant" value="SW" <?=($_POST['player_quadrant'] ?? $defaults['player_quadrant']) === 'SW' ? 'checked' : ''?>>
+                            <span>↙️ SW (Southwest)</span>
+                        </label>
+                        <label class="switch" style="flex:1; justify-content:center;">
+                            <input type="radio" name="player_quadrant" value="SE" <?=($_POST['player_quadrant'] ?? $defaults['player_quadrant']) === 'SE' ? 'checked' : ''?>>
+                            <span>↘️ SE (Southeast)</span>
+                        </label>
+                    </div>
+                    <div class="hint">Your village will be placed randomly within the selected quadrant, away from Natars.</div>
+                </div>
+
+                <!-- SKIRMISH ONLY: NPC Configuration -->
+                <div class="panel skirmish-only">
+                    <h3>🤖 NPC Configuration</h3>
+                    <label>Number of NPCs</label>
+                    <select name="npc_count" id="npc_count">
+                        <option value="0" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 0)?>>None (Player only)</option>
+                        <option value="10" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 10)?>>10 NPCs</option>
+                        <option value="25" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 25)?>>25 NPCs</option>
+                        <option value="50" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 50)?>>50 NPCs</option>
+                        <option value="75" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 75)?>>75 NPCs (High load)</option>
+                        <option value="100" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 100)?>>100 NPCs (Very high load)</option>
+                    </select>
+                    <div class="npc-warning" id="npc_warning">
+                        ⚠️ <strong>Performance Warning:</strong> More than 50 NPCs can significantly impact server performance on high-speed servers (>1000x). Consider starting with fewer NPCs.
+                    </div>
+                    <div class="hint">NPCs will have random tribes and basic behaviors. Personalities & difficulty will be added in Phase 2.</div>
+                </div>
+
+                <!-- SKIRMISH ONLY: Endgame Events -->
+                <div class="panel skirmish-only">
+                    <h3>🏆 Endgame Events</h3>
+                    <div class="row2">
+                        <div>
+                            <label>Artifacts Appear (days)</label>
+                            <input name="artifacts_day" type="number" min="30" max="365" step="1" value="<?=htmlspecialchars((string)($_POST['artifacts_day'] ?? $defaults['artifacts_day']))?>">
+                            <div class="hint">Days since server start (30-365)</div>
+                        </div>
+                        <div>
+                            <label>Wonder of the World Appear (days)</label>
+                            <input name="ww_day" type="number" min="60" max="365" step="1" value="<?=htmlspecialchars((string)($_POST['ww_day'] ?? $defaults['ww_day']))?>">
+                            <div class="hint">Must be >= Artifacts day (60-365)</div>
                         </div>
                     </div>
                 </div>
@@ -815,6 +938,41 @@ function run_cmd(string $cmd): array {
       if (!ok) e.preventDefault();
     }
   });
+
+  // Skirmish Mode Toggle
+  const modeRadios = document.querySelectorAll('input[name="installation_mode"]');
+  const skirmishPanels = document.querySelectorAll('.skirmish-only');
+  
+  function toggleSkirmishMode() {
+    const isSkirmish = document.querySelector('input[name="installation_mode"]:checked')?.value === 'skirmish';
+    skirmishPanels.forEach(panel => {
+      panel.style.display = isSkirmish ? 'block' : 'none';
+    });
+  }
+  
+  modeRadios.forEach(radio => {
+    radio.addEventListener('change', toggleSkirmishMode);
+  });
+  
+  // Initialize on page load
+  toggleSkirmishMode();
+  
+  // NPC Count Warning
+  const npcSelect = document.getElementById('npc_count');
+  const npcWarning = document.getElementById('npc_warning');
+  
+  if (npcSelect && npcWarning) {
+    npcSelect.addEventListener('change', function() {
+      const count = parseInt(this.value);
+      npcWarning.style.display = count > 50 ? 'block' : 'none';
+    });
+    
+    // Initialize on page load
+    const initialCount = parseInt(npcSelect.value);
+    if (initialCount > 50) {
+      npcWarning.style.display = 'block';
+    }
+  }
 </script>
 </body>
 </html>
