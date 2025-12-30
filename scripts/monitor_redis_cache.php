@@ -6,8 +6,10 @@
  * Usage: php scripts/monitor_redis_cache.php
  */
 
-require_once __DIR__ . '/../src/Core/Cache/RedisCache.php';
-require_once __DIR__ . '/../src/Core/Cache/BuildingCostCache.php';
+// Bootstrap the game
+define('GAME_SPEED', 1);
+define('INCLUDE_PATH', __DIR__ . '/../');
+require_once __DIR__ . '/../servers/s1/bootstrap.php';
 
 use Core\Cache\RedisCache;
 use Core\Cache\BuildingCostCache;
