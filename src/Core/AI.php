@@ -31,7 +31,6 @@ class AI_MAIN
     private $resources           = [0, 0, 0, 0];
     private $hero_percents       = [0, 0];
     private $aiBuilder;
-    private $buildings           = [];
     private $training_buildings  = [
         'barracks'      => [],
         'stable'        => [],
@@ -55,7 +54,7 @@ class AI_MAIN
         $this->village = $village->fetch_assoc();
         if ($this->village['isWW']) return;
 
-        $this->user = $db->query("SELECT race, plus, fasterTraining, access FROM users WHERE id={$this->village['owner']}")->fetch_assoc();
+        $this->user = $db->query("SELECT race, plus, fasterTraining FROM users WHERE id={$this->village['owner']}")->fetch_assoc();
 
         $this->calculateResources();
 
@@ -66,33 +65,14 @@ class AI_MAIN
         $this->smithy = $db->query("SELECT * FROM smithy WHERE kid=$kid")->fetch_assoc();
         $this->smithyUpgradesCount = (int)$db->fetchScalar("SELECT COUNT(id) FROM research WHERE mode=0 AND kid=$kid");
 
-        $this->resources = [
-            $this->village['wood'],
-            $this->village['clay'],
-            $this->village['iron'],
-            $this->village['crop'],
-        ];
-        
-        // Apply dynamic resource spending rate for NPCs
-        if (($this->user['access'] ?? 0) == 3) {
-            $spendingRate = NpcConfig::getResourceSpendingRate($this->user['id'], $kid);
-            
-            // Adjust available resources based on spending rate
-            for ($i = 0; $i < 4; $i++) {
-                $this->resources[$i] = (int)($this->resources[$i] * $spendingRate);
-            }
-        }
-        
         $this->buildings = (new VillageModel())->getBuildingsAssoc($kid);
         $this->populateTrainingBuildings();
-        $this->aiBuilder   = new AIAutoUpgradeAI($this->village, $this->user, $this->resources, $this->slots);
-        $this->unitBuilder = new UnitBuilder($kid, $this->user, $this->resources);
-        $fakeUserInfo = [
-            'id' => $this->user['id'],
-            'race' => $this->user['race'],
-            'kid' => $kid,
-        ];
-        $this->masterBuilder = new MasterBuilder($kid, $this->village,$fakeUserInfo);
+        $this->aiBuilder = new AutoUpgradeAI($kid,
+            $this->resources,
+            $this->buildings,
+            $this->user['plus'] > time(),
+            $this->user['race'],
+            $this->village);
         if (self::SKIP_WORKERS) {
             $this->aiBuilder->skipWorkers();
         }
@@ -141,102 +121,16 @@ class AI_MAIN
 
     public function trainUnits()
     {
-        $isNpc = ($this->user['access'] ?? 0) == 3;
-        $owner = $this->village['owner'] ?? 0;
-        
-        // Get available units based on training buildings
-        $available = $this->training_buildings['available'];
-        if (!sizeof($available)) {
-            if ($isNpc) {
-                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', 'No training buildings available', [
-                    'barracks' => sizeof($this->training_buildings['barracks']),
-                    'stable' => sizeof($this->training_buildings['stable']),
-                    'workshop' => sizeof($this->training_buildings['workshop'])
-                ]);
-            }
-            return 0;
-        }
-        
-        if ($isNpc) {
-            \Core\AI\NpcLogger::log($owner, 'TRAIN_ATTEMPT', 'Attempting to train units', [
-                'available_unit_types' => $available,
-                'resources' => $this->resources
-            ]);
-        }
-        
-        // For NPCs: use personality-based unit preferences
-        if ($isNpc) {
-            $config = NpcConfig::getNpcConfig($this->user['id']);
-            if ($config) {
-                $preferredUnits = NpcConfig::getPreferredUnits(
-                    $config['npc_personality'], 
-                    $this->user['race']
-                );
-                
-                \Core\AI\NpcLogger::log($owner, 'TRAIN_PREFS', 'Checking preferred units', [
-                    'preferred' => $preferredUnits,
-                    'available' => $available
-                ]);
-                
-                // Try to train preferred units in order
-                foreach ($preferredUnits as $unitId) {
-                    // Check if unit is available/researched
-                    if (!in_array($unitId, $available)) {
-                        \Core\AI\NpcLogger::log($owner, 'TRAIN_SKIP', "Unit $unitId not available/researched", []);
-                        continue;
-                    }
-                    
-                    // Check if we can afford it (FIXED: was maxUnitsOf, should be maxUnits)
-                    $canTrain = $this->maxUnits($unitId);
-                    if ($canTrain > 0) {
-                        // Train between 1-5 units of this type
-                        $count = min($canTrain, mt_rand(1, 5));
-                        $this->unitBuilder->add($unitId, $count);
-                        \Core\AI\NpcLogger::log($owner, 'TRAIN_SUCCESS', "Training $count x unit $unitId", [
-                            'unit_id' => $unitId,
-                            'count' => $count,
-                            'max_possible' => $canTrain
-                        ]);
-                        return 1;
-                    } else {
-                        \Core\AI\NpcLogger::log($owner, 'TRAIN_NO_RES', "Not enough resources for unit $unitId", [
-                            'unit_id' => $unitId,
-                            'resources' => $this->resources
-                        ]);
-                    }
-                }
-                
-                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', 'No preferred units affordable', [
-                    'preferred_units' => $preferredUnits,
-                    'resources' => $this->resources
-                ]);
-            } else {
-                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', 'No NPC config found', []);
-            }
-        }
-        
-        // Fallback to random for non-NPCs or if no preferred units available
-        $unitId = $available[mt_rand(0, sizeof($available) - 1)];
-        $canTrain = $this->maxUnits($unitId);  // FIXED: was maxUnitsOf
-        if ($canTrain <= 0) {
-            if ($isNpc) {
-                \Core\AI\NpcLogger::log($owner, 'TRAIN_FAIL', "Cannot afford random unit $unitId", [
-                    'unit_id' => $unitId,
-                    'resources' => $this->resources
-                ]);
-            }
-            return 0;
-        }
-        
-        $count = min($canTrain, mt_rand(1, 5));
-        $this->unitBuilder->add($unitId, $count);
-        if ($isNpc) {
-            \Core\AI\NpcLogger::log($owner, 'TRAIN_SUCCESS', "Training $count x unit $unitId (fallback)", [
-                'unit_id' => $unitId,
-                'count' => $count
-            ]);
-        }
-        return 1;
+        $unit = $this->chooseUnit();
+        if ($unit === FALSE) return false; //no unit can be trained
+        (new TrainingModel())->addTraining($this->village['kid'],
+            $unit['building']['item_id'],
+            $unit['nr'],
+            $unit['count'],
+            $unit['training_time']);
+        //remove resources
+        $this->takeResources($unit['costs']);
+        return true;
     }
 
     private function chooseUnit()
@@ -337,24 +231,10 @@ class AI_MAIN
 
     public function upgradeBuilding($count = 1)
     {
-        $isNpc = ($this->user['access'] ?? 0) == 3;
-        $owner = $this->village['owner'] ?? 0;
-        
         $effects = 0;
         for ($i = 1; $i <= $count; ++$i) {
             if (method_exists($this->aiBuilder, 'upgrade')) {
-                $result = $this->aiBuilder->upgrade();
-                if ($result > 0) {
-                    $effects += $result;
-                } else if ($isNpc && $i == 1) {
-                    // Only log first failure to avoid spam
-                    \Core\AI\NpcLogger::log($owner, 'BUILD_FAIL', 'AI Builder upgrade returned 0', [
-                        'resources' => $this->resources,
-                        'aiBuilder_exists' => true
-                    ]);
-                }
-            } else if ($isNpc && $i == 1) {
-                \Core\AI\NpcLogger::log($owner, 'BUILD_FAIL', 'AI Builder has no upgrade method', []);
+                $effects += $this->aiBuilder->upgrade();
             }
         }
         return $effects;
@@ -478,126 +358,20 @@ class AI
     public static function doSomethingRandom($kid, $count = 1)
     {
         $seconds_past = getGameElapsedSeconds();
-        $db = DB::getInstance();
-        
-        // Check if this is an NPC
-        $owner = $db->fetchScalar("SELECT owner FROM vdata WHERE kid=$kid");
-        $access = $db->fetchScalar("SELECT access FROM users WHERE id=$owner");
-        $isNpc = ($access == 3);
-        
-        // Log cycle start for NPCs
-        if ($isNpc) {
-            \Core\AI\NpcLogger::logCycleStart($owner, $count);
-            
-            // **NEW: Check if NPC has ANY troops at all (for clean installs)**
-            $totalTroops = $db->fetchScalar("SELECT (u1+u2+u3+u4+u5+u6+u7+u8+u9+u10) as total FROM units WHERE kid=$kid");
-            
-            if ($totalTroops == 0) {
-                // NEW NPC - prioritize training first troops!
-                \Core\AI\NpcLogger::log($owner, 'FIRST_TROOPS', 'New NPC detected (0 troops) - auto-training initial units', [
-                    'kid' => $kid
-                ]);
-                
-                $ai = new AI_MAIN($kid);
-                
-                // Force train units (skip building for first cycle to prioritize troops)
-                $result = $ai->trainUnits();
-                
-                if ($result) {
-                    \Core\AI\NpcLogger::log($owner, 'FIRST_TROOPS_SUCCESS', 'Initial troops queued for training', []);
-                } else {
-                    \Core\AI\NpcLogger::log($owner, 'FIRST_TROOPS_FAIL', 'Failed to train initial troops - check resources/buildings', []);
-                }
-                
-                return; // Skip rest of cycle to prioritize troops
-            }
-        }
-        
         $ai = new AI_MAIN($kid);
-        
         for ($i = 1; $i <= $count; ++$i) {
-            // NPC decision loop - DETERMINISTIC build/train only
-            // Raids and alliances are handled separately by interval-based checks in FakeUserModel
-            if ($isNpc) {
-                $roll = mt_rand(1, 100);
-                
-                if ($roll <= 60) {
-                    // 60% chance: Building upgrade (increased from 40%)
-                    $result = $ai->upgradeBuilding();
-                    if ($result) {
-                        // Get the building that was just queued
-                        $lastBuild = DB::getInstance()->query("SELECT f.id, f.name, f.level 
-                                                               FROM fdata f 
-                                                               WHERE f.vref = $kid 
-                                                               ORDER BY f.id DESC 
-                                                               LIMIT 1")->fetch_assoc();
-                        if ($lastBuild) {
-                            \Core\AI\NpcLogger::log($owner, 'BUILD', "Upgrading {$lastBuild['name']} to level " . ($lastBuild['level'] + 1), [
-                                'building' => $lastBuild['name'],
-                                'current_level' => $lastBuild['level'],
-                                'target_level' => $lastBuild['level'] + 1,
-                                'field_id' => $lastBuild['id']
-                            ]);
-                        } else {
-                            \Core\AI\NpcLogger::log($owner, 'BUILD', 'Building upgrade queued', ['success' => true]);
-                        }
-                    } else {
-                        \Core\AI\NpcLogger::log($owner, 'BUILD_SKIP', 'No buildings can be upgraded (check BUILD_FAIL logs)', [
-                            'iteration' => $i
-                        ]);
-                    }
+            if (getGameSpeed() <= 10 && $seconds_past <= 1.5 * 86400) {
+                $rnd = mt_rand(1, 5);
+                if ($rnd <= 3) {
+                    $ai->upgradeBuilding();
                 } else {
-                    // 40% chance: Train units (increased from 30%)
-                    $result = $ai->trainUnits();
-                    if ($result) {
-                        // Get the most recent training
-                        $lastTrain = DB::getInstance()->query("SELECT u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11 
-                                                               FROM training 
-                                                               WHERE vref = $kid 
-                                                               ORDER BY id DESC 
-                                                               LIMIT 1")->fetch_assoc();
-                        if ($lastTrain) {
-                            $trainedUnits = [];
-                            $totalUnits = 0;
-                            for ($u = 1; $u <= 11; $u++) {
-                                if ($lastTrain["u$u"] > 0) {
-                                    $trainedUnits["unit_$u"] = $lastTrain["u$u"];
-                                    $totalUnits += $lastTrain["u$u"];
-                                }
-                            }
-                            
-                            if ($totalUnits > 0) {
-                                \Core\AI\NpcLogger::log($owner, 'TRAIN', "Training $totalUnits units", [
-                                    'total' => $totalUnits,
-                                    'units' => $trainedUnits
-                                ]);
-                            } else {
-                                \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
-                            }
-                        } else {
-                            \Core\AI\NpcLogger::log($owner, 'TRAIN', 'Units training started', ['success' => true]);
-                        }
-                    } else {
-                        \Core\AI\NpcLogger::log($owner, 'TRAIN_SKIP', 'No units can be trained (check TRAIN_FAIL logs)', [
-                            'iteration' => $i
-                        ]);
+                    if (!$ai->upgradeBuilding()) {
+                        $ai->upgradeBuilding();
                     }
                 }
             } else {
-                // Original behavior for non-NPCs
-                if (getGameSpeed() <= 10 && $seconds_past <= 1.5 * 86400) {
-                    $rnd = mt_rand(1, 5);
-                    if ($rnd <= 3) {
-                        $ai->upgradeBuilding();
-                    } else {
-                        if (!$ai->upgradeBuilding()) {
-                            $ai->upgradeBuilding();
-                        }
-                    }
-                } else {
-                    if ($ai->upgradeBuilding()) {
-                        $ai->trainUnits();
-                    }
+                if ($ai->upgradeBuilding()) {
+                    $ai->trainUnits();
                 }
             }
         }
