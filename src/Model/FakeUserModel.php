@@ -18,10 +18,19 @@ class FakeUserModel
         $db = DB::getInstance();
         $interval = mt_rand(3600, 10800);
         $stmt = $db->query("SELECT id FROM users WHERE access=3 AND lastHeroExpCheck <= " . (time() - $interval) . " LIMIT 10");
+        
+        // Batch collect user IDs for hero XP update
+        $userIds = [];
         while ($row = $stmt->fetch_assoc()) {
+            $userIds[] = $row['id'];
             $db->query("UPDATE users SET lastHeroExpCheck=" . time() . " WHERE id={$row['id']}");
+        }
+        
+        // Batch hero XP update (10 queries → 1 query = 90% reduction)
+        if (!empty($userIds)) {
             $exp = mt_rand(10, 50) * ceil(getGameSpeed() / 100);
-            $db->query("UPDATE hero SET exp=exp+$exp WHERE uid={$row['id']}");
+            $ids = implode(',', $userIds);
+            $db->query("UPDATE hero SET exp=exp+$exp WHERE uid IN ($ids)");
         }
         if (getGameSpeed() <= 10) {
             $interval = mt_rand(600, 3600);

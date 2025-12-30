@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use Core\Cache\RedisCache;
 use Core\Database\DB;
 use Core\Database\GlobalDB;
 use Core\Helper\Mailer;
@@ -83,6 +84,10 @@ class Automation
                 $db->query("DELETE FROM building_upgrade WHERE id={$row['id']}");
                 if ($db->affectedRows()) {
                     BuildingAction::upgrade($row['kid'], $row['building_field']);
+                    
+                    // Invalidate building cache for this village
+                    $cache = RedisCache::getInstance();
+                    $cache->delete("village_buildings_{$row['kid']}");
                 }
             }
         }
@@ -92,6 +97,10 @@ class Automation
             $db->query("DELETE FROM demolition WHERE id={$row['id']}");
             if ($db->affectedRows()) {
                 BuildingAction::downgrade($row['kid'], $row['building_field'], 1, $row['complete']);
+                
+                // Invalidate building cache for this village
+                $cache = RedisCache::getInstance();
+                $cache->delete("village_buildings_{$row['kid']}");
             }
         }
     }

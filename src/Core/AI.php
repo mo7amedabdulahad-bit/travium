@@ -5,6 +5,7 @@ namespace Core;
 use function array_map;
 use function array_merge;
 use Controller\Build\TroopBuilding;
+use Core\Cache\RedisCache;
 use Core\Database\DB;
 use Game\Buildings\AutoUpgradeAI;
 use Game\Formulas;
@@ -66,7 +67,16 @@ class AI_MAIN
         $this->smithy = $db->query("SELECT * FROM smithy WHERE kid=$kid")->fetch_assoc();
         $this->smithyUpgradesCount = (int)$db->fetchScalar("SELECT COUNT(id) FROM research WHERE mode=0 AND kid=$kid");
 
-        $this->buildings = (new VillageModel())->getBuildingsAssoc($kid);
+        // Cache building data (10 minute TTL)
+        $cache = RedisCache::getInstance();
+        $cacheKey = "village_buildings_{$kid}";
+        $this->buildings = $cache->get($cacheKey);
+        
+        if ($this->buildings === null) {
+            // Cache miss - load from database
+            $this->buildings = (new VillageModel())->getBuildingsAssoc($kid);
+            $cache->set($cacheKey, $this->buildings, 600); // 10 minutes
+        }
         $this->populateTrainingBuildings();
         $this->aiBuilder = new AutoUpgradeAI($kid,
             $this->resources,
