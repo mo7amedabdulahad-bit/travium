@@ -211,11 +211,37 @@ class FakeUserModel
         }
         
         \Core\AI\NpcLogger::log(0, 'DEBUG', 'handleFakeUsers: Complete', []);
+        
+        // Remove lock file
+        $lockFile = INCLUDE_PATH . 'cache/npc_automation.lock';
+        if (file_exists($lockFile)) {
+            unlink($lockFile);
+            error_log("[NPC_DEBUG] Lock file removed - processing complete");
+        }
     }
 
     private function canRun()
     {
         if (getGameElapsedSeconds() <= 0 || !Config::getProperty("dynamic", "fakeAccountProcess")) return false;
+        
+        // CRITICAL: Prevent concurrent execution (handleFakeUsers takes >47s but is called every 47s)
+        $lockFile = INCLUDE_PATH . 'cache/npc_automation.lock';
+        
+        if (file_exists($lockFile)) {
+            $lockAge = time() - filemtime($lockFile);
+            if ($lockAge < 120) { // 2 minute timeout
+                error_log("[NPC_DEBUG] Lock file exists (age: {$lockAge}s) - another process running, skipping");
+                return false;
+            }
+            // Stale lock (older than 2 minutes) - remove it
+            error_log("[NPC_DEBUG] Removing stale lock file (age: {$lockAge}s)");
+            unlink($lockFile);
+        }
+        
+        // Create lock file
+        touch($lockFile);
+        error_log("[NPC_DEBUG] Lock file created - starting NPC processing");
+        
         make_seed();
         return true;
     }
