@@ -183,16 +183,26 @@ class FakeUserModel
                                  AND u.access=3 
                                LIMIT $limit");
         
+        $aiCount = $results->num_rows;
+        error_log("[NPC_DEBUG] AI Cycle: Found $aiCount NPCs for building/training (checkInterval={$checkInterval}s)");
+        \Core\AI\NpcLogger::log(0, 'SYSTEM', "AI Cycle: Found $aiCount NPCs for building/training", []);
+        
         while ($row = $results->fetch_assoc()) {
+            error_log("[NPC_DEBUG] AI Cycle: Processing NPC kid={$row['kid']}, owner={$row['owner']}");
+            
             $db->query("UPDATE vdata SET lastVillageCheck=$now WHERE kid={$row['kid']}");
             
             // Skip ONLY villages that are brand new (created in last 10 seconds)
             // Allow lastVillageCheck=0 (never run before) to proceed
-            if ($row['lastVillageCheck'] > 0 && $row['lastVillageCheck'] > ($now - 10)) continue;
+            if ($row['lastVillageCheck'] > 0 && $row['lastVillageCheck'] > ($now - 10)) {
+                error_log("[NPC_DEBUG] AI Cycle: Skipping kid={$row['kid']} - too recent (lastCheck={$row['lastVillageCheck']})");
+                continue;
+            }
             
             $difficulty = $row['npc_difficulty'] ?? 'beginner';
             $count = \Core\NpcConfig::getRandomizedIterations($difficulty);
             
+            error_log("[NPC_DEBUG] AI Cycle: Calling doSomethingRandom() for kid={$row['kid']}, count=$count");
             AI::doSomethingRandom($row['kid'], $count);
         }
         
