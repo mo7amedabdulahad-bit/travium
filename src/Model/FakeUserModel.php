@@ -50,8 +50,10 @@ class FakeUserModel
             error_log("[NPC_DEBUG] Found $raidCount NPC villages for raid check");
             \Core\AI\NpcLogger::log(0, 'SYSTEM', "Found $raidCount NPC villages for raid check", []);
             
+            $processedCount = 0;
             while ($row = $raidResults->fetch_assoc()) {
-                error_log("[NPC_DEBUG] Processing NPC village kid={$row['kid']}, owner={$row['owner']}, name={$row['name']}");
+                $processedCount++;
+                error_log("[NPC_DEBUG] === Processing NPC #$processedCount: kid={$row['kid']}, owner={$row['owner']}, name={$row['name']} ===");
                 
                 $lastRaid = $row['last_raid'] ?? 0;
                 error_log("[NPC_DEBUG] Getting raid frequency for personality: {$row['npc_personality']}");
@@ -91,7 +93,7 @@ class FakeUserModel
                 } else {
                     error_log("[NPC_DEBUG] Raid on cooldown - skipping");
                 }
-                error_log("[NPC_DEBUG] === END of raid loop iteration for kid={$row['kid']} ===");
+                error_log("[NPC_DEBUG] *** END of raid loop iteration #$processedCount for kid={$row['kid']} ***");
             }
             
             error_log("[NPC_DEBUG] *** RAID LOOP COMPLETE - processed all NPCs ***");
