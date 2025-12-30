@@ -29,6 +29,10 @@ class FakeUserModel
         
         $db = DB::getInstance();
         
+        // === TEMPORARY: SKIP RAIDS/ALLIANCES TO TEST AI CYCLES ===
+        error_log("[NPC_DEBUG] SKIPPING raid/alliance processing to test AI cycles");
+        
+        /*
         // === DO RAIDS/ALLIANCES FIRST (before slow AI cycles) ===
         
         // === INTERVAL-BASED RAID PROCESSING ===
@@ -155,6 +159,7 @@ class FakeUserModel
                 }
             }
         }
+        */
         
         // === NOW DO THE SLOW AI CYCLES ===
         \Core\AI\NpcLogger::log(0, 'DEBUG', 'Raid/Alliance done, starting AI cycles', []);
