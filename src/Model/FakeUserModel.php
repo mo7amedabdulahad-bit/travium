@@ -91,8 +91,10 @@ class FakeUserModel
                 } else {
                     error_log("[NPC_DEBUG] Raid on cooldown - skipping");
                 }
+                error_log("[NPC_DEBUG] === END of raid loop iteration for kid={$row['kid']} ===");
             }
             
+            error_log("[NPC_DEBUG] *** RAID LOOP COMPLETE - processed all NPCs ***");
             error_log("[NPC_DEBUG] Finished raid processing loop");
         }
         
