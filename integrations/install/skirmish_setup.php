@@ -23,9 +23,11 @@ if (!$input) {
 }
 
 // 1. Define Constants for Bootstrap
-define('ROOT_PATH', dirname(__DIR__, 2) . DIRECTORY_SEPARATOR);
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__, 2) . DIRECTORY_SEPARATOR);
+}
 if (!defined('GLOBAL_CONFIG_FILE')) {
-    define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'config.php');
+    define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'src/config.php');
 }
 if (!defined('CONNECTION_FILE')) {
     define('CONNECTION_FILE', ROOT_PATH . 'servers/' . $input['worldId'] . '/include/connection.php');
@@ -115,6 +117,24 @@ try {
     $npcsToCreate = max(0, $totalNpcs - 3);
     echo "[Skirmish] Creating $npcsToCreate additional NPCs...\n";
 
+    // Prepare NPC Names from SQLite
+    $npcNames = [];
+    $sqlitePath = ROOT_PATH . "src/schema/users.sqlite";
+    if (file_exists($sqlitePath) && class_exists('SQLite3')) {
+        try {
+            $sqlite = new SQLite3($sqlitePath);
+            $res = $sqlite->query("SELECT username FROM users ORDER BY RANDOM() LIMIT $npcsToCreate");
+            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+                $npcNames[] = $row['username'];
+            }
+            $sqlite->close();
+        } catch (Exception $e) {
+            echo "[Skirmish Warning] SQLite name fetch failed: " . $e->getMessage() . "\n";
+        }
+    } else {
+        echo "[Skirmish Warning] SQLite users DB not found or SQLite3 missing. Using generic names.\n";
+    }
+
     $quadKeys = array_keys($alliances);
     $quadIndex = 0;
     
@@ -122,7 +142,12 @@ try {
         $quad = $quadKeys[$quadIndex];
         $quadIndex = ($quadIndex + 1) % 4;
         
-        $npcName = "NPC_" . $quad . "_" . ($i + 1);
+        // Use real name if available, else generic
+        if (isset($npcNames[$i])) {
+            $npcName = $npcNames[$i];
+        } else {
+            $npcName = "NPC_" . $quad . "_" . ($i + 1);
+        }
         
         // Inline Create Function Logic
         $kid = $registerModel->generateBase(strtolower($quad));
@@ -130,7 +155,7 @@ try {
             $tribe = mt_rand(1, 3);
             $uid = $registerModel->addUser(
                 $npcName,
-                sha1(microtime() . $npcName),
+                sha1(microtime() . $npcName), // Random password
                 '',
                 $tribe,
                 $kid,

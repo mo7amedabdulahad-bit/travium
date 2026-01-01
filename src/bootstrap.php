@@ -34,7 +34,9 @@ if (php_sapi_name() != 'cli') {
     }
 }
 define("GLOBAL_CACHING_KEY", get_current_user());
-define("ROOT_PATH", dirname(__DIR__) . DIRECTORY_SEPARATOR);
+if (!defined("ROOT_PATH")) {
+    define("ROOT_PATH", dirname(__DIR__) . DIRECTORY_SEPARATOR);
+}
 //define("PUBLIC_INTERNAL_PATH", dirname(__DIR__) . "/server-template/public/");
 define("INCLUDE_PATH", __DIR__ . DIRECTORY_SEPARATOR);
 define("RESOURCES_PATH", INCLUDE_PATH . "resources" . DIRECTORY_SEPARATOR);

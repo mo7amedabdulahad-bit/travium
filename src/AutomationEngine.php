@@ -10,6 +10,8 @@ use Core\Jobs;
 require(__DIR__ . "/bootstrap.php");
 
 $underSystemd = (bool) (getenv('TRAVIUM_UNDER_SYSTEMD') || getenv('INVOCATION_ID'));
+file_put_contents(__DIR__ . '/debug_automation.log', date('[Y-m-d H:i:s] ') . "Starting AutomationEngine. underSystemd=" . ($underSystemd ? 'true' : 'false') . "\n", FILE_APPEND);
+
 global $PIDs, $loop;
 $PIDs = [];
 $loop = true;
@@ -24,7 +26,10 @@ if (!$underSystemd) {
     $STDIN  = fopen('/dev/null', 'r');
     $STDOUT = fopen($automationLogFile, 'wb');
     $STDERR = fopen($automationLogFile, 'wb');
-    if ($autoPID) { exit(0); }
+    if ($autoPID) { 
+        file_put_contents(__DIR__ . '/debug_automation.log', date('[Y-m-d H:i:s] ') . "Parent exiting (daemonize).\n", FILE_APPEND);
+        exit(0); 
+    }
     if ($autoPID == -1) { exit(1); }
     $newSID = posix_setsid();
     if ($newSID === -1) { exit(1); }
@@ -51,7 +56,9 @@ function sig_handler($signal)
 pcntl_signal(SIGTERM, "sig_handler");
 pcntl_signal(SIGHUP, "sig_handler");
 
+file_put_contents(__DIR__ . '/debug_automation.log', date('[Y-m-d H:i:s] ') . "Launching Jobs...\n", FILE_APPEND);
 Jobs\Launcher::lunchJobs();
+file_put_contents(__DIR__ . '/debug_automation.log', date('[Y-m-d H:i:s] ') . "Jobs Launched. Entering loop.\n", FILE_APPEND);
 
 while ($loop) {
     pcntl_signal_dispatch();
