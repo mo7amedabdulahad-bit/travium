@@ -440,6 +440,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'cmd2_out'      => $out2,
             ];
 
+            // SKIRMISH MODE HOOK
+            if ($result['success'] && $input['installation_mode'] === 'skirmish') {
+                try {
+                    require_once __DIR__ . '/skirmish_setup.php';
+                    if (skirmishSetup($input)) {
+                        $result['skirmish_success'] = true;
+                        $result['cmd2_out'] .= "\n[Skirmish Setup] Successfully created player, alliances and NPCs.";
+                    }
+                } catch (Exception $e) {
+                    $result['skirmish_success'] = false;
+                    $result['cmd2_out'] .= "\n[Skirmish Setup Failed] " . $e->getMessage();
+                }
+            }
+
         } catch (Throwable $e) {
             $errors[] = "Installer failed: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
         }
