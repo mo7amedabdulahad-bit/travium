@@ -37,6 +37,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -z "$DOMAIN" ]]; then
+  echo "Domain argument (--domain) is missing."
+  read -p "Please enter the domain name (e.g. travium.local): " user_domain
+  DOMAIN="${user_domain}"
+fi
 [[ -n "$DOMAIN" ]] || die "Missing --domain arg."
 
 SITE_USER="${SITE_USER:-$DEFAULT_SITE_USER}"
@@ -159,6 +164,10 @@ ok "OpenSSH configured for CloudPanel compatibility."
 log "Installing CloudPanel CE v2 with MariaDB 11.4 (non-interactive)..."
 curl -sS https://installer.cloudpanel.io/ce/v2/install.sh -o /root/clp-install.sh
 chmod +x /root/clp-install.sh
+
+# PREVENT REBOOT: Comment out reboot command in CloudPanel installer so we can continue
+sed -i 's/^reboot/#reboot/g' /root/clp-install.sh
+sed -i 's/shutdown -r now/#shutdown -r now/g' /root/clp-install.sh
 
 DB_ENGINE="$(pick_db_engine)" bash /root/clp-install.sh
 
