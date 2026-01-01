@@ -128,7 +128,11 @@ class RegisterModel
         $protection = $lastupdate + Formulas::getProtectionBasicTime($lastupdate);
         $db = DB::getInstance();
         $name = $db->real_escape_string($name);
-        $gold = Config::getInstance()->gold->startGold;
+        $email = $db->real_escape_string($email);
+        $access = (int)$access;
+        $race = (int)$race;
+        $kid = $db->real_escape_string($kid);
+        $gold = (int)(Config::getInstance()->gold->startGold ?? 0);
         $uuid = $db->fetchScalar('SELECT UUID()');
         $db->query("INSERT INTO users (uuid, name, password, email, access, gift_gold, signupTime, protection, race, kid, cp, lastupdate, last_adventure_time, location, desc1, desc2, note) VALUES ('$uuid', '$name','$password', '$email', $access, $gold , $lastupdate,$protection, $race,'$kid',$cp, $lastupdate, $lastupdate, '', '', '', '')");
         $uid = $db->lastInsertId();
