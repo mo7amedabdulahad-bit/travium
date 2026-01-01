@@ -27,7 +27,7 @@ if (!defined('ROOT_PATH')) {
     define('ROOT_PATH', dirname(__DIR__, 2) . DIRECTORY_SEPARATOR);
 }
 if (!defined('GLOBAL_CONFIG_FILE')) {
-    define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'src/config.php');
+    define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'config.php');
 }
 if (!defined('CONNECTION_FILE')) {
     define('CONNECTION_FILE', ROOT_PATH . 'servers/' . $input['worldId'] . '/include/connection.php');

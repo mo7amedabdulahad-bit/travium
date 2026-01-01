@@ -6,7 +6,11 @@ class Config
     public static function &getInstance()
     {
         if (!is_object(self::$_self)) {
-            self::$_self = include INCLUDE_PATH . 'config.php';
+            if (defined('GLOBAL_CONFIG_FILE')) {
+                self::$_self = include GLOBAL_CONFIG_FILE;
+            } else {
+                self::$_self = include INCLUDE_PATH . 'config.php';
+            }
         }
         return self::$_self;
     }
