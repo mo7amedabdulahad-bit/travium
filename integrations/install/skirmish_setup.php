@@ -4,217 +4,154 @@ use Core\Database\DB;
 use Model\RegisterModel;
 use Model\AllianceModel;
 use Model\AutomationModel;
-use Core\NpcConfig; // Make sure this class exists or is autoloaded
+use Core\NpcConfig;
 
-/**
- * Skirmish Mode Setup Script
- * 
- * This script is included by integrations/install/index.php AFTER a successful 
- * standard installation if 'skirmish' mode is selected.
- * 
- * Pre-requisites:
- * - src/bootstrap.php must be loadable (install/index.php environment needs to allow this)
- * - Config and DB connections must be active
- * - $input array from install/index.php must contain:
- *      player_username, player_password, player_email, player_tribe, player_quadrant, npc_count
- */
+// Skirmish Setup CLI Script
+// Usage: php skirmish_setup.php '<json_input>'
 
-function skirmishSetup(array $input) {
-    global $config;
+if (php_sapi_name() !== 'cli') {
+    die('CLI only');
+}
 
-    // 1. Bootstrap the Game Engine
-    // We need to switch context from "installer" to "game"
-    // Assuming we are in integrations/install/
-    $bootstrapPath = dirname(__DIR__, 2) . '/src/bootstrap.php';
-    if (!file_exists($bootstrapPath)) {
-        throw new RuntimeException("Skirmish Setup: Cannot find bootstrap.php at $bootstrapPath");
-    }
-    
-    // Config::getInstance() might already be loaded by install/index.php but we need full bootstrap
-    // We wrap this in a closure or check to avoid redeclaration issues if index.php did partial load
-    if (!defined('ROOT_PATH')) {
-        if (!defined('GLOBAL_CONFIG_FILE')) {
-            define('GLOBAL_CONFIG_FILE', dirname(__DIR__, 2) . '/config.php');
-        }
-        if (!defined('CONNECTION_FILE')) {
-            define('CONNECTION_FILE', dirname(__DIR__, 2) . '/servers/' . $input['worldId'] . '/include/connection.php');
-        }
-        require_once $bootstrapPath;
-    }
+if ($argc < 2) {
+    die("Missing input JSON");
+}
 
+$input = json_decode($argv[1], true);
+if (!$input) {
+    die("Invalid JSON input");
+}
+
+// 1. Define Constants for Bootstrap
+define('ROOT_PATH', dirname(__DIR__, 2) . DIRECTORY_SEPARATOR);
+if (!defined('GLOBAL_CONFIG_FILE')) {
+    define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'config.php');
+}
+if (!defined('CONNECTION_FILE')) {
+    define('CONNECTION_FILE', ROOT_PATH . 'servers/' . $input['worldId'] . '/include/connection.php');
+}
+
+// 2. Load Bootstrap
+$bootstrapPath = ROOT_PATH . 'src/bootstrap.php';
+if (!file_exists($bootstrapPath)) {
+    die("Bootstrap not found: $bootstrapPath");
+}
+require_once $bootstrapPath;
+
+try {
     $db = DB::getInstance();
     $registerModel = new RegisterModel();
     $allianceModel = new AllianceModel();
 
-    // 2. Define Quadrants and Alliances
+    // 3. Define Quadrants and Alliances
     $alliances = [
         'NE' => ['tag' => 'NE', 'name' => 'North East Empire', 'angle' => [0, 90]],
         'SE' => ['tag' => 'SE', 'name' => 'South East Empire', 'angle' => [270, 360]],
         'SW' => ['tag' => 'SW', 'name' => 'South West Empire', 'angle' => [180, 270]],
         'NW' => ['tag' => 'NW', 'name' => 'North West Empire', 'angle' => [90, 180]],
     ];
-    
-    // Map storing 'Quadrant' => 'AllianceID'
     $allianceIds = [];
 
-    // 3. Create Player Account
-    $playerQuadrant = $input['player_quadrant']; // NE, SE, SW, NW
-    
-    // Generate valid coordinate in selected quadrant
+    // 4. Create Player Account
+    echo "[Skirmish] Creating Player...\n";
+    $playerQuadrant = $input['player_quadrant'];
     $playerKid = $registerModel->generateBase(strtolower($playerQuadrant));
+    
     if (!$playerKid) {
         throw new RuntimeException("Could not generate starting position for player in $playerQuadrant");
     }
 
+    // FIX: Use SHA1 for password to match LoginCtrl
     $playerId = $registerModel->addUser(
         $input['player_username'],
-        $input['player_password'], // Pass raw, addUser handles hashing? 
-        // WAIT: RegisterModel::addUser expects already hashed password? 
-        // Let's check ActivateCtrl logic: $_SESSION[.. pw] stores it, then RegisterModel->addUser uses it.
-        // Usually Travium stores plaintext or md5? 
-        // Looking at RegisterModel::addUser($name, $password...):
-        // $db->query("INSERT INTO users ... '$password' ...")
-        // It inserts exactly what is passed.
-        // Installer input is plaintext. We should hash it if the game expects hashed.
-        // Code check: LoginCtrl uses `md5($password)`.
-        // So we must pass `md5($input['player_password'])`.
-        md5($input['player_password']),
+        sha1($input['player_password']), 
         $input['player_email'],
         $input['player_tribe'],
         $playerKid
     );
 
     if (!$playerId) {
-        throw new RuntimeException("Failed to notify RegisterModel->addUser for player.");
+        throw new RuntimeException("Failed to register player.");
     }
     
-    // Create Village
     $registerModel->createBaseVillage($playerId, $input['player_username'], $input['player_tribe'], $playerKid);
     
-    // Create Player's Alliance
     $playerAliData = $alliances[$playerQuadrant];
     $playerAliId = $allianceModel->createAlliance($playerId, $playerAliData['name'], $playerAliData['tag']);
     $allianceIds[$playerQuadrant] = $playerAliId;
     
-    // Log
-    logSuccess("Created Player '{$input['player_username']}' (ID: $playerId) in $playerQuadrant at KID $playerKid. Alliance: {$playerAliData['name']} (ID: $playerAliId)");
+    echo "[Skirmish] Player '{$input['player_username']}' created in $playerQuadrant (ID: $playerId, Ali: $playerAliId)\n";
 
-
-    // 4. Create Leader NPCs for other quadrants
-    // We need a leader to create the alliance.
+    // 5. Create Leader NPCs
+    echo "[Skirmish] Creating Alliance Leaders...\n";
     foreach ($alliances as $quad => $aliData) {
-        if ($quad === $playerQuadrant) continue; // Already created
+        if ($quad === $playerQuadrant) continue;
 
         $leaderName = $aliData['tag'] . "_Leader";
         $leaderKid = $registerModel->generateBase(strtolower($quad));
-        
-        // Random tribe for NPC leader
-        $tribe = mt_rand(1, 3); 
+        $tribe = mt_rand(1, 3);
         
         $leaderId = $registerModel->addUser(
             $leaderName,
-            sha1(microtime()), // Random password
+            sha1(microtime()),
             '',
             $tribe,
             $leaderKid,
-            3 // Access level 3 (Multihunter/Support/NPC?) or 1? Let's use 1 (Regular) or check FakeUserModel usage. 
-              // RegisterModel::addFakeUser uses 3.
+            3
         );
         
         $registerModel->createBaseVillage($leaderId, $leaderName, $tribe, $leaderKid);
+        if (class_exists('Core\NpcConfig')) {
+            \Core\NpcConfig::assignRandom($leaderId);
+        }
         
-        // Assign Personality
-        // \Core\NpcConfig::assignRandom($leaderId); // If available
-        
-        // Create Alliance
         $aliId = $allianceModel->createAlliance($leaderId, $aliData['name'], $aliData['tag']);
         $allianceIds[$quad] = $aliId;
-        
-        logSuccess("Created NPC Leader '$leaderName' in $quad. Alliance: {$aliData['name']} (ID: $aliId)");
+        echo "[Skirmish] Leader '$leaderName' created (Ali: $aliId)\n";
     }
 
-    // 5. Create Mass NPCs
-    // Total NPCs requested minus the 3 leaders we just created
+    // 6. Create Mass NPCs
     $totalNpcs = (int)$input['npc_count'];
     $npcsToCreate = max(0, $totalNpcs - 3);
-    
-    $createdCount = 0;
-    
-    // We will cycle through quadrants to distribute evenly
+    echo "[Skirmish] Creating $npcsToCreate additional NPCs...\n";
+
     $quadKeys = array_keys($alliances);
     $quadIndex = 0;
     
-    // Get NPC names
-    // We can assume we have a list or generate names.
-    // For now, let's generate generic names "NPC_NE_1", etc. or use a name generator if available.
-    // RegisterModel::addFakeUser takes a comma list. But we want manual control.
-    
-    // We will use a simple name generation for robustness
     for ($i = 0; $i < $npcsToCreate; $i++) {
         $quad = $quadKeys[$quadIndex];
-        $quadIndex = ($quadIndex + 1) % 4; // Rotate
+        $quadIndex = ($quadIndex + 1) % 4;
         
         $npcName = "NPC_" . $quad . "_" . ($i + 1);
         
-        try {
-            createNpcInQuadrant($registerModel, $allianceModel, $npcName, $quad, $allianceIds[$quad]);
-            $createdCount++;
-        } catch (Exception $e) {
-            // Log error but continue
-            // echo "Failed to create NPC $npcName: " . $e->getMessage();
+        // Inline Create Function Logic
+        $kid = $registerModel->generateBase(strtolower($quad));
+        if ($kid) {
+            $tribe = mt_rand(1, 3);
+            $uid = $registerModel->addUser(
+                $npcName,
+                sha1(microtime() . $npcName),
+                '',
+                $tribe,
+                $kid,
+                3
+            );
+            if ($uid) {
+                $registerModel->createBaseVillage($uid, $npcName, $tribe, $kid);
+                $db->query("UPDATE users SET aid={$allianceIds[$quad]}, alliance_join_time=".time()." WHERE id=$uid");
+                $allianceModel->recalculateMaxUsers($allianceIds[$quad]);
+                 if (class_exists('Core\NpcConfig')) {
+                    \Core\NpcConfig::assignRandom($uid);
+                }
+            }
         }
     }
     
-    logSuccess("Created $createdCount additional NPCs distributed across quadrants.");
-    
-    return true;
+    echo "[Skirmish] Setup Complete.\n";
+    exit(0);
+
+} catch (Exception $e) {
+    echo "[Skirmish Error] " . $e->getMessage() . "\n";
+    exit(1);
 }
 
-/**
- * Helper to create a single NPC in a specific quadrant and assign to alliance
- */
-function createNpcInQuadrant(RegisterModel $registerModel, AllianceModel $allianceModel, string $name, string $quadrant, int $allianceId) {
-    
-    // 1. Generate Location
-    $kid = $registerModel->generateBase(strtolower($quadrant));
-    if (!$kid) return false;
-    
-    // 2. Create User
-    $tribe = mt_rand(1, 3);
-    $uid = $registerModel->addUser(
-        $name,
-        sha1(microtime() . $name),
-        '',
-        $tribe,
-        $kid,
-        3 // Fake User Access
-    );
-    
-    if (!$uid) return false;
-    
-    // 3. Create Village
-    $registerModel->createBaseVillage($uid, $name, $tribe, $kid);
-    
-    // 4. Assign to Alliance
-    // We can use AllianceModel::acceptInvite style logic or direct DB update since we are admin/setup
-    // Direct DB update is safer/faster for setup script.
-    $db = DB::getInstance();
-    $now = time();
-    $db->query("UPDATE users SET aid=$allianceId, alliance_join_time=$now WHERE id=$uid");
-    
-    // Update Alliance counts? Recalculate?
-    // AllianceModel::recalculateMaxUsers($aid)
-    $allianceModel->recalculateMaxUsers($allianceId);
-    
-    // 5. Assign Config/Personality
-    if (class_exists('Core\NpcConfig')) {
-        \Core\NpcConfig::assignRandom($uid);
-    }
-    
-    return $uid;
-}
-
-function logSuccess($msg) {
-    // Basic logging, maybe to a file or echoed if the installer captures output
-    file_put_contents(dirname(__DIR__, 2) . '/skirmish_setup.log', date('[Y-m-d H:i:s] ') . $msg . PHP_EOL, FILE_APPEND);
-}

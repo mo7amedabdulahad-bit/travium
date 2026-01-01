@@ -440,17 +440,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'cmd2_out'      => $out2,
             ];
 
-            // SKIRMISH MODE HOOK
+            // SKIRMISH MODE HOOK (CLI Version)
             if ($result['success'] && $input['installation_mode'] === 'skirmish') {
-                try {
-                    require_once __DIR__ . '/skirmish_setup.php';
-                    if (skirmishSetup($input)) {
-                        $result['skirmish_success'] = true;
-                        $result['cmd2_out'] .= "\n[Skirmish Setup] Successfully created player, alliances and NPCs.";
-                    }
-                } catch (Exception $e) {
+                $skirmishScript = __DIR__ . '/skirmish_setup.php';
+                $jsonInput = json_encode($input);
+                // Escape simple quotes for shell safety if needed, but escapeshellarg is safer
+                $cmd3 = "/usr/bin/php8.4 " . escapeshellarg($skirmishScript) . " " . escapeshellarg($jsonInput);
+                
+                [$out3, $code3] = run_cmd($cmd3);
+                
+                if ($code3 === 0) {
+                    $result['skirmish_success'] = true;
+                    $result['cmd2_out'] .= "\n" . $out3;
+                } else {
                     $result['skirmish_success'] = false;
-                    $result['cmd2_out'] .= "\n[Skirmish Setup Failed] " . $e->getMessage();
+                    $result['cmd2_out'] .= "\n[Skirmish Setup Failed] Code: $code3\nOutput: " . $out3;
                 }
             }
 
