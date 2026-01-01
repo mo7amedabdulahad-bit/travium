@@ -71,6 +71,18 @@ case "${ID,,}" in
     ;;
 esac
 
+# WSL Systemd Check
+if [[ -f /proc/version ]] && grep -qi "microsoft" /proc/version; then
+    if ! pidof systemd >/dev/null && [[ ! -d /run/systemd/system ]]; then
+        die "Systemd is NOT running. CloudPanel requires systemd.
+        Please add the following to /etc/wsl.conf:
+        [boot]
+        systemd=true
+        
+        Then run 'wsl --shutdown' in PowerShell and try again."
+    fi
+fi
+
 pick_db_engine() {
   case "${ID,,}:${VERSION_ID}" in
     debian:13)
@@ -165,8 +177,10 @@ log "Installing CloudPanel CE v2 with MariaDB 11.4 (non-interactive)..."
 curl -sS https://installer.cloudpanel.io/ce/v2/install.sh -o /root/clp-install.sh
 chmod +x /root/clp-install.sh
 
-# PREVENT REBOOT: Comment out reboot command in CloudPanel installer so we can continue
-sed -i 's/^reboot/#reboot/g' /root/clp-install.sh
+# PREVENT REBOOT: Comment out reboot/shutdown commands more robustly
+sed -i 's/^\s*reboot/#reboot/g' /root/clp-install.sh
+sed -i 's/^\s*shutdown/#shutdown/g' /root/clp-install.sh
+# Also catch "shutdown -r now" if it's not at start of line
 sed -i 's/shutdown -r now/#shutdown -r now/g' /root/clp-install.sh
 
 DB_ENGINE="$(pick_db_engine)" bash /root/clp-install.sh
