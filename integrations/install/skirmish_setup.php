@@ -36,6 +36,9 @@ function skirmishSetup(array $input) {
         if (!defined('GLOBAL_CONFIG_FILE')) {
             define('GLOBAL_CONFIG_FILE', dirname(__DIR__, 2) . '/config.php');
         }
+        if (!defined('CONNECTION_FILE')) {
+            define('CONNECTION_FILE', dirname(__DIR__, 2) . '/servers/' . $input['worldId'] . '/include/connection.php');
+        }
         require_once $bootstrapPath;
     }
 
