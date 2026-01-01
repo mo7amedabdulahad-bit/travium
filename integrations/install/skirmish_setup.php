@@ -33,6 +33,9 @@ function skirmishSetup(array $input) {
     // Config::getInstance() might already be loaded by install/index.php but we need full bootstrap
     // We wrap this in a closure or check to avoid redeclaration issues if index.php did partial load
     if (!defined('ROOT_PATH')) {
+        if (!defined('GLOBAL_CONFIG_FILE')) {
+            define('GLOBAL_CONFIG_FILE', dirname(__DIR__, 2) . '/config.php');
+        }
         require_once $bootstrapPath;
     }
 
