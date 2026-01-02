@@ -340,7 +340,14 @@ class RegisterModel
         // Log query BEFORE execution to catch crash details
         file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Attempting Insert: $q\n", FILE_APPEND);
         
-        $good = $db->query($q);
+        try {
+            $good = $db->query($q);
+        } catch (\Throwable $e) { // Catch both Exception and Error
+            $msg = "SQL CRASH: " . $e->getMessage() . "\nQuery: $q\n";
+            file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . $msg, FILE_APPEND);
+            echo "[Skirmish Error] $msg"; // Print directly to CLI output
+            return false;
+        }
         
         if (!$good || !$db->affectedRows()) {
              // If we get here, no exception was thrown but query failed (legacy mode)
