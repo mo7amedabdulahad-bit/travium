@@ -17,6 +17,11 @@ if ($argc < 2) {
     die("Missing input JSON");
 }
 
+function debugLog($msg) {
+    file_put_contents(dirname(__DIR__, 2) . '/skirmish_debug.log', date('[H:i:s] ') . $msg . "\n", FILE_APPEND);
+}
+debugLog("Starting Skirmish Setup CLI...");
+
 $input = json_decode($argv[1], true);
 if (!$input) {
     die("Invalid JSON input");
@@ -39,9 +44,11 @@ if (!file_exists($bootstrapPath)) {
     die("Bootstrap not found: $bootstrapPath");
 }
 require_once $bootstrapPath;
+debugLog("Bootstrap loaded.");
 
 try {
     $db = DB::getInstance();
+    debugLog("DB instance retrieved.");
     $registerModel = new RegisterModel();
     $allianceModel = new AllianceModel();
 
@@ -56,6 +63,7 @@ try {
 
     // 4. Create Player Account
     echo "[Skirmish] Creating Player...\n";
+    debugLog("Creating player...");
     $playerQuadrant = $input['player_quadrant'];
     $playerKid = $registerModel->generateBase(strtolower($playerQuadrant));
     
@@ -87,6 +95,7 @@ try {
     $allianceIds[$playerQuadrant] = $playerAliId;
     
     echo "[Skirmish] Player '{$input['player_username']}' created in $playerQuadrant (ID: $playerId, Ali: $playerAliId)\n";
+    debugLog("Player created. Fetching NPC names...");
 
     // Prepare NPC Names for EVERYONE (Leaders + Mass)
     $totalNpcs = (int)$input['npc_count'];
@@ -112,6 +121,7 @@ try {
 
     // 5. Create Leader NPCs
     echo "[Skirmish] Creating Alliance Leaders...\n";
+    debugLog("Creating leaders...");
     foreach ($alliances as $quad => $aliData) {
         if ($quad === $playerQuadrant) continue;
 
@@ -144,6 +154,7 @@ try {
     // 6. Create Mass NPCs
     $npcsToCreate = max(0, $totalNpcs - 3);
     echo "[Skirmish] Creating $npcsToCreate additional NPCs...\n";
+    debugLog("Creating mass NPCs ($npcsToCreate)...");
 
     $quadKeys = array_keys($alliances);
     $quadIndex = 0;
@@ -180,10 +191,12 @@ try {
     }
     
     echo "[Skirmish] Setup Complete.\n";
+    debugLog("Setup Complete.");
     exit(0);
 
 } catch (Exception $e) {
     echo "[Skirmish Error] " . $e->getMessage() . "\n";
+    debugLog("Error: " . $e->getMessage());
     exit(1);
 }
 
