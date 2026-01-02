@@ -201,10 +201,19 @@ try {
                 $db->query("UPDATE users SET aid={$allianceIds[$quad]}, alliance_join_time=".time()." WHERE id=$uid");
                 $allianceModel->recalculateMaxUsers($allianceIds[$quad]);
                 
-                 if (class_exists('Core\NpcConfig')) {
+                if (class_exists('Core\NpcConfig')) {
                     // Assign personality to match position
-                    // 1 = Aggressive (Front), 0 = Passive (Back)
-                    \Core\NpcConfig::assign($uid, $isAggressive ? 1 : 0);
+                    // Front Line = Aggressive, Back Line = Economic (Passive)
+                    $personality = $isAggressive ? 'aggressive' : 'economic';
+                    
+                    if (method_exists('Core\NpcConfig', 'assignPersonality')) {
+                        \Core\NpcConfig::assignPersonality($uid, $personality);
+                    } else {
+                         // Fallback if method missing (shouldn't happen given class_exists check, but safety)
+                         if (method_exists('Core\NpcConfig', 'assignRandom')) {
+                             \Core\NpcConfig::assignRandom($uid);
+                         }
+                    }
                 }
             }
         }
