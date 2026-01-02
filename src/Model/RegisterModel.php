@@ -94,36 +94,40 @@ class RegisterModel
         // Calculate Max Radius (Corner distance)
         // defined('MAP_SIZE') check is safety. 25->35.35, 50->70.7, 100->141.4
         $mapSize = defined('MAP_SIZE') ? MAP_SIZE : 25;
-        // Half map size is the axis edge (25), but corners are further (sqrt(2)*25 = 35).
-        // Using mapSize * 1.5 covers corners comfortably.
-        $absoluteMaxR = $mapSize * 1.5; 
         
-        // Fix: User finds 6 too close. "Natar Zone" is usually the inner ~30-40%.
-        // For Size 25, 10 is good. For Size 50, 20.
-        // Formula: MapSize / 2.5
-        $natarZoneRadius = floor($mapSize / 2.5); // size 25 -> 10. size 50 -> 20.
+        // FIX: "Black Zone" is likely the corners (radius > mapSize).
+        // Restricting MAX R to mapSize creates a pure circle fit.
+        // Villages in corners (e.g. 25,25 -> r=35) will be ignored.
+        $absoluteMaxR = $mapSize; 
         
+        // Natar Zone: Inner hole.
+        // 10 is good for 25. 20 for 50.
+        $natarZoneRadius = floor($mapSize / 2.5); 
+
+        // Split the remaining space (10 to 25) into two bands.
+        // Band 1 (Front/Center): 10 to ~18
+        // Band 2 (Back/Edge): ~18 to 25
+        $midBand = floor(($natarZoneRadius + $absoluteMaxR) / 2) + 1;
+
         // Define Bands based on strategy
         switch ($positionStrategy) {
             case 'center': // Front Line (Aggressive)
-                // Zone: Inner Band (Network of War)
-                // From Natar Zone (10) to ~70% of max radius.
+                // Zone: Inner Ring
                 $minDistance = $natarZoneRadius; 
-                $maxDistance = floor($absoluteMaxR * 0.7); // Expanded Front Line band
-                $orderBy = "RAND()"; // Scatter organicallly within the Front Line
+                $maxDistance = $midBand; 
+                $orderBy = "RAND()"; // Scatter organicallly
                 break;
                 
             case 'edge': // Back Line (Passive)
-                // Zone: Outer Band (Safe Zone)
-                // From ~70% out to the corners.
-                $minDistance = ceil($absoluteMaxR * 0.7);
+                // Zone: Outer Ring
+                $minDistance = $midBand;
                 $maxDistance = $absoluteMaxR;
-                $orderBy = "RAND()"; // Scatter organicallly within the Back Line
+                $orderBy = "RAND()"; // Scatter organicallly
                 break;
                 
             case 'random': // Chaos
             default:
-                $minDistance = $natarZoneRadius; // Just avoid Natars
+                $minDistance = $natarZoneRadius; 
                 $maxDistance = $absoluteMaxR;
                 $orderBy = "RAND()";
                 break;
