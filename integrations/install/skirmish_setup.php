@@ -57,6 +57,36 @@ try {
     $registerModel = new RegisterModel();
     $allianceModel = new AllianceModel();
 
+    // ---------------------------------------------------
+    // PRE-CHECK: Fix Multihunter if missing
+    // ---------------------------------------------------
+    if (!$db->fetchScalar("SELECT count(*) FROM vdata WHERE owner=5")) {
+        echo "[Skirmish] Multihunter village missing! Attempting to fix...\n";
+        debugLog("Multihunter missing. Fixing...");
+        
+        $mhKid = $db->fetchScalar("SELECT id FROM wdata WHERE x=1 AND y=0");
+        
+        if ($mhKid) {
+            // Force clear occupancy to be safe
+            $db->query("UPDATE available_villages SET occupied=0 WHERE kid=$mhKid");
+            $db->query("UPDATE wdata SET occupied=0 WHERE id=$mhKid");
+            $db->query("DELETE FROM vdata WHERE kid=$mhKid");
+            
+            // Create
+            $mhResult = $registerModel->createBaseVillage(5, 'Multihunter', 1, $mhKid);
+            if ($mhResult) {
+                echo "[Skirmish] Multihunter village created at KID $mhKid.\n";
+                debugLog("Multihunter fixed at $mhKid.");
+            } else {
+                echo "[Skirmish] FAILED to create Multihunter village. Check /tmp/register_error.log\n";
+                debugLog("Multihunter fix failed.");
+            }
+        } else {
+            echo "[Skirmish] Coordinate (1,0) not found in wdata!\n";
+        }
+    }
+    // ---------------------------------------------------
+
     // 3. Define Quadrants and Alliances
     $alliances = [
         'NE' => ['tag' => 'NE', 'name' => 'North East Empire', 'angle' => [0, 90]],

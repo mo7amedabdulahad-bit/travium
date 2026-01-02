@@ -150,6 +150,8 @@ class RegisterModel
         // Desperation fallback for Mass NPCs:
         // If we really need to spawn (ignoreDensity=true) and couldn't find a spot:
         if ($ignoreDensity) {
+            file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "Hit Fallback! Sector=$sector Strat=$positionStrategy\n", FILE_APPEND);
+
             // 1. Try ANY fieldtype in the same sector and distance
             $conditionsFallback = [];
             $conditionsFallback[] = 'occupied=0';
@@ -162,6 +164,7 @@ class RegisterModel
             
             // 2. If that fails, try ANY available village on the map (Total fallback)
             if (!$kid) {
+                file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "Hit TOTAL Fallback (Global)! Strat=$positionStrategy\n", FILE_APPEND);
                 $q = "SELECT kid FROM available_villages WHERE occupied=0 ORDER BY $orderBy LIMIT 1";
                 $kid = $db->fetchScalar($q);
             }
