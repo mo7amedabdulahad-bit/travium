@@ -78,6 +78,9 @@ try {
 
     // Pass startGold from input
     $startGold = isset($input['startGold']) ? (int)$input['startGold'] : 0;
+    // Pass protection from input
+    $protectionHours = isset($input['protectionHours']) ? (int)$input['protectionHours'] : 12;
+    $protectionSeconds = $protectionHours * 3600;
 
     $playerId = $registerModel->addUser(
         $input['player_username'],
@@ -85,8 +88,9 @@ try {
         $input['player_email'],
         $input['player_tribe'],
         $playerKid,
-        1,          // access
-        $startGold  // giftGold (Corrected)
+        1,                  // access
+        $startGold,         // giftGold
+        $protectionSeconds  // protectionOverride
     );
 
     if (!$playerId) {
@@ -142,8 +146,9 @@ try {
             '',
             $tribe,
             $leaderKid,
-            3,          // access
-            $startGold  // giftGold (Corrected)
+            3,                  // access
+            $startGold,         // giftGold
+            $protectionSeconds  // protectionOverride
         );
         
         $registerModel->createBaseVillage($leaderId, $leaderName, $tribe, $leaderKid);
@@ -172,7 +177,9 @@ try {
         $npcName = !empty($npcNames) ? array_shift($npcNames) : ("NPC_" . $quad . "_" . ($i + 1));
         
         // Inline Create Function Logic
-        $kid = $registerModel->generateBase(strtolower($quad));
+        // PASS TRUE to $ignoreDensity to force squeeze them in
+        $kid = $registerModel->generateBase(strtolower($quad), 3, true, 0, true);
+        
         if ($kid) {
             $tribe = mt_rand(1, 3);
             $uid = $registerModel->addUser(
@@ -181,8 +188,9 @@ try {
                 '',
                 $tribe,
                 $kid,
-                3,          // access
-                $startGold  // giftGold (Corrected)
+                3,                  // access
+                $startGold,         // giftGold
+                $protectionSeconds  // protectionOverride
             );
             if ($uid) {
                 $registerModel->createBaseVillage($uid, $npcName, $tribe, $kid);

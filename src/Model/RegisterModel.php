@@ -70,14 +70,9 @@ class RegisterModel
         return $k;
     }
 
-    public function generateBase($sector, $fieldType = 3, $occupy = true, $tries = 0)
+    public function generateBase($sector, $fieldType = 3, $occupy = true, $tries = 0, $ignoreDensity = false)
     {
-        $minDistance = Formulas::getMapMinDistanceFromCenter();
-        $maxDistance = $minDistance + 10 * ($tries + 3);
-        if (getGameElapsedSeconds() <= 7200) {
-            $minDistance = max($minDistance, 23);
-            $maxDistance = ($minDistance + 10) + 10 * $tries;
-        }
+        if($tries > 50) return false;
         $db = DB::getInstance();
         switch ($sector) {
             case 'ne':
@@ -98,13 +93,20 @@ class RegisterModel
                 $angle = [0, 360];
                 break;
         }
+        $minDistance = 25;
+        $maxDistance = (int)(MAP_SIZE / 2); // Dynamic max distance based on map size
+        
         $conditions = [];
         $conditions[] = 'occupied=0';
         $conditions[] = "fieldtype=$fieldType";
         $conditions[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
         $conditions[] = "(r > 25 AND r >= $minDistance AND r <= $maxDistance)";
-        $nearby = '(SELECT COUNT(av.kid) FROM available_villages av WHERE av.occupied=1 AND ABS(av.r-a.r) <= 6 AND ABS(av.angle-a.angle) <= 8)';
-        $conditions[] = "$nearby < 3";
+        
+        if (!$ignoreDensity) {
+            $nearby = '(SELECT COUNT(av.kid) FROM available_villages av WHERE av.occupied=1 AND ABS(av.r-a.r) <= 6 AND ABS(av.angle-a.angle) <= 8)';
+            $conditions[] = "$nearby < 3";
+        }
+
         $conditions = implode(" AND ", $conditions);
         $q = "SELECT a.kid FROM available_villages a WHERE " . $conditions . " ORDER BY RAND() LIMIT 1";
         $kid = $db->fetchScalar($q);
@@ -115,17 +117,19 @@ class RegisterModel
             return (int)$kid;
         }
         if ($tries < 16) {
-            return $this->generateBase($sector, $fieldType, $occupy, ++$tries);
+            // If failed with density check, try again; if desperate (tries > 10) and not already ignoring, maybe flip it?
+            // For now, keep recursing.
+            return $this->generateBase($sector, $fieldType, $occupy, ++$tries, $ignoreDensity);
         }
         return false;
     }
 
-    public function addUser($name, $password, $email, $race, $kid, $access = 1, $giftGold = null, $addHero = true, $installation = FALSE)
+    public function addUser($name, $password, $email, $race, $kid, $access = 1, $giftGold = null, $protectionOverride = null, $addHero = true, $installation = FALSE)
     {
         $name = substr($name, 0, 15);
         $lastupdate = time();
         $cp = ceil(500 / (getGameSpeed() > 8 ? 8 : getGameSpeed()));
-        $protection = $lastupdate + Formulas::getProtectionBasicTime($lastupdate);
+        $protection = $lastupdate + ($protectionOverride !== null ? (int)$protectionOverride : Formulas::getProtectionBasicTime($lastupdate));
         $db = DB::getInstance();
         $name = $db->real_escape_string($name);
         $email = $db->real_escape_string($email);
