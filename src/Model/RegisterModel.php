@@ -98,22 +98,25 @@ class RegisterModel
         // Using mapSize * 1.5 covers corners comfortably.
         $absoluteMaxR = $mapSize * 1.5; 
         
-        $natarZoneRadius = 6; // Keep (0,0) to radius 6 clear for Natars/MH
+        // Fix: User finds 6 too close. "Natar Zone" is usually the inner ~30-40%.
+        // For Size 25, 10 is good. For Size 50, 20.
+        // Formula: MapSize / 2.5
+        $natarZoneRadius = floor($mapSize / 2.5); // size 25 -> 10. size 50 -> 20.
         
         // Define Bands based on strategy
         switch ($positionStrategy) {
             case 'center': // Front Line (Aggressive)
                 // Zone: Inner Band (Network of War)
-                // From Natar Zone to ~60% of map.
+                // From Natar Zone (10) to ~70% of max radius.
                 $minDistance = $natarZoneRadius; 
-                $maxDistance = floor($absoluteMaxR * 0.6); 
+                $maxDistance = floor($absoluteMaxR * 0.7); // Expanded Front Line band
                 $orderBy = "RAND()"; // Scatter organicallly within the Front Line
                 break;
                 
             case 'edge': // Back Line (Passive)
                 // Zone: Outer Band (Safe Zone)
-                // From ~60% out to the corners.
-                $minDistance = ceil($absoluteMaxR * 0.6);
+                // From ~70% out to the corners.
+                $minDistance = ceil($absoluteMaxR * 0.7);
                 $maxDistance = $absoluteMaxR;
                 $orderBy = "RAND()"; // Scatter organicallly within the Back Line
                 break;
