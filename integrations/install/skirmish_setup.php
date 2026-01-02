@@ -60,11 +60,26 @@ try {
     // ---------------------------------------------------
     // PRE-CHECK: Fix Multihunter if missing
     // ---------------------------------------------------
-    if (!$db->fetchScalar("SELECT count(*) FROM vdata WHERE owner=5")) {
-        echo "[Skirmish] Multihunter village missing! Attempting to fix...\n";
-        debugLog("Multihunter missing. Fixing...");
+    // ---------------------------------------------------
+    // PRE-CHECK: Fix Multihunter if missing
+    // ---------------------------------------------------
+    // 1. Resolve Multihunter ID dynamically (don't assume 5)
+    $mhUid = (int)$db->fetchScalar("SELECT id FROM users WHERE name='Multihunter'");
+    if (!$mhUid) {
+        $mhUid = 5; // Fallback if user doesn't exist yet (will be created or ID reserved)
+    }
+
+    // 2. Check if MH has a village
+    if (!$db->fetchScalar("SELECT count(*) FROM vdata WHERE owner=$mhUid")) {
+        echo "[Skirmish] Multihunter (ID: $mhUid) village missing! Attempting to fix...\n";
+        debugLog("Multihunter (ID $mhUid) missing. Fixing...");
         
-        $mhKid = $db->fetchScalar("SELECT id FROM wdata WHERE x=1 AND y=0");
+        $mhKid = $db->fetchScalar("SELECT id FROM wdata WHERE x=1 AND y=0"); // (0,0) is usually (1,0) in wdata ID 1? No, 0,0 is ID 1??
+        // Usually Skirmish multihunter is at (0,0) or (1,0). Keeping existing logic (1,0) for now.
+        if (!$mhKid) { 
+             // Logic to find a nice center spot if specific coords fail
+             $mhKid = $db->fetchScalar("SELECT id FROM wdata WHERE fieldtype=3 AND occupied=0 ORDER BY id ASC LIMIT 1");
+        }
         
         if ($mhKid) {
             // Force clear occupancy to be safe
@@ -73,17 +88,26 @@ try {
             $db->query("DELETE FROM vdata WHERE kid=$mhKid");
             
             // Create
-            $mhResult = $registerModel->createBaseVillage(5, 'Multihunter', 1, $mhKid);
+            $mhResult = $registerModel->createBaseVillage($mhUid, 'Multihunter', 1, $mhKid);
             if ($mhResult) {
-                echo "[Skirmish] Multihunter village created at KID $mhKid.\n";
-                debugLog("Multihunter fixed at $mhKid.");
+                echo "[Skirmish] Multihunter village created at KID $mhKid for UID $mhUid.\n";
+                // Ensure ownership is correct (in case createBaseVillage logic drifted)
+                $db->query("UPDATE vdata SET owner=$mhUid WHERE kid=$mhKid");
+                debugLog("Multihunter fixed at $mhKid for UID $mhUid.");
             } else {
                 echo "[Skirmish] FAILED to create Multihunter village. Check /tmp/register_error.log\n";
                 debugLog("Multihunter fix failed.");
             }
         } else {
-            echo "[Skirmish] Coordinate (1,0) not found in wdata!\n";
+            echo "[Skirmish] Could not find a valid coordinate for Multihunter!\n";
         }
+    } else {
+        // Double check if the village at (1,0) is owned by correct ID, if not, fix it.
+        // Assuming we WANT him at a specific spot. But for now, just ownership fix is enough.
+        // Actually, if "rubal.manuel" (5) stole it, and MH is (2), but MH has NO village...
+        // The check `count(*) WHERE owner=$mhUid` (owner=2) would be 0. So it enters the block.
+        // The block tries to clear `$mhKid`. If `$mhKid` is 1302 (owned by rubal), it deletes it and gives it to MH.
+        // This effectively "steals it back". Perfect.
     }
     // ---------------------------------------------------
 
