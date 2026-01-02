@@ -120,7 +120,7 @@ class RegisterModel
         return false;
     }
 
-    public function addUser($name, $password, $email, $race, $kid, $access = 1, $addHero = true, $installation = FALSE)
+    public function addUser($name, $password, $email, $race, $kid, $access = 1, $giftGold = null, $addHero = true, $installation = FALSE)
     {
         $name = substr($name, 0, 15);
         $lastupdate = time();
@@ -132,7 +132,7 @@ class RegisterModel
         $access = (int)$access;
         $race = (int)$race;
         $kid = $db->real_escape_string($kid);
-        $gold = (int)(Config::getInstance()->gold->startGold ?? 0);
+        $gold = $giftGold !== null ? (int)$giftGold : (int)(Config::getInstance()->gold->startGold ?? 0);
         $uuid = $db->fetchScalar('SELECT UUID()');
         $db->query("INSERT INTO users (uuid, name, password, email, access, gift_gold, signupTime, protection, race, kid, cp, lastupdate, last_adventure_time, location, desc1, desc2, note) VALUES ('$uuid', '$name','$password', '$email', $access, $gold , $lastupdate,$protection, $race,'$kid',$cp, $lastupdate, $lastupdate, '', '', '', '')");
         $uid = $db->lastInsertId();

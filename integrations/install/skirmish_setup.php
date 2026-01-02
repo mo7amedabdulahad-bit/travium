@@ -63,13 +63,17 @@ try {
         throw new RuntimeException("Could not generate starting position for player in $playerQuadrant");
     }
 
-    // FIX: Use SHA1 for password to match LoginCtrl
+    // Pass startGold from input
+    $startGold = isset($input['startGold']) ? (int)$input['startGold'] : 0;
+
     $playerId = $registerModel->addUser(
         $input['player_username'],
         sha1($input['player_password']), 
         $input['player_email'],
         $input['player_tribe'],
-        $playerKid
+        $playerKid,
+        1,          // access
+        $startGold  // giftGold (Corrected)
     );
 
     if (!$playerId) {
@@ -84,12 +88,36 @@ try {
     
     echo "[Skirmish] Player '{$input['player_username']}' created in $playerQuadrant (ID: $playerId, Ali: $playerAliId)\n";
 
+    // Prepare NPC Names for EVERYONE (Leaders + Mass)
+    $totalNpcs = (int)$input['npc_count'];
+    $totalNpcsToName = max($totalNpcs, 3); // Ensure at least enough for 3 leaders
+    $npcNames = [];
+    $sqlitePath = ROOT_PATH . "src/schema/users.sqlite";
+    
+    if (file_exists($sqlitePath) && class_exists('SQLite3')) {
+        try {
+            $sqlite = new SQLite3($sqlitePath);
+            // Fetch names equal to total needed
+            $res = $sqlite->query("SELECT username FROM users ORDER BY RANDOM() LIMIT $totalNpcsToName");
+            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+                $npcNames[] = $row['username'];
+            }
+            $sqlite->close();
+        } catch (Exception $e) {
+            echo "[Skirmish Warning] SQLite name fetch failed: " . $e->getMessage() . "\n";
+        }
+    } else {
+        echo "[Skirmish Warning] SQLite users DB not found or SQLite3 missing. Using generic names. (Path: $sqlitePath)\n";
+    }
+
     // 5. Create Leader NPCs
     echo "[Skirmish] Creating Alliance Leaders...\n";
     foreach ($alliances as $quad => $aliData) {
         if ($quad === $playerQuadrant) continue;
 
-        $leaderName = $aliData['tag'] . "_Leader";
+        // Use real name if available, else generic
+        $leaderName = !empty($npcNames) ? array_shift($npcNames) : ($aliData['tag'] . "_Leader");
+        
         $leaderKid = $registerModel->generateBase(strtolower($quad));
         $tribe = mt_rand(1, 3);
         
@@ -99,7 +127,8 @@ try {
             '',
             $tribe,
             $leaderKid,
-            3
+            3,          // access
+            $startGold  // giftGold (Corrected)
         );
         
         $registerModel->createBaseVillage($leaderId, $leaderName, $tribe, $leaderKid);
@@ -113,27 +142,8 @@ try {
     }
 
     // 6. Create Mass NPCs
-    $totalNpcs = (int)$input['npc_count'];
     $npcsToCreate = max(0, $totalNpcs - 3);
     echo "[Skirmish] Creating $npcsToCreate additional NPCs...\n";
-
-    // Prepare NPC Names from SQLite
-    $npcNames = [];
-    $sqlitePath = ROOT_PATH . "src/schema/users.sqlite";
-    if (file_exists($sqlitePath) && class_exists('SQLite3')) {
-        try {
-            $sqlite = new SQLite3($sqlitePath);
-            $res = $sqlite->query("SELECT username FROM users ORDER BY RANDOM() LIMIT $npcsToCreate");
-            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-                $npcNames[] = $row['username'];
-            }
-            $sqlite->close();
-        } catch (Exception $e) {
-            echo "[Skirmish Warning] SQLite name fetch failed: " . $e->getMessage() . "\n";
-        }
-    } else {
-        echo "[Skirmish Warning] SQLite users DB not found or SQLite3 missing. Using generic names.\n";
-    }
 
     $quadKeys = array_keys($alliances);
     $quadIndex = 0;
@@ -143,11 +153,7 @@ try {
         $quadIndex = ($quadIndex + 1) % 4;
         
         // Use real name if available, else generic
-        if (isset($npcNames[$i])) {
-            $npcName = $npcNames[$i];
-        } else {
-            $npcName = "NPC_" . $quad . "_" . ($i + 1);
-        }
+        $npcName = !empty($npcNames) ? array_shift($npcNames) : ("NPC_" . $quad . "_" . ($i + 1));
         
         // Inline Create Function Logic
         $kid = $registerModel->generateBase(strtolower($quad));
@@ -155,11 +161,12 @@ try {
             $tribe = mt_rand(1, 3);
             $uid = $registerModel->addUser(
                 $npcName,
-                sha1(microtime() . $npcName), // Random password
+                sha1(microtime() . $npcName),
                 '',
                 $tribe,
                 $kid,
-                3
+                3,          // access
+                $startGold  // giftGold (Corrected)
             );
             if ($uid) {
                 $registerModel->createBaseVillage($uid, $npcName, $tribe, $kid);
