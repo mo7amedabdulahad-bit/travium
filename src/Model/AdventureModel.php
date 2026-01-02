@@ -127,10 +127,18 @@ class AdventureModel
     function addAdventure($uid, &$adventure_id, $time, $bought = false, $hard = null)
     {
         $db = DB::getInstance();
-        $mainKid = $db->fetchScalar("SELECT kid FROM hero WHERE uid=$uid");
-        if($db->fetchScalar("SELECT heroMansion FROM fdata WHERE kid=$mainKid") <= 0){
-            $mainKid = $db->fetchScalar("SELECT kid FROM vdata WHERE owner=$uid AND (capital=1 OR ((SELECT heroMansion FROM fdata WHERE kid=vdata.kid) > 0)) ORDER BY RAND() LIMIT 1");
+        $mainKid = (int)$db->fetchScalar("SELECT kid FROM hero WHERE uid=$uid");
+        
+        // Only check hero mansion if we actually found a hero village
+        $mansionLevel = 0;
+        if ($mainKid > 0) {
+             $mansionLevel = (int)$db->fetchScalar("SELECT heroMansion FROM fdata WHERE kid=$mainKid");
         }
+
+        if ($mainKid <= 0 || $mansionLevel <= 0) {
+            $mainKid = (int)$db->fetchScalar("SELECT kid FROM vdata WHERE owner=$uid AND (capital=1 OR ((SELECT heroMansion FROM fdata WHERE kid=vdata.kid) > 0)) ORDER BY RAND() LIMIT 1");
+        }
+        
         if (!$mainKid) {
             return;
         }
