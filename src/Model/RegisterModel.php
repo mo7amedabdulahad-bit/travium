@@ -131,9 +131,36 @@ class RegisterModel
         }
         if ($tries < 16) {
             // If failed with density check, try again; if desperate (tries > 10) and not already ignoring, maybe flip it?
-            // For now, keep recursing.
+            // For        if ($tries < 16) {
             return $this->generateBase($sector, $fieldType, $occupy, ++$tries, $ignoreDensity);
         }
+
+        // Desperation fallback for Mass NPCs:
+        // If we really need to spawn (ignoreDensity=true) and couldn't find a spot:
+        if ($ignoreDensity) {
+            // 1. Try ANY fieldtype in the same sector and distance
+            $conditions = [];
+            $conditions[] = 'occupied=0';
+            $conditions[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
+            $conditions[] = "(r >= $minDistance AND r <= $maxDistance)";
+            $q = "SELECT kid FROM available_villages WHERE " . implode(" AND ", $conditions) . " ORDER BY RAND() LIMIT 1";
+            
+            $kid = $db->fetchScalar($q);
+            
+            // 2. If that fails, try ANY available village on the map (Total fallback)
+            if (!$kid) {
+                $q = "SELECT kid FROM available_villages WHERE occupied=0 ORDER BY RAND() LIMIT 1";
+                $kid = $db->fetchScalar($q);
+            }
+
+            if ($kid) {
+                if ($occupy) {
+                    $db->query("UPDATE available_villages SET occupied=1 WHERE kid=$kid");
+                }
+                return $kid;
+            }
+        }
+
         return false;
     }
 
