@@ -93,8 +93,8 @@ class RegisterModel
         
         $calculatedMax = (int)(MAP_SIZE / 2);
         if ($calculatedMax <= 25) {
-            // Tiny map handling - allow full range
-            $minDistance = 2; 
+            // Tiny map handling - allow full range but PROTECT THE CENTER (Natar Zone)
+            $minDistance = 6; // Was 2. Increased to 6 to push them out of Natar Zone. 
             // Fix: calculatedMax is only half map size. 
             // We need full map size * 1.5 to reach corners (e.g. 25*1.41 = 35).
             // Using *2 to be absolutely safe.
