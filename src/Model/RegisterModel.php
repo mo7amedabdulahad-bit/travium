@@ -255,7 +255,7 @@ class RegisterModel
 
     public function createBaseVillage($uid, $playerName, $race, $kid)
     {
-        $village_name = $playerName . "'s Village";
+        $village_name = $playerName . " Village"; // Removed 's to avoid backtick issues
         if (function_exists("T")) {
              $trans = T("Global", "playerVillageName");
              if ($trans) {
@@ -320,7 +320,7 @@ class RegisterModel
                 $maxRes,
                 $maxRes,
                 time(),
-                miliseconds(),
+                time(), // Replaced miliseconds() with time() to prevent INT overflow/function error
                 time(),
                 $isWW ? 1 : 0,
                 $expandedFrom,
