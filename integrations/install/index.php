@@ -424,8 +424,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cmd1 = "/usr/bin/php8.4 $installerFile install " . escapeshellarg($adminPass);
             $cmd2 = "/usr/bin/php8.4 $updateFile --new-installation";
 
+            file_put_contents('/tmp/installer_debug.log', date('[H:i:s] ') . "Running Installer...\n", FILE_APPEND);
             [$out1,$code1] = run_cmd($cmd1);
+            file_put_contents('/tmp/installer_debug.log', date('[H:i:s] ') . "Installer Done (Code: $code1).\nRunning Updater...\n", FILE_APPEND);
             [$out2,$code2] = run_cmd($cmd2);
+            file_put_contents('/tmp/installer_debug.log', date('[H:i:s] ') . "Updater Done (Code: $code2).\n", FILE_APPEND);
 
             $result = [
                 'success'       => ($code1 === 0 && $code2 === 0),
