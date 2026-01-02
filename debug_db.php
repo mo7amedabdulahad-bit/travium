@@ -85,4 +85,28 @@ foreach ($logs as $log) {
         echo "File not found.\n";
     }
 }
+
+// 5. Schema Audit & Test Insert
+echo "\n=== SCHEMA AUDIT ===\n";
+$cols = $db->query("SHOW COLUMNS FROM vdata");
+echo "vdata columns:\n";
+while($c = $cols->fetch_assoc()) {
+    echo "{$c['Field']} ({$c['Type']})\n";
+}
+
+echo "\n=== TEST INSERT ===\n";
+$testQ = "INSERT INTO vdata (kid, owner, fieldtype, name, capital, pop, cp, wood, clay, iron, crop, maxstore, maxcrop, last_loyalty_update, lastmupdate, created, isWW, expandedfrom, lastVillageCheck) VALUES ('1302', '5', '3', 'Multihunter Village', '1', '0', '0', '7500', '7500', '7500', '7500', '8000', '8000', '1767360360', '1767360360', '1767360360', '0', '0', '0')";
+try {
+    // Determine a safe KID for testing (e.g. 99999 or find free)
+    // We'll just try to EXPLAIN it or run it on a dummy KID if possible
+    // Actually, just running it is fine, it might fail on Duplicate Key if 1302 exists, but that's a different error.
+    // Let's use KID 99999 to be safe.
+    $testQSafe = str_replace("'1302'", "'99999'", $testQ);
+    $db->query($testQSafe);
+    echo "Test Insert Success!\n";
+    $db->query("DELETE FROM vdata WHERE kid=99999"); // Cleanup
+} catch (\Throwable $e) {
+    echo "Test Insert Failed: " . $e->getMessage() . "\n";
+}
+
 echo "\n=== END REPORT ===\n";
