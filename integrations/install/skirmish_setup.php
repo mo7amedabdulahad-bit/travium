@@ -176,9 +176,13 @@ try {
         // Use real name if available, else generic
         $npcName = !empty($npcNames) ? array_shift($npcNames) : ("NPC_" . $quad . "_" . ($i + 1));
         
+        // Personality: Alternate Aggressive (Front) vs Passive (Back)
+        $isAggressive = ($i % 2 === 0); 
+        $positionStrategy = $isAggressive ? 'center' : 'edge';
+
         // Inline Create Function Logic
-        // PASS TRUE to $ignoreDensity to force squeeze them in
-        $kid = $registerModel->generateBase(strtolower($quad), 3, true, 0, true);
+        // Pass strategy: 'center' (Front Line) or 'edge' (Back Line)
+        $kid = $registerModel->generateBase(strtolower($quad), 3, true, 0, true, $positionStrategy);
         
         if ($kid) {
             $tribe = mt_rand(1, 3);
@@ -196,8 +200,11 @@ try {
                 $registerModel->createBaseVillage($uid, $npcName, $tribe, $kid);
                 $db->query("UPDATE users SET aid={$allianceIds[$quad]}, alliance_join_time=".time()." WHERE id=$uid");
                 $allianceModel->recalculateMaxUsers($allianceIds[$quad]);
+                
                  if (class_exists('Core\NpcConfig')) {
-                    \Core\NpcConfig::assignRandom($uid);
+                    // Assign personality to match position
+                    // 1 = Aggressive (Front), 0 = Passive (Back)
+                    \Core\NpcConfig::assign($uid, $isAggressive ? 1 : 0);
                 }
             }
         }

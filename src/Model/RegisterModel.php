@@ -70,27 +70,24 @@ class RegisterModel
         return $k;
     }
 
-    public function generateBase($sector, $fieldType = 3, $occupy = true, $tries = 0, $ignoreDensity = false)
+    public function generateBase($sector, $fieldType = 3, $occupy = true, $tries = 0, $ignoreDensity = false, $positionStrategy = 'random')
     {
         if($tries > 50) return false;
         $db = DB::getInstance();
+        $sector = strtolower($sector);
+        $angle = [0, 360];
         switch ($sector) {
-            case 'ne':
-            case 'no':
-                $angle = [0, 90];
-                break;
-            case 'se':
-            case 'so':
-                $angle = [270, 360];
-                break;
             case 'nw':
                 $angle = [90, 180];
+                break;
+            case 'ne':
+                $angle = [0, 90];
                 break;
             case 'sw':
                 $angle = [180, 270];
                 break;
-            default:
-                $angle = [0, 360];
+            case 'se':
+                $angle = [270, 360];
                 break;
         }
         
@@ -116,14 +113,26 @@ class RegisterModel
             $conditions[] = "$nearby < 3";
         }
 
-        $conditions = implode(" AND ", $conditions);
-        // User Request: Front line design -> Cluster near center if ignoring density
-        $orderBy = $ignoreDensity ? "r ASC, rand ASC" : "RAND()";
+        $conditionsString = implode(" AND ", $conditions);
+
+        // Position Strategy Sorting
+        switch ($positionStrategy) {
+            case 'center': // Front Line (Attackers)
+                $orderBy = "r ASC, rand ASC";
+                break;
+            case 'edge': // Back Line (Passives)
+                $orderBy = "r DESC, rand ASC";
+                break;
+            case 'random':
+            default:
+                $orderBy = "RAND()";
+                break;
+        }
         
-        $q = "SELECT a.kid FROM available_villages a WHERE " . $conditions . " ORDER BY $orderBy LIMIT 1";
+        $q = "SELECT a.kid FROM available_villages a WHERE " . $conditionsString . " ORDER BY $orderBy LIMIT 1";
         
         // DEBUG LOGGING
-        file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "generateBase: Sector=$sector MAP_SIZE=".MAP_SIZE." MaxDist=$maxDistance Query=$q\n", FILE_APPEND);
+        file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "generateBase: Sector=$sector Strat=$positionStrategy MAP_SIZE=".MAP_SIZE." MaxDist=$maxDistance Query=$q\n", FILE_APPEND);
 
         $kid = $db->fetchScalar($q);
         if ($kid !== false) {
@@ -135,25 +144,25 @@ class RegisterModel
         if ($tries < 16) {
             // If failed with density check, try again; if desperate (tries > 10) and not already ignoring, maybe flip it?
             // For        if ($tries < 16) {
-            return $this->generateBase($sector, $fieldType, $occupy, ++$tries, $ignoreDensity);
+            return $this->generateBase($sector, $fieldType, $occupy, ++$tries, $ignoreDensity, $positionStrategy);
         }
 
         // Desperation fallback for Mass NPCs:
         // If we really need to spawn (ignoreDensity=true) and couldn't find a spot:
         if ($ignoreDensity) {
             // 1. Try ANY fieldtype in the same sector and distance
-            $conditions = [];
-            $conditions[] = 'occupied=0';
-            $conditions[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
-            $conditions[] = "(r >= $minDistance AND r <= $maxDistance)";
+            $conditionsFallback = [];
+            $conditionsFallback[] = 'occupied=0';
+            $conditionsFallback[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
+            $conditionsFallback[] = "(r >= $minDistance AND r <= $maxDistance)";
             // Use same Front Line logic for fallback
-            $q = "SELECT kid FROM available_villages WHERE " . implode(" AND ", $conditions) . " ORDER BY r ASC LIMIT 1";
+            $q = "SELECT kid FROM available_villages WHERE " . implode(" AND ", $conditionsFallback) . " ORDER BY $orderBy LIMIT 1";
             
             $kid = $db->fetchScalar($q);
             
             // 2. If that fails, try ANY available village on the map (Total fallback)
             if (!$kid) {
-                $q = "SELECT kid FROM available_villages WHERE occupied=0 ORDER BY r ASC LIMIT 1";
+                $q = "SELECT kid FROM available_villages WHERE occupied=0 ORDER BY $orderBy LIMIT 1";
                 $kid = $db->fetchScalar($q);
             }
 
@@ -251,7 +260,10 @@ class RegisterModel
             0,
             false
         );
-        if (!$result) return false;
+        if (!$result) {
+            file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "createBaseVillage FAILED for User $uid at KID $kid\n", FILE_APPEND);
+            return false;
+        }
         $db = DB::getInstance();
         $db->query("UPDATE units SET u11=1 WHERE kid=$kid");
         $this->addResourceFields($kid);
@@ -275,6 +287,11 @@ class RegisterModel
         $maxRes = 800 * getGame("storage_multiplier");
         $minRes = ceil($maxRes * 0.9375);
         $fieldType = $db->fetchScalar("SELECT fieldtype FROM wdata WHERE id=$kid");
+        
+        if (!$fieldType) {
+             file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: FieldType not found for KID $kid\n", FILE_APPEND);
+        }
+
         $row = vsprintf("'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'",
             [
                 $kid,
@@ -301,6 +318,7 @@ class RegisterModel
         $db->begin_transaction();
         $good = $db->query("INSERT INTO vdata (kid, owner, fieldtype, name, capital, pop, cp, wood, clay, iron, crop, maxstore, maxcrop, last_loyalty_update, lastmupdate, created, isWW, expandedfrom, lastVillageCheck) VALUES ($row)");
         if (!$good || !$db->affectedRows()) {
+            file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: VDATA Insert Failed for KID $kid. DB Error: " . $db->error . "\n", FILE_APPEND);
             $db->query("UPDATE available_villages SET occupied=0 WHERE kid=$kid");
             $db->query("UPDATE wdata SET occupied=0 WHERE id=$kid");
             $db->rollback();
