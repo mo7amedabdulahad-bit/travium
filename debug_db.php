@@ -40,7 +40,7 @@ echo "\n=== DIAGNOSTIC REPORT ===\n";
 
 // 1. Check Multihunter
 echo "\n[Multihunter Status]\n";
-$mh = $db->query("SELECT id, username, access, location FROM users WHERE id=5")->fetch_assoc();
+$mh = $db->query("SELECT id, name, access, location FROM users WHERE id=5")->fetch_assoc();
 if ($mh) {
     echo "User 5 found: " . print_r($mh, true) . "\n";
     $vils = $db->query("SELECT * FROM vdata WHERE owner=5");
