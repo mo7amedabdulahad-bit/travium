@@ -255,13 +255,8 @@ class RegisterModel
 
     public function createBaseVillage($uid, $playerName, $race, $kid)
     {
-        $village_name = $playerName . " Village"; // Removed 's to avoid backtick issues
-        if (function_exists("T")) {
-             $trans = T("Global", "playerVillageName");
-             if ($trans) {
-                 $village_name = sprintf($trans, $playerName);
-             }
-        }
+        $village_name = $playerName . " Village"; // Simple, safe name
+        
         $result = $this->_createVillage(
             $uid,
             $race,
@@ -295,7 +290,8 @@ class RegisterModel
         $db = DB::getInstance();
         $db->query("UPDATE available_villages SET occupied=1 WHERE kid=$kid");
         CulturePointsHelper::updateUserCP($uid);
-        $village_name = $db->real_escape_string(str_replace("'", '`', $village_name));
+        // Forcefully remove bad chars for SQL safety
+        $village_name = $db->real_escape_string(str_replace(["'", "`"], "", $village_name));
         $maxRes = 800 * getGame("storage_multiplier");
         $minRes = ceil($maxRes * 0.9375);
         $fieldType = (int)$db->fetchScalar("SELECT fieldtype FROM wdata WHERE id=$kid");
