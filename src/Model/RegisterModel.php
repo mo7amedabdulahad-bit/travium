@@ -95,9 +95,10 @@ class RegisterModel
         if ($calculatedMax <= 25) {
             // Tiny map handling - allow full range
             $minDistance = 2; 
-            // Fix: calculatedMax is only half map size. We need full map size for edge.
-            // Using a static 25 or derived from MAP_SIZE is safer.
-            $maxDistance = (defined('MAP_SIZE') ? MAP_SIZE : 25) + 5; 
+            // Fix: calculatedMax is only half map size. 
+            // We need full map size * 1.5 to reach corners (e.g. 25*1.41 = 35).
+            // Using *2 to be absolutely safe.
+            $maxDistance = (defined('MAP_SIZE') ? MAP_SIZE : 25) * 2; 
         } else {
             $minDistance = 25;
             $maxDistance = $calculatedMax;
@@ -120,19 +121,36 @@ class RegisterModel
 
         // Position Strategy Sorting
         switch ($positionStrategy) {
-            case 'center': // Front Line (Attackers)
-                $orderBy = "r ASC, rand ASC";
+            case 'center': // Front Line (Attackers) = Closest to 0,0
+                $orderBy = "r ASC, RAND()"; 
                 break;
-            case 'edge': // Back Line (Passives)
-                $orderBy = "r DESC, rand ASC";
+            case 'edge': // Back Line (Defenders) = Furthest from 0,0
+                $orderBy = "r DESC, RAND()"; 
                 break;
-            case 'random':
-            default:
-                $orderBy = "RAND()";
+            case 'random': // Pure Chaos
+                $orderBy = "RAND()"; 
+                break;
+            default: // Classic Travian Spiral
+                $orderBy = "r ASC"; 
                 break;
         }
         
         $q = "SELECT a.kid FROM available_villages a WHERE " . $conditionsString . " ORDER BY $orderBy LIMIT 1";
+        
+        // Add debug logging to trace strategy performance
+        $qLog = "SELECT kid FROM available_villages a WHERE $conditionsString ORDER BY $orderBy LIMIT $limit";
+        // file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "Sector: $sector, Strat: $positionStrategy, MaxR: $maxDistance. Query: $qLog\n", FILE_APPEND);
+
+        // 2. Select Candidates
+        // Increased limit for fallback options
+        $rows = $db->query("SELECT kid, r, angle FROM available_villages a WHERE $conditionsString ORDER BY $orderBy LIMIT 16");
+        
+        $count = $rows->num_rows;
+        file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "GenBase: Sector=$sector Strat=$positionStrategy MaxR=$maxDistance ResultCount=$count\n", FILE_APPEND);
+        
+        if ($count == 0) {
+             file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "GenBase: ZERO RESULTS! Conditions: $conditionsString\n", FILE_APPEND);
+        }
         
         // DEBUG LOGGING
         file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "generateBase: Sector=$sector Strat=$positionStrategy MAP_SIZE=".MAP_SIZE." MaxDist=$maxDistance Query=$q\n", FILE_APPEND);
