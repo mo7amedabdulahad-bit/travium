@@ -195,6 +195,7 @@ try {
         }
     }
     
+    $db->query("UPDATE config SET installed=1");
     echo "[Skirmish] Setup Complete.\n";
     debugLog("Setup Complete.");
     exit(0);
