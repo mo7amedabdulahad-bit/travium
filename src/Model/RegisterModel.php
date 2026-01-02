@@ -416,6 +416,13 @@ class RegisterModel
         $db->query("INSERT INTO units (kid, race, u11) VALUES ($kid, $race, " . ($hasHero ? 1 : 0) . ")");
     }
 
+    public function getVillages($uid)
+    {
+        // SYNC FIX: Ensure latest code is pushed
+        $db = DB::getInstance();
+        return $db->query("SELECT * FROM vdata WHERE owner=$uid");
+    }
+
     public function addTech($kid)
     {
         $db = DB::getInstance();
