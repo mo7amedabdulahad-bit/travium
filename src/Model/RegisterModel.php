@@ -92,38 +92,37 @@ class RegisterModel
         }
         
         // Calculate Max Radius (Corner distance)
+        // Calculate Max Radius (Corner distance)
         $mapSize = defined('MAP_SIZE') ? MAP_SIZE : 25;
-        // User wants "War Zone" in the corners/edges (> 25).
-        // So we MUST allow radius > mapSize.
+        // User wants "War Zone" in the corners/edges.
+        // Restoration of Corners:
         $absoluteMaxR = $mapSize * 1.5; 
         
         // Natar Zone / "Black Zone" (Center)
-        // User wants this EMPTY and LARGE.
-        // For Size 25, Radius 15 is a huge hole in the middle.
-        $natarZoneRadius = 15; 
-        if ($mapSize >= 50) $natarZoneRadius = 30;
+        // User wants this EMPTY. Radius 19 was still "in black".
+        // Pushing exclusion to 20+.
+        $natarZoneRadius = 20; 
+        if ($mapSize >= 50) $natarZoneRadius = 40;
 
-        // Bands
-        // Band A (Safe Zone / Passive): 15 to 25
-        // Band B (War Zone / Aggressive): 25 to Max (~37)
+        // "War Zone" starts at the grid edge.
         $warZoneStart = $mapSize; 
 
         // Define Bands based on strategy
-        // NOTE: Input 'center' comes from Aggressive NPCs. Input 'edge' comes from Passive.
-        // User wants Aggressive at the EDGE ("War Zone") and Passive closer to center.
+        // BOTH strategies now favor the Outer Rim (End Lines).
         switch ($positionStrategy) {
-            case 'center': // Aggressive (Front Line) -> WAR ZONE (Outer Ring)
-                // Zone: Outer Ring / Corners
+            case 'center': // Aggressive (Front Line) -> EXTREME CORNERS
+                // Zone: Deep War Zone (Corners)
                 $minDistance = $warZoneStart; 
                 $maxDistance = $absoluteMaxR; 
-                $orderBy = "RAND()"; 
+                $orderBy = "r DESC, RAND()"; // Fill corners first!
                 break;
                 
-            case 'edge': // Passive (Back Line) -> SAFE ZONE (Middle Ring)
-                // Zone: Middle Ring
+            case 'edge': // Passive (Back Line) -> PERIMETER
+                // Zone: The Rim
                 $minDistance = $natarZoneRadius;
-                $maxDistance = $warZoneStart;
-                $orderBy = "RAND()"; 
+                $maxDistance = $absoluteMaxR; 
+                // Bias slightly towards edge, but allow filling the 20-25 band
+                $orderBy = "r DESC, RAND()"; 
                 break;
                 
             case 'random': // Chaos
