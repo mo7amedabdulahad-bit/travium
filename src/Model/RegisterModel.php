@@ -333,15 +333,31 @@ class RegisterModel
         
         $q = "INSERT INTO vdata (kid, owner, fieldtype, name, capital, pop, cp, wood, clay, iron, crop, maxstore, maxcrop, last_loyalty_update, lastmupdate, created, isWW, expandedfrom, lastVillageCheck) VALUES ($row)";
         
+        // Relax SQL strictness to prevent "near ''" errors from empty inputs if any
+        $db->query("SET sql_mode=''");
+
         // Log query BEFORE execution to catch crash details
         file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Attempting Insert: $q\n", FILE_APPEND);
         
+        $good = false;
         try {
+            // Temporary customized error handler to catch trigger_error from DB.php
+            set_error_handler(function($errno, $errstr) use ($q) {
+                file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Captured Warning: $errstr\nQuery: $q\n", FILE_APPEND);
+                // Return true to suppress default handling? No, we want to maybe simulate fail?
+                // Throwing exception allows catch block to handle it.
+                throw new \Exception("PHP Warning: $errstr");
+            });
+
             $good = $db->query($q);
+            
+            restore_error_handler();
+            
         } catch (\Throwable $e) { // Catch both Exception and Error
+            restore_error_handler(); // Ensure handler is restored
             $msg = "SQL CRASH: " . $e->getMessage() . "\nQuery: $q\n";
             file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . $msg, FILE_APPEND);
-            echo "[Skirmish Error] $msg"; // Print directly to CLI output
+            echo "[Skirmish Register Error] $msg"; // Print directly to CLI output
             return false;
         }
         
