@@ -109,6 +109,10 @@ class RegisterModel
 
         $conditions = implode(" AND ", $conditions);
         $q = "SELECT a.kid FROM available_villages a WHERE " . $conditions . " ORDER BY RAND() LIMIT 1";
+        
+        // DEBUG LOGGING
+        file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "generateBase: Sector=$sector MAP_SIZE=".MAP_SIZE." MaxDist=$maxDistance Query=$q\n", FILE_APPEND);
+
         $kid = $db->fetchScalar($q);
         if ($kid !== false) {
             if($occupy){
