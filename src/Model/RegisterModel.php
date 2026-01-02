@@ -326,19 +326,31 @@ class RegisterModel
                 $expandedFrom,
                 $isArtifact ? 1 : 0,
             ]);
+            
+        if ($row === false) {
+             file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: vsprintf FAILED! Args count: 19. Check types.\n", FILE_APPEND);
+             return false;
+        }
+
         $db->query("UPDATE wdata SET occupied=1 WHERE id=$kid");
         $db->begin_transaction();
         
         $q = "INSERT INTO vdata (kid, owner, fieldtype, name, capital, pop, cp, wood, clay, iron, crop, maxstore, maxcrop, last_loyalty_update, lastmupdate, created, isWW, expandedfrom, lastVillageCheck) VALUES ($row)";
+        
+        // Log query BEFORE execution to catch crash details
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Attempting Insert: $q\n", FILE_APPEND);
+        
         $good = $db->query($q);
         
         if (!$good || !$db->affectedRows()) {
-            file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: VDATA Insert Failed for KID $kid. DB Error: " . $db->error . "\nQuery: $q\n", FILE_APPEND);
-            $db->query("UPDATE available_villages SET occupied=0 WHERE kid=$kid");
-            $db->query("UPDATE wdata SET occupied=0 WHERE id=$kid");
-            $db->rollback();
-            return false;
+             // If we get here, no exception was thrown but query failed (legacy mode)
+             file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Insert FAILED (No Except). Error: " . $db->error . "\n", FILE_APPEND);
+             $db->query("UPDATE available_villages SET occupied=0 WHERE kid=$kid");
+             $db->query("UPDATE wdata SET occupied=0 WHERE id=$kid");
+             $db->rollback();
+             return false;
         }
+
         $db->commit();
         $this->addUnits($kid, $race);
         $this->addTech($kid);
