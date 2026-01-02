@@ -354,11 +354,22 @@ class RegisterModel
              return false;
         }
 
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Insert OK. Committing...\n", FILE_APPEND);
         $db->commit();
+        
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Committed. Adding Units...\n", FILE_APPEND);
         $this->addUnits($kid, $race);
+        
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Units Added. Adding Tech...\n", FILE_APPEND);
         $this->addTech($kid);
+        
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Tech Added. Adding Smithy...\n", FILE_APPEND);
         $this->addSmithy($kid);
+        
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "Smithy Added. Updating Map...\n", FILE_APPEND);
         Map::villageDestroyOrCaptureOrNewVillageUpdate($kid);
+        
+        file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage Success.\n", FILE_APPEND);
         return true;
     }
 
