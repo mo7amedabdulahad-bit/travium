@@ -442,6 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // SKIRMISH MODE HOOK (CLI Version)
             if ($result['success'] && $input['installation_mode'] === 'skirmish') {
+                file_put_contents('/tmp/installer_debug.log', "Starting Skirmish Setup...\n", FILE_APPEND);
                 $skirmishScript = __DIR__ . '/skirmish_setup.php';
                 $jsonInput = json_encode($input);
                 // Escape simple quotes for shell safety if needed, but escapeshellarg is safer

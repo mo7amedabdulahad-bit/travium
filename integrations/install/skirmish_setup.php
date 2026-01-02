@@ -9,19 +9,21 @@ use Core\NpcConfig;
 // Skirmish Setup CLI Script
 // Usage: php skirmish_setup.php '<json_input>'
 
+function debugLog($msg) {
+    file_put_contents('/tmp/skirmish_debug.log', date('[H:i:s] ') . $msg . "\n", FILE_APPEND);
+}
+debugLog("Process started. ARGC: $argc");
+
 if (php_sapi_name() !== 'cli') {
     die('CLI only');
 }
 
 if ($argc < 2) {
+    debugLog("Missing input JSON");
     die("Missing input JSON");
 }
 
-function debugLog($msg) {
-    file_put_contents(dirname(__DIR__, 2) . '/skirmish_debug.log', date('[H:i:s] ') . $msg . "\n", FILE_APPEND);
-}
-debugLog("Starting Skirmish Setup CLI...");
-
+debugLog("Parsing input...");
 $input = json_decode($argv[1], true);
 if (!$input) {
     die("Invalid JSON input");
