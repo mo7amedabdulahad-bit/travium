@@ -29,7 +29,9 @@ if (!defined('ROOT_PATH')) define('ROOT_PATH', __DIR__ . '/');
 if (!defined('EP_HOST')) define('EP_HOST', 'localhost');
 if (!defined('EP_PORT')) define('EP_PORT', 3306);
 define('CONNECTION_FILE', $connectionFile);
+if (!defined('INCLUDE_PATH')) define('INCLUDE_PATH', __DIR__ . '/src/');
 require_once(__DIR__ . '/src/config.php');
+require_once(__DIR__ . '/src/Core/Config.php');
 require_once(__DIR__ . '/src/Core/Database/DB.php');
 
 $db = \Core\Database\DB::getInstance();
