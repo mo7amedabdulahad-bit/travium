@@ -353,6 +353,7 @@ ExecStart=/usr/bin/env TRAVIUM_UNDER_SYSTEMD=1 /usr/bin/php8.4 /home/${SITE_USER
 Type=simple
 Restart=on-failure
 RestartSec=2
+StartLimitIntervalSec=0
 KillMode=control-group
 StandardOutput=journal
 StandardError=journal
@@ -386,6 +387,9 @@ for w in "${desired[@]}"; do
       echo "Enabling travium@${w}.service"
       systemctl enable --now "travium@${w}.service"
       ln -sf "/etc/systemd/system/travium@.service" "$TARGET_WANTS_DIR/travium@${w}.service"
+    else
+      # Ensure it is running or restarted if config changed
+      systemctl try-restart "travium@${w}.service"
     fi
   fi
 done
