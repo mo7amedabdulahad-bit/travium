@@ -91,49 +91,55 @@ class RegisterModel
                 break;
         }
         
-        $calculatedMax = (int)(MAP_SIZE / 2);
-        if ($calculatedMax <= 25) {
-            // Tiny map handling - allow full range but PROTECT THE CENTER (Natar Zone)
-            $minDistance = 6; // Was 2. Increased to 6 to push them out of Natar Zone. 
-            // Fix: calculatedMax is only half map size. 
-            // We need full map size * 1.5 to reach corners (e.g. 25*1.41 = 35).
-            // Using *2 to be absolutely safe.
-            $maxDistance = (defined('MAP_SIZE') ? MAP_SIZE : 25) * 2; 
-        } else {
-            $minDistance = 25;
-            $maxDistance = $calculatedMax;
+        // Calculate Max Radius (Corner distance)
+        // defined('MAP_SIZE') check is safety. 25->35.35, 50->70.7, 100->141.4
+        $mapSize = defined('MAP_SIZE') ? MAP_SIZE : 25;
+        // Half map size is the axis edge (25), but corners are further (sqrt(2)*25 = 35).
+        // Using mapSize * 1.5 covers corners comfortably.
+        $absoluteMaxR = $mapSize * 1.5; 
+        
+        $natarZoneRadius = 6; // Keep (0,0) to radius 6 clear for Natars/MH
+        
+        // Define Bands based on strategy
+        switch ($positionStrategy) {
+            case 'center': // Front Line (Aggressive)
+                // Zone: Inner Band (Network of War)
+                // From Natar Zone to ~60% of map.
+                $minDistance = $natarZoneRadius; 
+                $maxDistance = floor($absoluteMaxR * 0.6); 
+                $orderBy = "RAND()"; // Scatter organicallly within the Front Line
+                break;
+                
+            case 'edge': // Back Line (Passive)
+                // Zone: Outer Band (Safe Zone)
+                // From ~60% out to the corners.
+                $minDistance = ceil($absoluteMaxR * 0.6);
+                $maxDistance = $absoluteMaxR;
+                $orderBy = "RAND()"; // Scatter organicallly within the Back Line
+                break;
+                
+            case 'random': // Chaos
+            default:
+                $minDistance = $natarZoneRadius; // Just avoid Natars
+                $maxDistance = $absoluteMaxR;
+                $orderBy = "RAND()";
+                break;
         }
 
-        
         $conditions = [];
         $conditions[] = 'occupied=0';
         $conditions[] = "fieldtype=$fieldType";
         $conditions[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
-        // Fixed: Removed hardcoded r > 25, used dynamic minDistance
         $conditions[] = "(r >= $minDistance AND r <= $maxDistance)";
         
         if (!$ignoreDensity) {
             $nearby = '(SELECT COUNT(av.kid) FROM available_villages av WHERE av.occupied=1 AND ABS(av.r-a.r) <= 6 AND ABS(av.angle-a.angle) <= 8)';
             $conditions[] = "$nearby < 3";
         }
-
+        
         $conditionsString = implode(" AND ", $conditions);
-
-        // Position Strategy Sorting
-        switch ($positionStrategy) {
-            case 'center': // Front Line (Attackers) = Closest to 0,0
-                $orderBy = "r ASC, RAND()"; 
-                break;
-            case 'edge': // Back Line (Defenders) = Furthest from 0,0
-                $orderBy = "r DESC, RAND()"; 
-                break;
-            case 'random': // Pure Chaos
-                $orderBy = "RAND()"; 
-                break;
-            default: // Classic Travian Spiral
-                $orderBy = "r ASC"; 
-                break;
-        }
+        
+        // Removed switch here as it's handled above now
         
         $q = "SELECT a.kid FROM available_villages a WHERE " . $conditionsString . " ORDER BY $orderBy LIMIT 1";
         
