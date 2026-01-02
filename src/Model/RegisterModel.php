@@ -137,13 +137,15 @@ class RegisterModel
         
         $q = "SELECT a.kid FROM available_villages a WHERE " . $conditionsString . " ORDER BY $orderBy LIMIT 1";
         
+        
+        $limit = 16;
         // Add debug logging to trace strategy performance
         $qLog = "SELECT kid FROM available_villages a WHERE $conditionsString ORDER BY $orderBy LIMIT $limit";
         // file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "Sector: $sector, Strat: $positionStrategy, MaxR: $maxDistance. Query: $qLog\n", FILE_APPEND);
 
         // 2. Select Candidates
         // Increased limit for fallback options
-        $rows = $db->query("SELECT kid, r, angle FROM available_villages a WHERE $conditionsString ORDER BY $orderBy LIMIT 16");
+        $rows = $db->query("SELECT kid, r, angle FROM available_villages a WHERE $conditionsString ORDER BY $orderBy LIMIT $limit");
         
         $count = $rows->num_rows;
         file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "GenBase: Sector=$sector Strat=$positionStrategy MaxR=$maxDistance ResultCount=$count\n", FILE_APPEND);
