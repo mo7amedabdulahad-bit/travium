@@ -88,9 +88,9 @@ foreach ($logs as $log) {
 
 // 5. Schema Audit & Test Insert
 echo "\n=== USERS TABLE ===\n";
-$uRes = $db->query("SELECT id, username, access FROM users ORDER BY id ASC LIMIT 20");
+$uRes = $db->query("SELECT id, name, access FROM users ORDER BY id ASC LIMIT 20");
 while($u = $uRes->fetch_assoc()) {
-    echo "[{$u['id']}] {$u['username']} (Access: {$u['access']})\n";
+    echo "[{$u['id']}] {$u['name']} (Access: {$u['access']})\n";
 }
 
 echo "\n=== VDATA OWNERSHIP ===\n";
