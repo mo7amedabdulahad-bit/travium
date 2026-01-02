@@ -1555,8 +1555,19 @@ class InstallerModel
         $register->createNatarsBaseVillage($natar_kid);
         $WonderOfTheWorld = new \Model\WonderOfTheWorldModel();
         $WonderOfTheWorld->createWWVillages();
-        //multihunter
-        $register->createBaseVillage(2, "Multihunter", 1, Formulas::xy2kid(1, 0));
+        
+        // Multihunter: Force cleanup first to ensure creation succeeds
+        $mhKid = Formulas::xy2kid(1, 0);
+        $db->query("DELETE FROM vdata WHERE kid=$mhKid");
+        $db->query("UPDATE available_villages SET occupied=0 WHERE kid=$mhKid");
+        $db->query("UPDATE wdata SET occupied=0 WHERE id=$mhKid");
+        
+        if (!$register->createBaseVillage(2, "Multihunter", 1, $mhKid)) {
+            // Fallback: Try (0,1) if (1,0) failed
+            $mhKid2 = Formulas::xy2kid(0, 1);
+            $register->createBaseVillage(2, "Multihunter", 1, $mhKid2);
+        }
+        
         $db->query("UPDATE config SET installed=1, installationTime=" . time());
         /*
         $newsletter_subject = sprintf(T("Global", "Newsletter_NewServer_subject"), Config::getProperty("settings", "serverName"), getGameSpeed());

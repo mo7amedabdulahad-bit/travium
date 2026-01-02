@@ -117,7 +117,10 @@ class RegisterModel
         }
 
         $conditions = implode(" AND ", $conditions);
-        $q = "SELECT a.kid FROM available_villages a WHERE " . $conditions . " ORDER BY RAND() LIMIT 1";
+        // User Request: Front line design -> Cluster near center if ignoring density
+        $orderBy = $ignoreDensity ? "r ASC, rand ASC" : "RAND()";
+        
+        $q = "SELECT a.kid FROM available_villages a WHERE " . $conditions . " ORDER BY $orderBy LIMIT 1";
         
         // DEBUG LOGGING
         file_put_contents('/tmp/register_debug.log', date('[H:i:s] ') . "generateBase: Sector=$sector MAP_SIZE=".MAP_SIZE." MaxDist=$maxDistance Query=$q\n", FILE_APPEND);
@@ -143,13 +146,14 @@ class RegisterModel
             $conditions[] = 'occupied=0';
             $conditions[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
             $conditions[] = "(r >= $minDistance AND r <= $maxDistance)";
-            $q = "SELECT kid FROM available_villages WHERE " . implode(" AND ", $conditions) . " ORDER BY RAND() LIMIT 1";
+            // Use same Front Line logic for fallback
+            $q = "SELECT kid FROM available_villages WHERE " . implode(" AND ", $conditions) . " ORDER BY r ASC LIMIT 1";
             
             $kid = $db->fetchScalar($q);
             
             // 2. If that fails, try ANY available village on the map (Total fallback)
             if (!$kid) {
-                $q = "SELECT kid FROM available_villages WHERE occupied=0 ORDER BY RAND() LIMIT 1";
+                $q = "SELECT kid FROM available_villages WHERE occupied=0 ORDER BY r ASC LIMIT 1";
                 $kid = $db->fetchScalar($q);
             }
 
