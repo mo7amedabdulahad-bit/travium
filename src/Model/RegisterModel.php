@@ -298,10 +298,10 @@ class RegisterModel
         $village_name = $db->real_escape_string(str_replace("'", '`', $village_name));
         $maxRes = 800 * getGame("storage_multiplier");
         $minRes = ceil($maxRes * 0.9375);
-        $fieldType = $db->fetchScalar("SELECT fieldtype FROM wdata WHERE id=$kid");
+        $fieldType = (int)$db->fetchScalar("SELECT fieldtype FROM wdata WHERE id=$kid");
         
         if (!$fieldType) {
-             file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: FieldType not found for KID $kid\n", FILE_APPEND);
+             file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: FieldType not found (or 0) for KID $kid\n", FILE_APPEND);
         }
 
         $row = vsprintf("'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'",
@@ -328,9 +328,12 @@ class RegisterModel
             ]);
         $db->query("UPDATE wdata SET occupied=1 WHERE id=$kid");
         $db->begin_transaction();
-        $good = $db->query("INSERT INTO vdata (kid, owner, fieldtype, name, capital, pop, cp, wood, clay, iron, crop, maxstore, maxcrop, last_loyalty_update, lastmupdate, created, isWW, expandedfrom, lastVillageCheck) VALUES ($row)");
+        
+        $q = "INSERT INTO vdata (kid, owner, fieldtype, name, capital, pop, cp, wood, clay, iron, crop, maxstore, maxcrop, last_loyalty_update, lastmupdate, created, isWW, expandedfrom, lastVillageCheck) VALUES ($row)";
+        $good = $db->query($q);
+        
         if (!$good || !$db->affectedRows()) {
-            file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: VDATA Insert Failed for KID $kid. DB Error: " . $db->error . "\n", FILE_APPEND);
+            file_put_contents('/tmp/register_error.log', date('[H:i:s] ') . "_createVillage: VDATA Insert Failed for KID $kid. DB Error: " . $db->error . "\nQuery: $q\n", FILE_APPEND);
             $db->query("UPDATE available_villages SET occupied=0 WHERE kid=$kid");
             $db->query("UPDATE wdata SET occupied=0 WHERE id=$kid");
             $db->rollback();
