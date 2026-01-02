@@ -255,8 +255,13 @@ try {
     exit(0);
 
 } catch (Exception $e) {
-    echo "[Skirmish Error] " . $e->getMessage() . "\n";
-    debugLog("Error: " . $e->getMessage());
+    echo "\n[Skirmish Error] Exception Caught!\n";
+    echo "Message: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . "\n";
+    echo "Line: " . $e->getLine() . "\n";
+    echo "Trace:\n" . $e->getTraceAsString() . "\n";
+    
+    debugLog("Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
     exit(1);
 }
 
