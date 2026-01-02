@@ -1,7 +1,3 @@
-<?php
-define("COL_TAG", "");
-define('GLOBAL_CONFIG_FILE', __DIR__ . '/config.php');
-
 // Auto-detect CONNECTION_FILE
 $serversDir = __DIR__ . '/servers';
 $connectionFile = null;
@@ -25,6 +21,10 @@ if (!$connectionFile) {
     die("Cannot proceed without DB connection.\n");
 }
 
+if (!defined('IS_DEV')) define('IS_DEV', true);
+if (!defined('ROOT_PATH')) define('ROOT_PATH', __DIR__ . '/');
+if (!defined('EP_HOST')) define('EP_HOST', 'localhost');
+if (!defined('EP_PORT')) define('EP_PORT', 3306);
 define('CONNECTION_FILE', $connectionFile);
 require_once(__DIR__ . '/src/config.php');
 require_once(__DIR__ . '/src/Core/Database/DB.php');
