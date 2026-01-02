@@ -1,3 +1,7 @@
+<?php
+define("COL_TAG", "");
+define('GLOBAL_CONFIG_FILE', __DIR__ . '/config.php');
+
 // Auto-detect CONNECTION_FILE
 $serversDir = __DIR__ . '/servers';
 $connectionFile = null;
@@ -17,7 +21,6 @@ if (is_dir($serversDir)) {
 if (!$connectionFile) {
     echo "ERROR: No connection.php found in servers/ directory!\n";
     echo "This means installation failed before server directory creation.\n";
-    // Try checking if a 's1' dir exists even if empty?
     die("Cannot proceed without DB connection.\n");
 }
 
@@ -81,4 +84,3 @@ foreach ($logs as $log) {
     }
 }
 echo "\n=== END REPORT ===\n";
-
