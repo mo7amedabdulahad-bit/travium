@@ -93,14 +93,17 @@ class RegisterModel
         
         $calculatedMax = (int)(MAP_SIZE / 2);
         if ($calculatedMax <= 25) {
-            // Tiny map handling
+            // Tiny map handling - allow full range
             $minDistance = 2; 
-            $maxDistance = max($calculatedMax, 10);
+            // Fix: calculatedMax is only half map size. We need full map size for edge.
+            // Using a static 25 or derived from MAP_SIZE is safer.
+            $maxDistance = (defined('MAP_SIZE') ? MAP_SIZE : 25) + 5; 
         } else {
             $minDistance = 25;
             $maxDistance = $calculatedMax;
         }
 
+        
         $conditions = [];
         $conditions[] = 'occupied=0';
         $conditions[] = "fieldtype=$fieldType";
@@ -252,7 +255,13 @@ class RegisterModel
 
     public function createBaseVillage($uid, $playerName, $race, $kid)
     {
-        $village_name = sprintf(T("Global", "playerVillageName"), $playerName);
+        $village_name = $playerName . "'s Village";
+        if (function_exists("T")) {
+             $trans = T("Global", "playerVillageName");
+             if ($trans) {
+                 $village_name = sprintf($trans, $playerName);
+             }
+        }
         $result = $this->_createVillage(
             $uid,
             $race,
