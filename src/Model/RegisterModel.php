@@ -93,14 +93,23 @@ class RegisterModel
                 $angle = [0, 360];
                 break;
         }
-        $minDistance = 25;
-        $maxDistance = (int)(MAP_SIZE / 2); // Dynamic max distance based on map size
         
+        $calculatedMax = (int)(MAP_SIZE / 2);
+        if ($calculatedMax <= 25) {
+            // Tiny map handling
+            $minDistance = 2; 
+            $maxDistance = max($calculatedMax, 10);
+        } else {
+            $minDistance = 25;
+            $maxDistance = $calculatedMax;
+        }
+
         $conditions = [];
         $conditions[] = 'occupied=0';
         $conditions[] = "fieldtype=$fieldType";
         $conditions[] = "(angle >= {$angle[0]} AND angle <= {$angle[1]})";
-        $conditions[] = "(r > 25 AND r >= $minDistance AND r <= $maxDistance)";
+        // Fixed: Removed hardcoded r > 25, used dynamic minDistance
+        $conditions[] = "(r >= $minDistance AND r <= $maxDistance)";
         
         if (!$ignoreDensity) {
             $nearby = '(SELECT COUNT(av.kid) FROM available_villages av WHERE av.occupied=1 AND ABS(av.r-a.r) <= 6 AND ABS(av.angle-a.angle) <= 8)';
