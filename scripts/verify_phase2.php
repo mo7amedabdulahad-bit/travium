@@ -3,7 +3,9 @@
 // Run this after applying migration 005_npc_scheduler_columns.sql
 
 define('ROOT_PATH', dirname(__DIR__) . '/');
+echo "debug: loading bootstrap...\n";
 require_once ROOT_PATH . 'src/bootstrap.php';
+echo "debug: bootstrap loaded.\n";
 
 use Core\Database\DB;
 use Core\NpcScheduler;

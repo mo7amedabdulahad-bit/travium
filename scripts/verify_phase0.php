@@ -3,7 +3,9 @@
 // Run this on the server after pulling changes and running migrations
 
 define('ROOT_PATH', dirname(__DIR__) . '/');
+echo "debug: loading bootstrap...\n";
 require_once ROOT_PATH . 'src/bootstrap.php';
+echo "debug: bootstrap loaded.\n";
 
 use Core\Database\DB;
 use Core\NpcConfig;
