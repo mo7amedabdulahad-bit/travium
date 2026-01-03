@@ -3,6 +3,7 @@
 // Run this on the server after pulling changes and running migrations
 
 define('ROOT_PATH', dirname(__DIR__) . '/');
+define('GLOBAL_CONFIG_FILE', __DIR__ . '/dummy_global_config.php');
 echo "debug: loading bootstrap...\n";
 require_once ROOT_PATH . 'src/bootstrap.php';
 echo "debug: bootstrap loaded.\n";
