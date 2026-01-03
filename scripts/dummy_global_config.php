@@ -23,6 +23,9 @@ $globalConfig['staticParameters']['session_timeout'] = 3600;
 $globalConfig['staticParameters']['default_payment_location'] = 1;
 $globalConfig['staticParameters']['global_css_class'] = 'travium';
 
+// Misc keys found in config.php
+$globalConfig['auto_reinstall'] = false;
+
 $globalConfig['dataSources']['globalDB'] = [
     'hostname' => 'localhost',
     'username' => 'travium',
