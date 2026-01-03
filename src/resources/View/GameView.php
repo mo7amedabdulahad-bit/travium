@@ -321,7 +321,7 @@ class GameView
                 $class[] = 'active';
             }
             $view->vars['content'] .= '<li id="infoID_p' . $row['id'] . '" class="' . implode(" ", $class) . '">';
-            if ($row['autoType'] == 1) {
+            if (($row['autoType'] ?? 0) == 1) {
                 $cache = GlobalCaching::getInstance();
                 if (!($offer = $cache->get("paymentOffer"))) {
                     $offer = GlobalDB::getInstance()->query("SELECT offer, offerFrom FROM paymentConfig LIMIT 1")->fetch_assoc();
@@ -330,7 +330,7 @@ class GameView
                 $view->vars['content'] .= sprintf(T("inGame", "infoBox.AutoType_GoldPromotion"),
                     TimezoneHelper::autoDateString($offer['offerFrom'], true),
                     TimezoneHelper::autoDateString($offer['offer'], true));
-            } else if ($row['autoType'] == 2) {
+            } else if (($row['autoType'] ?? 0) == 2) {
                 //TODO: Public Peace day.
             } else {
                 $view->vars['content'] .= $row['params'];
@@ -874,7 +874,8 @@ class GameView
         $session = $this->session;
         $villages = (new ProfileCache($this->session->get("profileCacheVersion")))->getProfileVillagesSortedByName($this->session->getPlayerId());
         $attacksList = [];
-        if (!($attacksList = $memcache->get("attacksList:{$this->session->getPlayerId()}"))) {
+        if (!($attacksList = $memcache->get("attacksList:{$this->session->getPlayerId()}")) || !is_array($attacksList)) {
+            $attacksList = [];
             if ($this->session->getPlayerId() > 2 && ($this->session->hasPlus() || $this->session->isAdmin())) {
                 $attacks = $db->query("SELECT v.kid, (SELECT COUNT(m.id) FROM movement m WHERE m.mode=0 AND m.to_kid=v.kid AND m.attack_type IN(3,4)) as `attack_count` FROM vdata v WHERE v.owner={$this->session->getPlayerId()}");
                 while ($row = $attacks->fetch_assoc()) {

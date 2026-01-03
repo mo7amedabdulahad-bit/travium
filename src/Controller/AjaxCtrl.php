@@ -24,7 +24,7 @@ class AjaxCtrl extends AnyCtrl
         
         // **FIX: Check $_REQUEST instead of just $_GET (JavaScript sends via POST)**
         if (isset($_REQUEST['cmd'])) {
-            $cmd = filter_var($_REQUEST['cmd'], FILTER_SANITIZE_STRING);
+            $cmd = htmlspecialchars($_REQUEST['cmd'], ENT_QUOTES, 'UTF-8');
             $response = ["response" => ['error' => FALSE, 'errorMsg' => NULL, 'data' => [],],];
             if (!in_array($cmd, ['news', 'configuration'])) {
                 $this->checkAjaxToken($response);
@@ -51,8 +51,7 @@ class AjaxCtrl extends AnyCtrl
     function checkAjaxToken(&$response)
     {
         return true;
-        if (!isset($_POST['ajaxToken']) || filter_var($_POST['ajaxToken'],
-                FILTER_SANITIZE_STRING) != $this->session->getAjaxToken()) {
+        if (!isset($_POST['ajaxToken']) || htmlspecialchars($_POST['ajaxToken'], ENT_QUOTES, 'UTF-8') != $this->session->getAjaxToken()) {
             $response['ajaxToken'] = NULL;
             $response['response']['error'] = TRUE;
             $response['response']['errorMsg'] = 'Invalid token.';

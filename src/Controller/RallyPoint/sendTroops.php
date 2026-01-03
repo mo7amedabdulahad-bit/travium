@@ -115,7 +115,7 @@ class sendTroops extends RallyPointHTML
             $this->getAvailableAttackTypes();
         }
         if (isset($_REQUEST['dname'])) {
-            $this->result['settings']['to']['dname'] = filter_var($_REQUEST['dname'], FILTER_SANITIZE_STRING);
+            $this->result['settings']['to']['dname'] = htmlspecialchars($_REQUEST['dname'], ENT_QUOTES, 'UTF-8');
         }
         if (isset($_REQUEST['redeployHero']) && $this->result['ui']['showHeroChangeHomeCheckBox']) {
             $this->result['settings']['redeployHero'] = TRUE;
@@ -127,8 +127,7 @@ class sendTroops extends RallyPointHTML
 
         if (isset($_POST['timestamp']) && isset($_POST['timestamp_checksum'])) {
             $this->result['settings']['timestamp'] = (int)$_POST['timestamp'];
-            $this->result['settings']['timestamp_checksum'] = filter_var($_POST['timestamp_checksum'],
-                FILTER_SANITIZE_STRING);
+            $this->result['settings']['timestamp_checksum'] = htmlspecialchars($_POST['timestamp_checksum'], ENT_QUOTES, 'UTF-8');
 
             if (!(isset($_REQUEST['edit']) && $_REQUEST['edit'] == 'edit')) {
                 $a2b = $this->getA2b($this->result['settings']['timestamp'],

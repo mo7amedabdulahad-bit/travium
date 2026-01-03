@@ -40,8 +40,8 @@ class MinimapCtrl extends AnyCtrl
         $max = (int)$db->fetchScalar("SELECT MAX(r) FROM available_villages a WHERE occupied=1 AND (SELECT owner FROM vdata WHERE kid=a.kid)>1");
         $map = $db->query("SELECT id, fieldtype, occupied, x, y FROM wdata");
         while ($row = $map->fetch_assoc()) {
-            $x = 92.5 + ($row['x'] * $rate_x);
-            $y = 54.5 - ($row['y'] * $rate_y);
+            $x = (int)(92.5 + ($row['x'] * $rate_x));
+            $y = (int)(54.5 - ($row['y'] * $rate_y));
             if (Formulas::isGrayArea($row['id'])) {
                 $rgb = $this->hex2rgb($this->color_blend_by_opacity($this->colors['grey'], mt_rand(70, 100)));
                 imagesetpixel($img, $x, $y, imagecolorallocatealpha($img, $rgb['r'], $rgb['g'], $rgb['b'], 0));
@@ -58,7 +58,7 @@ class MinimapCtrl extends AnyCtrl
                         $race = 1;
                     }
                     $rgb = $this->hex2rgb($this->colors['tribes'][$race]);
-                    imagesetpixel($img, $x, $y, imagecolorallocatealpha($img, $rgb['r'], $rgb['g'], $rgb['b'], $rnd));
+                    imagesetpixel($img, $x, $y, imagecolorallocatealpha($img, (int)$rgb['r'], (int)$rgb['g'], (int)$rgb['b'], $rnd));
                 }
             }
         }

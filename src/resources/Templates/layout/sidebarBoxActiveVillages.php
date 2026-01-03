@@ -110,7 +110,7 @@
             </div>
             <div class="clear"></div>
             <div id="villageNameField"
-                 class="boxTitle"><?=filter_var($vars['villageName'], FILTER_SANITIZE_STRING); ?></div>
+                 class="boxTitle"><?=htmlspecialchars($vars['villageName'], ENT_QUOTES, 'UTF-8'); ?></div>
         </div>
         <div class="innerBox content">
             <div
