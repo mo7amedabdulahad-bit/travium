@@ -160,6 +160,10 @@ try {
     echo "[Skirmish] Player '{$input['player_username']}' created in $playerQuadrant (ID: $playerId, Ali: $playerAliId)\n";
     debugLog("Player created. Fetching NPC names...");
 
+    // Get server-level difficulty for all NPCs
+    $serverDifficulty = $db->fetchScalar("SELECT difficulty FROM server_settings WHERE server_id=1") ?? 'Medium';
+    echo "[Skirmish] Server difficulty: $serverDifficulty - All NPCs will inherit this difficulty\n";
+
     // Prepare NPC Names for EVERYONE (Leaders + Mass)
     $totalNpcs = (int)$input['npc_count'];
     $totalNpcsToName = max($totalNpcs, 3); // Ensure at least enough for 3 leaders
@@ -209,6 +213,9 @@ try {
         
         // Set war village (first village)
         $db->query("UPDATE users SET war_village_id=$leaderKid WHERE id=$leaderId");
+        
+        // Set server-level difficulty
+        $db->query("UPDATE users SET npc_difficulty='$serverDifficulty' WHERE id=$leaderId");
         
         if (class_exists('Core\NpcConfig')) {
         \Core\NpcConfig::assignRandom($leaderId);
@@ -260,6 +267,9 @@ try {
                 
                 // Set war village (first village)
                 $db->query("UPDATE users SET war_village_id=$kid WHERE id=$uid");
+                
+                // Set server-level difficulty
+                $db->query("UPDATE users SET npc_difficulty='$serverDifficulty' WHERE id=$uid");
                 
                 $db->query("UPDATE users SET aid={$allianceIds[$quad]}, alliance_join_time=".time()." WHERE id=$uid");
                 $allianceModel->recalculateMaxUsers($allianceIds[$quad]);
