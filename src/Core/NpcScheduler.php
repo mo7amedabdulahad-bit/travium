@@ -40,11 +40,9 @@ class NpcScheduler
             $start = microtime(true);
             
             try {
-                // Execute NPC Logic
-                // We'll use the ScriptEngine (Phase 3) here later. 
-                // For now, we update the timestamp to ensure the loop continues.
+                // Execute NPC Logic via ScriptEngine
                 if (class_exists('Core\NpcScriptEngine')) {
-                    // \Core\NpcScriptEngine::executeTick($npc);
+                    \Core\NpcScriptEngine::executeTick($npc);
                 }
 
                 $processedCount++;
