@@ -16,3 +16,6 @@ $connection['database'] = [
 // config.php line 21: 'auto_reinstall' => $connection['auto_reinstall']
 $connection['auto_reinstall'] = false;
 $connection['auto_reinstall_start_after'] = 0;
+
+$connection['engine_filename'] = 'engine.php';
+
