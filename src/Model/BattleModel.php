@@ -477,6 +477,7 @@ class BattleModel
             $off_losses = 1;
         }
 
+        logError("Phase5 Debug: About to call finalize_attack()");
         $this->finalize_attack($no_morale,
             $pop_ratio,
             [
@@ -485,6 +486,7 @@ class BattleModel
             ],
             $offense['t'],
             $defense['t']);
+        logError("Phase5 Debug: finalize_attack() completed");
 
         // Phase 5: Record NPC alliance attack event
         logError("Phase5 Debug: Battle finished - Defender UID: " . ($this->defender['uid'] ?? 'null'));
