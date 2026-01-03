@@ -1,7 +1,9 @@
-<?php
 // Dummy global config file to satisfy require_once in src/config.php
 // This is used by verification scripts running in CLI mode.
-global $globalConfig;
+// REMOVED global keyword to ensure we modify the variable in the caller's scope
+// whether it is global or local.
+echo "debug: dummy_global_config loaded. defined vars: " . implode(',', array_keys(get_defined_vars())) . "\n";
+
 if (!isset($globalConfig)) $globalConfig = [];
 
 // Initialize required keys to prevent "Undefined array key" warnings in src/config.php
