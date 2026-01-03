@@ -210,6 +210,20 @@ class Launcher
             $job = [$farmListModel, 'refreshNpcFarmLists'];
             $jobs[] = new Job('AIProgress:refreshFarmLists', 86400, $job); // 24 hours
         }
+        {
+            // **NEW: Phase 2 NPC Scheduler**
+            // Process NPC logic every 30 seconds (adjust as needed for load)
+            if (class_exists('Core\NpcScheduler')) {
+                // Lambda used to wrap static call if needed, or direct array callable
+                $job = function() {
+                    $count = \Core\NpcScheduler::processDueNpcs(1, 10);
+                    if ($count > 0) {
+                         // Optional: log or handle success
+                    }
+                };
+                $jobs[] = new Job('AIProgress:npcScheduler', 30, $job);
+            }
+        }
         $natarsModel = new NatarsModel();
         {
             $job = [$natarsModel, 'handleNatarVillages'];
