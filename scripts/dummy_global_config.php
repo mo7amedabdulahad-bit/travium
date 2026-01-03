@@ -14,6 +14,15 @@ if (!isset($globalConfig['mailer'])) $globalConfig['mailer'] = [];
 $globalConfig['staticParameters']['recaptcha_public_key'] = 'mock_key';
 $globalConfig['staticParameters']['recaptcha_private_key'] = 'mock_key';
 $globalConfig['staticParameters']['indexUrl'] = 'http://localhost/';
+$globalConfig['staticParameters']['default_timezone'] = 'UTC';
+$globalConfig['staticParameters']['default_language'] = 'en';
+$globalConfig['staticParameters']['default_direction'] = 'LTR';
+$globalConfig['staticParameters']['default_dateFormat'] = 'y.m.d';
+$globalConfig['staticParameters']['default_timeFormat'] = 'H:i';
+$globalConfig['staticParameters']['session_timeout'] = 3600;
+$globalConfig['staticParameters']['default_payment_location'] = 1;
+$globalConfig['staticParameters']['global_css_class'] = 'travium';
+
 $globalConfig['dataSources']['globalDB'] = [
     'hostname' => 'localhost',
     'username' => 'travium',
