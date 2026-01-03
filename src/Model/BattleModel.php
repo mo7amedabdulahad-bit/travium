@@ -487,17 +487,28 @@ class BattleModel
             $defense['t']);
 
         // Phase 5: Record NPC alliance attack event
+        logError("Phase5 Debug: Battle finished - Defender UID: " . ($this->defender['uid'] ?? 'null'));
         if (isset($this->defender['uid']) && $this->defender['uid'] > 0) {
             $defenderAccessLevel = DB::getInstance()->fetchScalar("SELECT access FROM users WHERE id={$this->defender['uid']}");
+            logError("Phase5 Debug: Defender access level: $defenderAccessLevel");
             if ($defenderAccessLevel == 3) { // Defender is NPC
                 $defenderAllianceId = (int)$this->defender['player']['aid'];
+                logError("Phase5 Debug: NPC alliance ID: $defenderAllianceId");
                 if ($defenderAllianceId > 0) {
-                    \Core\NpcWorldEvents::recordAllianceAttacked(
-                        \Core\Config::getInstance()->worldId,
-                        $defenderAllianceId,
-                        $this->attacker['uid'],
-                        $this->defender['kid']
-                    );
+                    logError("Phase5 Debug: Recording event for alliance $defenderAllianceId");
+                    try {
+                        NpcWorldEvents::recordAllianceAttacked(
+                            Config::getInstance()->worldId,
+                            $defenderAllianceId,
+                            $this->attacker['uid'],
+                            $this->defender['kid']
+                        );
+                        logError("Phase5 Debug: Event recorded successfully!");
+                    } catch (\Exception $e) {
+                        logError("Phase5 Debug: ERROR - " . $e->getMessage());
+                    }
+                } else {
+                    logError("Phase5 Debug: NPC not in alliance, skipping");
                 }
             }
         }
