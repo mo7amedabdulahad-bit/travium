@@ -14,9 +14,15 @@ class NpcScriptEngine
      */
     public static function executeTick($npcRow)
     {
-        // 1. Determine Global Settings & Phase
-        $settings = NpcConfig::getServerSettings();
-        if (!$settings) return; // Not configured
+        try {
+            logError("NPC {$npcRow['id']}: === TICK START ===");
+            
+            // 1. Determine Global Settings & Phase
+            $settings = NpcConfig::getServerSettings();
+            if (!$settings) {
+                logError("NPC {$npcRow['id']}: No server settings found, aborting");
+                return;
+            }
 
         // Simple phase logic for now (Game age based)
         // Early: < 2 days, Mid: < 7 days, Late: > 7 days
@@ -82,6 +88,11 @@ class NpcScriptEngine
                 // Phase 4: War Village Logic
                 self::executeWarVillageLogic($kid, $npcRow, $template, $policy);
             }
+        }
+        
+        logError("NPC {$npcRow['id']}: === TICK COMPLETE ===");
+        } catch (\Exception $e) {
+            logError("NPC {$npcRow['id']}: FATAL ERROR - " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
         }
     }
 
