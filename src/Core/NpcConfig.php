@@ -431,9 +431,8 @@ class NpcConfig
         $cache = \Core\Caching\Caching::getInstance();
         $key = "server_settings:$serverId";
         
-        if ($cached = $cache->get($key)) {
-            return $cached;
-        }
+        // Clear cache to force fresh fetch (temporary debug)
+        $cache->delete($key);
 
         $db = DB::getInstance();
         $result = $db->query("SELECT * FROM server_settings WHERE server_id=" . (int)$serverId);
@@ -444,9 +443,11 @@ class NpcConfig
                 $row['personality_weights'] = json_decode($row['personality_weights_json'], true);
             }
             $cache->set($key, $row, 300); // Cache for 5 mins
+            logError("NpcConfig: Server settings loaded successfully for server $serverId");
             return $row;
         }
         
+        logError("NpcConfig: No server settings found in database for server_id=$serverId");
         return null;
     }
 
