@@ -22,5 +22,6 @@ $connection['worldId'] = 1;
 $connection['serverName'] = 'Test Server';
 $connection['gameWorldUrl'] = 'http://localhost/';
 $connection['secure_hash_code'] = 'mock_hash_code';
+$connection['speed'] = 1;
 
 
