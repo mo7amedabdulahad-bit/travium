@@ -23,5 +23,6 @@ $connection['serverName'] = 'Test Server';
 $connection['gameWorldUrl'] = 'http://localhost/';
 $connection['secure_hash_code'] = 'mock_hash_code';
 $connection['speed'] = 1;
+$connection['round_length'] = 365;
 
 
