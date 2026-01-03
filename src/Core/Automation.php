@@ -110,9 +110,6 @@ class Automation
     {
         $db = DB::getInstance();
         $movements = $db->query("SELECT * FROM movement WHERE mode=0 AND end_time <= " . miliseconds() . " ORDER BY end_time ASC, id ASC LIMIT 250");
-        if ($movements->num_rows > 0) {
-            logError("AUTOMATION DEBUG: Found {$movements->num_rows} completed attack movements to process at " . date('H:i:s'));
-        }
         $this->processMovementComplete($movements);
     }
 
@@ -138,19 +135,15 @@ class Automation
             }
             switch ($row['attack_type']) {
                 case MovementsModel::ATTACKTYPE_EVASION:
-                    logError("AUTOMATION DEBUG: Processing evasion movement ID: {$row['id']}");
                     new EvasionProcessor($row);
                     break;
                 case MovementsModel::ATTACKTYPE_REINFORCEMENT:
-                    logError("AUTOMATION DEBUG: Processing reinforcement movement ID: {$row['id']}");
                     new ReinforcementProcessor($row);
                     break;
                 case MovementsModel::ATTACKTYPE_NORMAL:
                 case MovementsModel::ATTACKTYPE_RAID:
                 case MovementsModel::ATTACKTYPE_SPY:
-                    logError("AUTOMATION DEBUG: Processing battle movement ID: {$row['id']}, Type: {$row['attack_type']}, To: {$row['to_kid']}");
                     new BattleModel($row);
-                    logError("AUTOMATION DEBUG: BattleModel completed for movement ID: {$row['id']}");
                     break;
                 case MovementsModel::ATTACKTYPE_ADVENTURE:
                     new AdventureProcessor($row);

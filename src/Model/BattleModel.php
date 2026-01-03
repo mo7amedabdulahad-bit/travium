@@ -179,7 +179,6 @@ class BattleModel
 
     public function __construct($row)
     {
-        logError("Phase5 Debug: BattleModel constructor STARTED for attack to village " . ($row['to_kid'] ?? 'unknown'));
         $this->startProfile('__construct');
         $this->heroItemsModel = new HeroItems();
         $this->atkBonusRate = 1 + (Config::getProperty("extraSettings", "power", "atkBonus", "percent") / 100);
@@ -199,7 +198,6 @@ class BattleModel
 
         //Checking if there is a village or not
         if (!$this->model->getVillageState($this->row['to_kid'])) {
-            logError("Phase5 Debug: Village {$this->row['to_kid']} does not exist, exiting early");
             $this->sendVillageDoesNotExistsReport();
             $this->returnTroops();
             return $this->profileOutput();
@@ -212,7 +210,6 @@ class BattleModel
 
         // Checking for unknown defender
         if (!$this->defender['uid'] && !$this->defender['isOasis'] || !$resultDefender) {
-            logError("Phase5 Debug: Unknown defender or failed assocDefender, exiting early (UID: " . ($this->defender['uid'] ?? 'null') . ", isOasis: " . ($this->defender['isOasis'] ?? 'null') . ", resultDefender: " . ($resultDefender ? 'true' : 'false') . ")");
             $this->sendVillageDoesNotExistsReport();
             $this->returnTroops();
             return $this->profileOutput();
@@ -484,7 +481,6 @@ class BattleModel
             $off_losses = 1;
         }
 
-        logError("Phase5 Debug: About to call finalize_attack()");
         $this->finalize_attack($no_morale,
             $pop_ratio,
             [
@@ -493,7 +489,6 @@ class BattleModel
             ],
             $offense['t'],
             $defense['t']);
-        logError("Phase5 Debug: finalize_attack() completed");
 
         $this->recordNpcAllianceAttackEvent();
 
@@ -505,15 +500,11 @@ class BattleModel
      */
     private function recordNpcAllianceAttackEvent()
     {
-        logError("Phase5 Debug: Battle finished - Defender UID: " . ($this->defender['uid'] ?? 'null'));
         if (isset($this->defender['uid']) && $this->defender['uid'] > 0) {
             $defenderAccessLevel = DB::getInstance()->fetchScalar("SELECT access FROM users WHERE id={$this->defender['uid']}");
-            logError("Phase5 Debug: Defender access level: $defenderAccessLevel");
             if ($defenderAccessLevel == 3) { // Defender is NPC
                 $defenderAllianceId = (int)$this->defender['player']['aid'];
-                logError("Phase5 Debug: NPC alliance ID: $defenderAllianceId");
                 if ($defenderAllianceId > 0) {
-                    logError("Phase5 Debug: Recording event for alliance $defenderAllianceId");
                     try {
                         NpcWorldEvents::recordAllianceAttacked(
                             1, // server_id (single server setup)
@@ -521,12 +512,9 @@ class BattleModel
                             $this->attacker['uid'],
                             $this->defender['kid']
                         );
-                        logError("Phase5 Debug: Event recorded successfully!");
                     } catch (\Exception $e) {
-                        logError("Phase5 Debug: ERROR - " . $e->getMessage());
+                        logError("NpcWorldEvents::recordAllianceAttacked failed: " . $e->getMessage());
                     }
-                } else {
-                    logError("Phase5 Debug: NPC not in alliance, skipping");
                 }
             }
         }
