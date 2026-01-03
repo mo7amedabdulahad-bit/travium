@@ -108,10 +108,11 @@ class Automation
 
     public function attackMovementComplete()
     {
-        logError("AUTOMATION DEBUG: attackMovementComplete() called at " . date('H:i:s'));
         $db = DB::getInstance();
         $movements = $db->query("SELECT * FROM movement WHERE mode=0 AND end_time <= " . miliseconds() . " ORDER BY end_time ASC, id ASC LIMIT 250");
-        logError("AUTOMATION DEBUG: Found {$movements->num_rows} completed attack movements to process");
+        if ($movements->num_rows > 0) {
+            logError("AUTOMATION DEBUG: Found {$movements->num_rows} completed attack movements to process at " . date('H:i:s'));
+        }
         $this->processMovementComplete($movements);
     }
 
