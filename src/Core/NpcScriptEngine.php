@@ -72,13 +72,42 @@ class NpcScriptEngine
             }
 
             // C. Special Logic (War vs Passive)
-            // If it's the war village, we might do attacks (Phase 4)
+            // If it's the war village, execute military AI
             // If not, do passive logic
             if ($kid != $warVillageId) {
                 NpcPassiveVillage::doPassiveAction($kid);
             } else {
-                // Phase 4: NpcWarManager::executeWarLogic(...)
+                // Phase 4: War Village Logic
+                self::executeWarVillageLogic($kid, $npcRow, $template, $policy);
             }
+        }
+    }
+
+    /**
+     * Execute war village military AI
+     * 
+     * @param int $warVillageId The war village ID
+     * @param array $npcRow NPC user row
+     * @param array $template Personality template
+     * @param array $policy Difficulty policy
+     */
+    private static function executeWarVillageLogic($warVillageId, $npcRow, $template, $policy)
+    {
+        // 1. Scout new targets periodically (not implemented yet)
+        // NpcScoutingManager::executeScouts($warVillageId, $template, $policy);
+
+        // 2. Select target
+        $target = NpcTargetSelector::selectTarget($warVillageId, $template, $policy);
+        if (!$target) return; // No valid targets
+
+        // 3. Decide: Raid or Attack?
+        // 50% chance for raid, 50% for attack (fully aggressive)
+        $action = mt_rand(0, 1) ? 'raid' : 'attack';
+        
+        if ($action === 'raid') {
+            NpcRaidManager::executeRaid($warVillageId, $target, $template, $policy);
+        } else {
+            NpcAttackManager::executeAttack($warVillageId, $target, $template, $policy);
         }
     }
 }
