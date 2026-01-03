@@ -41,11 +41,11 @@ class NpcAllianceCoordination
         
         // Difficulty-based response rate
         $responseRates = [
-            'Easy' => 0.4,
-            'Medium' => 0.6,
-            'Hard' => 0.8
+            'Easy' => 0.5,      // 50% chance
+            'Medium' => 0.7,    // 70% chance
+            'Hard' => 1.0       // 100% always respond
         ];
-        $responseRate = $responseRates[$difficulty] ?? 0.6;
+        $responseRate = $responseRates[$difficulty] ?? 0.7;
         
         $reinforcementsSent = 0;
         

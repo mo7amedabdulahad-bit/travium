@@ -98,8 +98,16 @@ class NpcScriptEngine
         
         $target = null;
         
-        // 70% chance to prioritize retaliation if we have targets
-        if (!empty($retaliationTargets) && mt_rand(1, 100) <= 70) {
+        // Difficulty-based retaliation priority (same as reinforcement rates)
+        $difficulty = $npcRow['npc_difficulty'] ?? 'Medium';
+        $retaliationChances = [
+            'Easy' => 50,      // 50% chance
+            'Medium' => 70,    // 70% chance
+            'Hard' => 100      // 100% always retaliate
+        ];
+        $retaliationChance = $retaliationChances[$difficulty] ?? 70;
+        
+        if (!empty($retaliationTargets) && mt_rand(1, 100) <= $retaliationChance) {
            $target = self::selectRetaliationTarget($warVillageId, $retaliationTargets);
         }
         
