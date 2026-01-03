@@ -3,7 +3,8 @@
 // Run this after applying migration 005_npc_scheduler_columns.sql
 
 define('ROOT_PATH', dirname(__DIR__) . '/');
-define('GLOBAL_CONFIG_FILE', __DIR__ . '/dummy_global_config.php');
+// REMOVED: define('GLOBAL_CONFIG_FILE', __DIR__ . '/dummy_global_config.php');
+// The script will now use the actual server's config files
 echo "debug: loading bootstrap...\n";
 require_once ROOT_PATH . 'src/bootstrap.php';
 echo "debug: bootstrap loaded.\n";
