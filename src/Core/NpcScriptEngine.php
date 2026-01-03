@@ -40,9 +40,10 @@ class NpcScriptEngine
 
         $template = NpcConfig::getPersonalityTemplate($personality, $phase);
         if (!$template) {
-            // Log warning or fallback?
+            logError("NPC {$npcRow['id']}: No template found for personality=$personality, phase=$phase");
             return;
         }
+        logError("NPC {$npcRow['id']}: Using template for $personality / $phase");
 
         // 3. Get Villages
         $db = DB::getInstance();
@@ -77,6 +78,7 @@ class NpcScriptEngine
             if ($kid != $warVillageId) {
                 NpcPassiveVillage::doPassiveAction($kid);
             } else {
+                logError("NPC {$npcRow['id']}: Executing war village logic for village $kid");
                 // Phase 4: War Village Logic
                 self::executeWarVillageLogic($kid, $npcRow, $template, $policy);
             }
@@ -114,13 +116,20 @@ class NpcScriptEngine
         // If no retaliation target selected, use normal target selection
         if (!$target) {
             $target = NpcTargetSelector::selectTarget($warVillageId, $template, $policy);
+            if ($target) {
+                logError("NPC war village $warVillageId: Selected normal target $target");
+            }
         }
         
-        if (!$target) return; // No valid targets
+        if (!$target) {
+            logError("NPC war village $warVillageId: No valid targets found");
+            return; // No valid targets
+        }
 
         // 3. Decide: Raid or Attack?
         // 50% chance for raid, 50% for attack (fully aggressive)
         $action = mt_rand(0, 1) ? 'raid' : 'attack';
+        logError("NPC war village $warVillageId: Executing $action on target $target");
         
         if ($action === 'raid') {
             NpcRaidManager::executeRaid($warVillageId, $target, $template, $policy);
