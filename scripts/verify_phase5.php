@@ -56,7 +56,7 @@ try {
     \Core\NpcWorldEvents::recordAllianceAttacked(1, 999, 1, 100);
     
     // Check if event was recorded
-    $eventCount = (int)$ db->fetchScalar("SELECT COUNT(*) FROM npc_world_events WHERE target_alliance_id=999 AND processed_at IS NULL");
+    $eventCount = (int)$db->fetchScalar("SELECT COUNT(*) FROM npc_world_events WHERE target_alliance_id=999 AND processed_at IS NULL");
     
     if ($eventCount > 0) {
         echo "[OK] Event recording works.\n";
