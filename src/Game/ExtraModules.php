@@ -49,7 +49,7 @@ class ExtraModules
             ])) {
             return FALSE;
         }
-        return method_exists(get_class(), $action);
+        return method_exists(self::class, $action);
     }
 
     public static function isEnabled($name)
