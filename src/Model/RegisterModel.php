@@ -431,7 +431,6 @@ class RegisterModel
 
     public function getVillages($uid)
     {
-        // SYNC FIX: Ensure latest code is pushed
         $db = DB::getInstance();
         return $db->query("SELECT * FROM vdata WHERE owner=$uid");
     }
@@ -799,19 +798,30 @@ class RegisterModel
         $result = $this->_createVillage(1, 5, $kid, $name, 0, 0, true, false);
         if (!$result) return false;
         $this->addWWVillageFields($kid);
+
         $units = WonderOfTheWorldModel::getWWTroops(Formulas::isGrayArea($kid));
         $modify = [];
         for ($i = 1; $i <= 10; ++$i) {
             $modify[] = "u{$i}=" . $units[$i];
         }
         $db->query("UPDATE units SET " . implode(",", $modify) . " WHERE kid=$kid");
+        
         $calculatedCPPOP = VillageModel::calculateVillageCulturePointsAndPopulation($kid, true);
         $this->setVillageCPPOP($kid, $calculatedCPPOP['pop'], $calculatedCPPOP['cp']);
         $this->increaseUserPopCP(1, $calculatedCPPOP['pop'], $calculatedCPPOP['cp']);
+        
         $store = Formulas::storeCAP(20) + Formulas::storeCAP(10);
         $db->query("UPDATE vdata SET maxstore=$store, maxcrop=$store WHERE kid=$kid");
+        
         ResourcesHelper::updateVillageResources($kid, false);
         return $result;
+    }
+
+    public function getCapital($uid)
+    {
+        $db = DB::getInstance();
+        $uid = (int)$uid;
+        return $db->fetchScalar("SELECT kid FROM vdata WHERE owner=$uid AND capital=1 LIMIT 1");
     }
 
     public function findInPolarSystem($plus, $area = 'ne', $nonNatar = TRUE)

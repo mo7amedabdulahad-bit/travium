@@ -207,7 +207,8 @@ try {
         
         $registerModel->createBaseVillage($leaderId, $leaderName, $tribe, $leaderKid);
         if (class_exists('Core\NpcConfig')) {
-            \Core\NpcConfig::assignRandom($leaderId);
+        \Core\NpcConfig::assignRandom($leaderId);
+            \Core\NpcConfig::registerNpcVillage($registerModel->getCapital($leaderId), $leaderId, 'Headquarters', 'Early');
         }
         
         $aliId = $allianceModel->createAlliance($leaderId, $aliData['name'], $aliData['tag']);
@@ -267,12 +268,28 @@ try {
                          if (method_exists('Core\NpcConfig', 'assignRandom')) {
                              \Core\NpcConfig::assignRandom($uid);
                          }
+                         \Core\NpcConfig::registerNpcVillage($registerModel->getCapital($uid), $uid, 'Headquarters', 'Early');
                     }
                 }
             }
         }
     }
     
+    // 7. NEW: Phase 0 Integration - Save Global Settings
+    echo "[Skirmish] Saving Phase 0 server settings...\n";
+    $personalityWeights = [
+        'aggressive' => 30,
+        'economic' => 25,
+        'balanced' => 20,
+        'diplomat' => 15,
+        'assassin' => 10
+    ];
+    
+    // Default server ID is 1 for now
+    $db->query("INSERT INTO server_settings (server_id, npc_count, map_size, difficulty, personality_weights_json) 
+                VALUES (1, $totalNpcs, " . (defined('MAP_SIZE') ? MAP_SIZE : 25) . ", 'Medium', '" . json_encode($personalityWeights) . "')
+                ON DUPLICATE KEY UPDATE npc_count=$totalNpcs");
+                
     $db->query("UPDATE config SET installed=1");
     echo "[Skirmish] Setup Complete.\n";
     debugLog("Setup Complete.");

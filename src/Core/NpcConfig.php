@@ -11,8 +11,8 @@ use Core\Database\DB;
  * for the intelligent AI NPC system.
  * 
  * @package Core
- * @version 1.0
- * @date 2025-12-28
+ * @version 1.1 (Phase 0 Extended)
+ * @date 2026-01-03
  */
 class NpcConfig
 {
@@ -370,6 +370,84 @@ class NpcConfig
         $time = time();
 
         return $db->query("UPDATE users SET last_npc_action=$time WHERE id=$uid AND access=3");
+    }
+
+    /**
+     * Get a random unused name from the name pool
+     * 
+     * @param string $gender 'Male' or 'Female' (optional)
+     * @return string|false Name or false if pool empty
+     */
+    public static function getNameFromPool($gender = null)
+    {
+        $db = DB::getInstance();
+        
+        $sql = "SELECT name, id FROM npc_names WHERE is_used=0";
+        if ($gender) {
+            $sql .= " AND gender='" . $db->real_escape_string($gender) . "'";
+        }
+        $sql .= " ORDER BY RAND() LIMIT 1";
+        
+        $result = $db->query($sql);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            // Mark as used immediately to prevent race conditions during heavy spawn
+            $db->query("UPDATE npc_names SET is_used=1 WHERE id=" . $row['id']);
+            return $row['name'];
+        }
+        
+        return false;
+    }
+
+    /**
+     * Register an NPC village in the tracking table
+     * 
+     * @param int $villageId The vdata.kid
+     * @param int $npcUid The users.id of the NPC
+     * @param string $role 'Headquarters','War','Support','Frontier'
+     * @param string $phase 'Early','Mid','Late','Endgame'
+     */
+    public static function registerNpcVillage($villageId, $npcUid, $role, $phase = 'Early')
+    {
+        $db = DB::getInstance();
+        $villageId = (int)$villageId;
+        $npcUid = (int)$npcUid;
+        $role = $db->real_escape_string($role);
+        $phase = $db->real_escape_string($phase);
+        
+        return $db->query("INSERT INTO npc_villages (village_id, npc_player_id, village_role, assigned_script_phase) 
+                          VALUES ($villageId, $npcUid, '$role', '$phase')
+                          ON DUPLICATE KEY UPDATE village_role='$role', assigned_script_phase='$phase'");
+    }
+
+    /**
+     * Get Server Settings
+     * 
+     * @param int $serverId
+     * @return array|null
+     */
+    public static function getServerSettings($serverId = 1)
+    {
+        $cache = \Core\Caching\Caching::getInstance();
+        $key = "server_settings:$serverId";
+        
+        if ($cached = $cache->get($key)) {
+            return $cached;
+        }
+
+        $db = DB::getInstance();
+        $result = $db->query("SELECT * FROM server_settings WHERE server_id=" . (int)$serverId);
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if ($row['personality_weights_json']) {
+                $row['personality_weights'] = json_decode($row['personality_weights_json'], true);
+            }
+            $cache->set($key, $row, 300); // Cache for 5 mins
+            return $row;
+        }
+        
+        return null;
     }
 
     /**
