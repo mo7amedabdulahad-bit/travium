@@ -485,6 +485,22 @@ class BattleModel
             $offense['t'],
             $defense['t']);
 
+        // Phase 5: Record NPC alliance attack event
+        if (isset($this->defender['uid']) && $this->defender['uid'] > 0) {
+            $defenderAccessLevel = DB::getInstance()->fetchScalar("SELECT access FROM users WHERE id={$this->defender['uid']}");
+            if ($defenderAccessLevel == 3) { // Defender is NPC
+                $defenderAllianceId = (int)$this->defender['player']['aid'];
+                if ($defenderAllianceId > 0) {
+                    \Core\NpcWorldEvents::recordAllianceAttacked(
+                        \Core\Config::getInstance()->worldId,
+                        $defenderAllianceId,
+                        $this->attacker['uid'],
+                        $this->defender['kid']
+                    );
+                }
+            }
+        }
+
         return $this->profileOutput();
     }
 

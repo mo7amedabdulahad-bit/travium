@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS npc_world_events (
     server_id INT NOT NULL DEFAULT 1,
     event_type ENUM('AllianceAttacked','WWPlanReleased','WWUnderAttack','NPCAttacked','AllyLost') NOT NULL,
     target_alliance_id INT NULL,
+    attacker_id INT NULL,
+    target_village_id INT NULL,
     target_npc_id INT NULL,
     event_data_json TEXT, -- JSON payload for event details
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
