@@ -199,6 +199,7 @@ class BattleModel
 
         //Checking if there is a village or not
         if (!$this->model->getVillageState($this->row['to_kid'])) {
+            logError("Phase5 Debug: Village {$this->row['to_kid']} does not exist, exiting early");
             $this->sendVillageDoesNotExistsReport();
             $this->returnTroops();
             return $this->profileOutput();
@@ -211,6 +212,7 @@ class BattleModel
 
         // Checking for unknown defender
         if (!$this->defender['uid'] && !$this->defender['isOasis'] || !$resultDefender) {
+            logError("Phase5 Debug: Unknown defender or failed assocDefender, exiting early (UID: " . ($this->defender['uid'] ?? 'null') . ", isOasis: " . ($this->defender['isOasis'] ?? 'null') . ", resultDefender: " . ($resultDefender ? 'true' : 'false') . ")");
             $this->sendVillageDoesNotExistsReport();
             $this->returnTroops();
             return $this->profileOutput();
