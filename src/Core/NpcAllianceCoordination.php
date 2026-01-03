@@ -62,7 +62,7 @@ class NpcAllianceCoordination
             $success = self::sendReinforcement(
                 $defender['war_village_id'], 
                 $targetVillageId, 
-                $defender['tribe'],
+                $defender['race'],
                 0.4 // Send 40% of defensive troops
             );
             
@@ -99,7 +99,7 @@ class NpcAllianceCoordination
         $maxRange = 50; // tiles
         
         $query = "
-            SELECT u.id as user_id, u.war_village_id, u.tribe, w.x, w.y
+            SELECT u.id as user_id, u.war_village_id, u.race, w.x, w.y
             FROM users u
             INNER JOIN vdata v ON u.war_village_id = v.kid
             INNER JOIN wdata w ON v.kid = w.id
