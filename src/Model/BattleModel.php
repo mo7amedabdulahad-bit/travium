@@ -268,6 +268,7 @@ class BattleModel
                 $caged = array_fill(1, 10, 0);
                 $this->model->move_to_cages($this->defender['wave'][0]['units']['num'], $cages, $caged);
                 $this->finalize_caged_attack($caged);
+                 $this->recordNpcAllianceAttackEvent();
                 $this->endProfile('cagedAttack');
                 return $this->profileOutput();
             }
@@ -284,6 +285,7 @@ class BattleModel
             //spy attack
             $this->startProfile('processScoutAttack');
             $this->processScoutAttack($no_morale, $pop_ratio, $sui, $wall_b);
+            $this->recordNpcAllianceAttackEvent();
             $this->endProfile('processScoutAttack');
             return $this->profileOutput();
         }
@@ -351,6 +353,7 @@ class BattleModel
         if (!$offense['t']) {
             $this->startProfile('FinalizeRaidAttackNoOffense');
             $this->finalize_attack($no_morale, $pop_ratio, [1, 0], $offense['t'], $defense['t']);
+            $this->recordNpcAllianceAttackEvent();
             $this->endProfile('FinalizeRaidAttackNoOffense');
             return $this->profileOutput();
         }
@@ -363,6 +366,7 @@ class BattleModel
                 $off_losses = 1;
             }
             $this->finalize_attack($no_morale, $pop_ratio, [$off_losses, $def_losses], $offense['t'], $defense['t']);
+            $this->recordNpcAllianceAttackEvent();
             $this->endProfile('FinalizeRaidAttack');
             return $this->profileOutput();
         }
@@ -491,7 +495,16 @@ class BattleModel
             $defense['t']);
         logError("Phase5 Debug: finalize_attack() completed");
 
-        // Phase 5: Record NPC alliance attack event
+        $this->recordNpcAllianceAttackEvent();
+
+        return $this->profileOutput();
+    }
+
+    /**
+     * Phase 5: Record NPC alliance attack event
+     */
+    private function recordNpcAllianceAttackEvent()
+    {
         logError("Phase5 Debug: Battle finished - Defender UID: " . ($this->defender['uid'] ?? 'null'));
         if (isset($this->defender['uid']) && $this->defender['uid'] > 0) {
             $defenderAccessLevel = DB::getInstance()->fetchScalar("SELECT access FROM users WHERE id={$this->defender['uid']}");
@@ -517,8 +530,6 @@ class BattleModel
                 }
             }
         }
-
-        return $this->profileOutput();
     }
 
     private function assocAttacker()
