@@ -1004,4 +1004,73 @@ class NpcConfig
         
         return $removed;
     }
+    /**
+     * Get Personality Template for a specific phase
+     * 
+     * @param string $personality
+     * @param string $phase
+     * @return array|null
+     */
+    public static function getPersonalityTemplate($personality, $phase)
+    {
+        $cache = \Core\Caching\Caching::getInstance();
+        $key = "npc_template:{$personality}:{$phase}";
+        
+        if ($cached = $cache->get($key)) {
+            return $cached;
+        }
+
+        $db = DB::getInstance();
+        $personality = $db->real_escape_string($personality);
+        $phase = $db->real_escape_string($phase);
+
+        $result = $db->query("SELECT * FROM npc_personality_templates WHERE personality='$personality' AND phase='$phase'");
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $data = [
+                'build_priorities' => json_decode($row['build_priorities_json'], true),
+                'troop_template' => json_decode($row['troop_template_json'], true),
+                'behavior_params' => json_decode($row['behavior_params_json'], true),
+            ];
+            $cache->set($key, $data, 3600); // Cache for 1 hour
+            return $data;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get Difficulty Policy
+     * 
+     * @param string $difficulty
+     * @return array
+     */
+    public static function getDifficultyPolicy($difficulty)
+    {
+        $cache = \Core\Caching\Caching::getInstance();
+        $key = "npc_policy:{$difficulty}";
+        
+        if ($cached = $cache->get($key)) {
+            return $cached;
+        }
+
+        $db = DB::getInstance();
+        $difficulty = $db->real_escape_string($difficulty);
+
+        $result = $db->query("SELECT * FROM npc_difficulty_policies WHERE difficulty='$difficulty'");
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $cache->set($key, $row, 3600);
+            return $row;
+        }
+        
+        // Fallback defaults
+        return [
+            'tick_interval_seconds' => 300,
+            'action_budget_multiplier' => 1.0,
+            'mistake_rate_percent' => 5
+        ];
+    }
 }
