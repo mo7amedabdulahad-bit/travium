@@ -179,6 +179,7 @@ class BattleModel
 
     public function __construct($row)
     {
+        logError("Phase5 Debug: BattleModel constructor STARTED for attack to village " . ($row['to_kid'] ?? 'unknown'));
         $this->startProfile('__construct');
         $this->heroItemsModel = new HeroItems();
         $this->atkBonusRate = 1 + (Config::getProperty("extraSettings", "power", "atkBonus", "percent") / 100);
