@@ -23,6 +23,7 @@ function geoip_country_code_by_name($ip = null)
 if (!extension_loaded("redis")) {
     die("Redis extension not available.");
 }
+fwrite(STDERR, "debug: redis ok\n");
 
 $start_time = microtime(true);
 if (php_sapi_name() != 'cli') {
@@ -51,19 +52,25 @@ if (!defined("ERROR_LOG_FILE")) {
     define("ERROR_LOG_FILE", INCLUDE_PATH . "error_log.log");
 }
 
+fwrite(STDERR, "debug: loading autoloader\n");
 require_once INCLUDE_PATH . "Core" . DIRECTORY_SEPARATOR . 'Autoloader.php';
+fwrite(STDERR, "debug: loading functions\n");
 require_once INCLUDE_PATH . "functions.general.php";
 
   
 global $config;
+fwrite(STDERR, "debug: getting Caching instance\n");
 $cache = Caching::getInstance();
+fwrite(STDERR, "debug: getting Config instance\n");
 $config = Config::getInstance();
 if (!$config || !property_exists($config, 'db')) {
     die("Installation is not completed.");
 }
+fwrite(STDERR, "debug: getting DB instance\n");
 $db = DB::getInstance();
 {
     if (true || php_sapi_name() == 'cli') {
+        fwrite(STDERR, "debug: querying config table\n");
         $result = $db->query("SELECT * FROM config");
         if (!$result->num_rows) {
             logError("No config row found.");
@@ -93,10 +100,12 @@ $db = DB::getInstance();
 if (property_exists($config->dynamic, 'isRestore') && $config->dynamic->isRestore && !defined("IS_UPDATE")) {
     exit("We are having issues, please try again in a moment. E3");
 }
+fwrite(STDERR, "debug: loading config.after\n");
 require(INCLUDE_PATH . "config/config.after.php");
 if (!$config->dynamic->installed) {
     $config->dynamic->maintenance = true;
 }
+fwrite(STDERR, "debug: bootstrap almost done\n");
 function check_ip_access()
 {
     $ip = WebService::ipAddress();
