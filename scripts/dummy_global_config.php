@@ -13,6 +13,13 @@ if (!isset($globalConfig['dataSources'])) $globalConfig['dataSources'] = [];
 if (!isset($globalConfig['voting'])) $globalConfig['voting'] = [];
 if (!isset($globalConfig['mailer'])) $globalConfig['mailer'] = [];
 
+// Populate voting
+$globalConfig['voting']['secret'] = 'mock_secret';
+$globalConfig['voting']['gtop100'] = 'http://localhost/';
+$globalConfig['voting']['topg'] = 'http://localhost/';
+$globalConfig['voting']['arenatop100'] = 'http://localhost/';
+
+
 // Mock essentials
 $globalConfig['staticParameters']['recaptcha_public_key'] = 'mock_key';
 $globalConfig['staticParameters']['recaptcha_private_key'] = 'mock_key';
