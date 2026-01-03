@@ -3,8 +3,8 @@
 // Run this on the server after pulling changes and running migrations
 
 define('ROOT_PATH', dirname(__DIR__) . '/');
-// REMOVED: define('GLOBAL_CONFIG_FILE', __DIR__ . '/dummy_global_config.php');
-// The script will now use the actual server's config files via env.php or similar
+define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'config.php');
+define('CONNECTION_FILE', ROOT_PATH . 'servers/s1/include/connection.php');
 echo "debug: loading bootstrap...\n";
 require_once ROOT_PATH . 'src/bootstrap.php';
 echo "debug: bootstrap loaded.\n";
