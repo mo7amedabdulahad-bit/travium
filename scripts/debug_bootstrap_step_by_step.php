@@ -8,6 +8,9 @@ echo "Step 0: Start\n";
 define('ROOT_PATH', dirname(__DIR__) . '/');
 define('INCLUDE_PATH', ROOT_PATH . 'src/');
 define('GLOBAL_CONFIG_FILE', __DIR__ . '/dummy_global_config.php');
+if (!defined("CONNECTION_FILE")) {
+    define("CONNECTION_FILE", __DIR__ . '/dummy_connection.php');
+}
 
 echo "Step 1: Check Redis\n";
 if (!extension_loaded("redis")) {
