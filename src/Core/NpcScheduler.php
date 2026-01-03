@@ -18,6 +18,9 @@ class NpcScheduler
     {
         $db = DB::getInstance();
         
+        // Phase 5: Process world events BEFORE processing NPCs
+        self::processWorldEvents($serverId);
+        
         // 1. Select NPCs due for processing
         // Uses index idx_users_next_tick (access, next_tick_at)
         $result = $db->query("SELECT id, name, next_tick_at, tick_interval_seconds, war_village_id, npc_personality 
@@ -70,5 +73,71 @@ class NpcScheduler
         }
 
         return $processedCount;
+    }
+    
+    /**
+     * Process world events (Phase 5)
+     * 
+     * @param int $serverId Server/world ID
+     */
+    private static function processWorldEvents($serverId)
+    {
+        $db = DB::getInstance();
+        
+        // Get unprocessed events (limit 20 per cycle to prevent lag)
+        $events = $db->query("
+            SELECT * FROM npc_world_events 
+            WHERE server_id = $serverId AND processed_at IS NULL 
+            ORDER BY created_at ASC 
+            LIMIT 20
+        ");
+        
+        if (!$events || $events->num_rows === 0) return;
+        
+        while ($event = $events->fetch_assoc()) {
+            try {
+                self::handleEvent($event);
+                
+                // Mark as processed
+                $db->query("UPDATE npc_world_events SET processed_at = NOW() WHERE id = {$event['id']}");
+            } catch (\Exception $e) {
+                logError("Event Processing Error (Event ID: {$event['id']}): " . $e->getMessage());
+                // Still mark as processed to prevent infinite retry
+                $db->query("UPDATE npc_world_events SET processed_at = NOW() WHERE id = {$event['id']}");
+            }
+        }
+    }
+    
+    /**
+     * Handle a specific event type
+     * 
+     * @param array $event Event row from database
+     */
+    private static function handleEvent($event)
+    {
+        $db = DB::getInstance();
+        
+        switch ($event['event_type']) {
+            case 'AllianceAttacked':
+                // Get the attacked NPC
+                $attackedNpcId = (int)$db->fetchScalar("
+                    SELECT owner FROM vdata WHERE kid = {$event['target_village_id']}
+                ");
+                
+                if ($attackedNpcId > 0) {
+                    // 1. Coordinate alliance mutual defense
+                    NpcAllianceCoordination::coordinateMutualDefense($attackedNpcId, $event['attacker_id']);
+                    
+                    // 2. Add attacker to retaliation list
+                    NpcRetaliationManager::addRetaliationTarget($attackedNpcId, $event['attacker_id'], 1.0);
+                }
+                break;
+                
+            case 'WWPlanReleased':
+            case 'WWUnderAttack':
+            case 'NpcDefeated':
+                // Phase 6 handlers (stub for now)
+                break;
+        }
     }
 }

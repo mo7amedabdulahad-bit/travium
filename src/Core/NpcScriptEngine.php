@@ -93,11 +93,21 @@ class NpcScriptEngine
      */
     private static function executeWarVillageLogic($warVillageId, $npcRow, $template, $policy)
     {
-        // 1. Scout new targets periodically (not implemented yet)
-        // NpcScoutingManager::executeScouts($warVillageId, $template, $policy);
-
-        // 2. Select target
-        $target = NpcTargetSelector::selectTarget($warVillageId, $template, $policy);
+        // Phase 5: Check retaliation list first
+        $retaliationTargets = NpcRetaliationManager::getRetaliationTargets($npcRow['id']);
+        
+        $target = null;
+        
+        // 70% chance to prioritize retaliation if we have targets
+        if (!empty($retaliationTargets) && mt_rand(1, 100) <= 70) {
+           $target = self::selectRetaliationTarget($warVillageId, $retaliationTargets);
+        }
+        
+        // If no retaliation target selected, use normal target selection
+        if (!$target) {
+            $target = NpcTargetSelector::selectTarget($warVillageId, $template, $policy);
+        }
+        
         if (!$target) return; // No valid targets
 
         // 3. Decide: Raid or Attack?
@@ -109,5 +119,50 @@ class NpcScriptEngine
         } else {
             NpcAttackManager::executeAttack($warVillageId, $target, $template, $policy);
         }
+    }
+    
+    /**
+     * Select a retaliation target from the priority list
+     * 
+     * @param int $warVillageId War village ID
+     * @param array $retaliationTargets Sorted retaliation list
+     * @return int|null Target village ID
+     */
+    private static function selectRetaliationTarget($warVillageId, $retaliationTargets)
+    {
+        $db = DB::getInstance();
+        
+        // Try top 3 highest priority targets
+        $topTargets = array_slice($retaliationTargets, 0, 3);
+        
+        foreach ($topTargets as $targetInfo) {
+            $attackerId = (int)$targetInfo['user_id'];
+            
+            // Get attacker's villages
+            $villages = $db->query("SELECT kid FROM vdata WHERE owner=$attackerId");
+            
+            $validVillages = [];
+            while ($row = $villages->fetch_assoc()) {
+                $kid = (int)$row['kid'];
+                
+                // Check if in range (use same 50-tile range as normal targeting)
+                $coords = $db->query("SELECT x, y FROM wdata WHERE id=$kid")->fetch_assoc();
+                $warCoords = $db->query("SELECT x, y FROM wdata WHERE id=$warVillageId")->fetch_assoc();
+                
+                if ($coords && $warCoords) {
+                    $distance = max(abs($coords['x'] - $warCoords['x']), abs($coords['y'] - $warCoords['y']));
+                    if ($distance <= 50) {
+                        $validVillages[] = $kid;
+                    }
+                }
+            }
+            
+            if (!empty($validVillages)) {
+                // Return random village from this high-priority attacker
+                return $validVillages[array_rand($validVillages)];
+            }
+        }
+        
+        return null; // No retaliation targets in range
     }
 }
