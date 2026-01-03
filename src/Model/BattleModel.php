@@ -22,6 +22,7 @@ use function getCustom;
 use function logError;
 use function unitIdToNr;
 use function unitIdToTribe;
+use Core\NpcWorldEvents;
 
 class BattleModel
 {
