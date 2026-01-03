@@ -498,7 +498,7 @@ class BattleModel
                     logError("Phase5 Debug: Recording event for alliance $defenderAllianceId");
                     try {
                         NpcWorldEvents::recordAllianceAttacked(
-                            Config::getInstance()->worldId,
+                            1, // server_id (single server setup)
                             $defenderAllianceId,
                             $this->attacker['uid'],
                             $this->defender['kid']
