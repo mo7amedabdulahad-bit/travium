@@ -18,4 +18,7 @@ $connection['auto_reinstall'] = false;
 $connection['auto_reinstall_start_after'] = 0;
 
 $connection['engine_filename'] = 'engine.php';
+$connection['worldId'] = 1;
+$connection['serverName'] = 'Test Server';
+$connection['gameWorldUrl'] = 'http://localhost/';
 
