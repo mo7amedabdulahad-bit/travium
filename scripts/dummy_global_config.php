@@ -1,5 +1,7 @@
+<?php
 // Dummy global config file to satisfy require_once in src/config.php
 // This is used by verification scripts running in CLI mode.
+
 // REMOVED global keyword to ensure we modify the variable in the caller's scope
 // whether it is global or local.
 echo "debug: dummy_global_config loaded. defined vars: " . implode(',', array_keys(get_defined_vars())) . "\n";
