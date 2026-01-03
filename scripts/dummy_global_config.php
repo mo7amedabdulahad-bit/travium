@@ -2,11 +2,10 @@
 // Dummy global config file to satisfy require_once in src/config.php
 // This is used by verification scripts running in CLI mode.
 
-// REMOVED global keyword to ensure we modify the variable in the caller's scope
-// whether it is global or local.
-echo "debug: dummy_global_config loaded. defined vars: " . implode(',', array_keys(get_defined_vars())) . "\n";
-
+global $globalConfig;
 if (!isset($globalConfig)) $globalConfig = [];
+
+echo "debug: dummy_global_config loaded. Modifying globalConfig.\n";
 
 // Initialize required keys to prevent "Undefined array key" warnings in src/config.php
 if (!isset($globalConfig['staticParameters'])) $globalConfig['staticParameters'] = [];
@@ -41,3 +40,5 @@ $globalConfig['dataSources']['globalDB'] = [
 if (!defined("CONNECTION_FILE")) {
     define("CONNECTION_FILE", __DIR__ . '/dummy_connection.php');
 }
+
+echo "debug: dummy_global_config finished. Keys: " . implode(',', array_keys($globalConfig)) . "\n";
