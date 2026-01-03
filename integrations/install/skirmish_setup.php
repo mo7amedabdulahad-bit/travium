@@ -206,6 +206,10 @@ try {
         );
         
         $registerModel->createBaseVillage($leaderId, $leaderName, $tribe, $leaderKid);
+        
+        // Set war village (first village)
+        $db->query("UPDATE users SET war_village_id=$leaderKid WHERE id=$leaderId");
+        
         if (class_exists('Core\NpcConfig')) {
         \Core\NpcConfig::assignRandom($leaderId);
             \Core\NpcConfig::registerNpcVillage($registerModel->getCapital($leaderId), $leaderId, 'Headquarters', 'Early');
@@ -253,6 +257,10 @@ try {
             );
             if ($uid) {
                 $registerModel->createBaseVillage($uid, $npcName, $tribe, $kid);
+                
+                // Set war village (first village)
+                $db->query("UPDATE users SET war_village_id=$kid WHERE id=$uid");
+                
                 $db->query("UPDATE users SET aid={$allianceIds[$quad]}, alliance_join_time=".time()." WHERE id=$uid");
                 $allianceModel->recalculateMaxUsers($allianceIds[$quad]);
                 
