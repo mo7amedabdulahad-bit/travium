@@ -216,12 +216,16 @@ class Launcher
             if (class_exists('Core\NpcScheduler')) {
                 // Lambda used to wrap static call if needed, or direct array callable
                 $job = function() {
-                    $count = \Core\NpcScheduler::processDueNpcs(1, 10);
-                    if ($count > 0) {
-                         // Optional: log or handle success
+                    try {
+                        $count = \Core\NpcScheduler::processDueNpcs(1, 10);
+                        if ($count > 0) {
+                            logError("NpcScheduler: Processed $count NPCs");
+                        }
+                    } catch (\Exception $e) {
+                        logError("NpcScheduler ERROR: " . $e->getMessage());
                     }
                 };
-                $jobs[] = new Job('AIProgress:npcScheduler', 30, $job);
+                $jobs[] = new Job('AIProgress:npcScheduler', 10, $job);
             }
         }
         $natarsModel = new NatarsModel();
