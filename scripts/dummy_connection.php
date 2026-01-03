@@ -11,6 +11,7 @@ $connection['database'] = [
     'username' => 'travium',
     'password' => 'travium',
     'database' => 'travium',
+    'charset' => 'utf8mb4',
 ];
 
 // config.php line 21: 'auto_reinstall' => $connection['auto_reinstall']
