@@ -85,6 +85,7 @@ $defaults = [
     'player_tribe'            => 1,  // 1=Romans, 2=Teutons, 3=Gauls
     'player_quadrant'         => 'NE',  // NW, NE, SW, SE
     'npc_count'               => 10,
+    'difficulty'              => 'Medium', // Easy, Medium, Hard
     'artifacts_day'           => 30,
     'ww_day'                  => 60,
 ];
@@ -152,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'player_tribe'            => max(1, min(5, (int)$g('player_tribe', 1))),  // 1-5 (all tribes)
         'player_quadrant'         => in_array($g('player_quadrant'), ['NW','NE','SW','SE']) ? $g('player_quadrant') : 'NE',
         'npc_count'               => max(0, min(100, (int)$g('npc_count', 10))),  // 0-100
+        'difficulty'              => in_array($g('difficulty'), ['Easy','Medium','Hard']) ? $g('difficulty') : 'Medium',
         'artifacts_day'           => max(30, min(365, (int)$g('artifacts_day', 30))),  // 30-365
         'ww_day'                  => max(60, min(365, (int)$g('ww_day', 60))),  // 60-365
     ];
@@ -806,19 +808,31 @@ function run_cmd(string $cmd): array {
                 <!-- SKIRMISH ONLY: NPC Configuration -->
                 <div class="panel skirmish-only">
                     <h3>🤖 NPC Configuration</h3>
-                    <label>Number of NPCs</label>
-                    <select name="npc_count" id="npc_count">
-                        <option value="0" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 0)?>>None (Player only)</option>
-                        <option value="10" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 10)?>>10 NPCs</option>
-                        <option value="25" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 25)?>>25 NPCs</option>
-                        <option value="50" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 50)?>>50 NPCs</option>
-                        <option value="75" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 75)?>>75 NPCs (High load)</option>
-                        <option value="100" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 100)?>>100 NPCs (Very high load)</option>
-                    </select>
+                    <div class="row2">
+                        <div>
+                            <label>Number of NPCs</label>
+                            <select name="npc_count" id="npc_count">
+                                <option value="0" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 0)?>>None (Player only)</option>
+                                <option value="10" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 10)?>>10 NPCs</option>
+                                <option value="25" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 25)?>>25 NPCs</option>
+                                <option value="50" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 50)?>>50 NPCs</option>
+                                <option value="75" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 75)?>>75 NPCs (High load)</option>
+                                <option value="100" <?=sel($_POST['npc_count'] ?? $defaults['npc_count'], 100)?>>100 NPCs (Very high load)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>NPC Difficulty</label>
+                            <select name="difficulty" id="difficulty">
+                                <option value="Easy" <?=sel($_POST['difficulty'] ?? $defaults['difficulty'] ?? 'Medium', 'Easy')?>>Easy (Generous Resources)</option>
+                                <option value="Medium" <?=sel($_POST['difficulty'] ?? $defaults['difficulty'] ?? 'Medium', 'Medium')?>>Medium (Balanced)</option>
+                                <option value="Hard" <?=sel($_POST['difficulty'] ?? $defaults['difficulty'] ?? 'Medium', 'Hard')?>>Hard (Aggressive & Quick)</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="npc-warning" id="npc_warning">
                         ⚠️ <strong>Performance Warning:</strong> More than 50 NPCs can significantly impact server performance on high-speed servers (>1000x). Consider starting with fewer NPCs.
                     </div>
-                    <div class="hint">NPCs will have random tribes and basic behaviors. Personalities & difficulty will be added in Phase 2.</div>
+                    <div class="hint">NPC behaviors and retaliation rates scale with difficulty.</div>
                 </div>
 
                 <!-- SKIRMISH ONLY: Endgame Events -->

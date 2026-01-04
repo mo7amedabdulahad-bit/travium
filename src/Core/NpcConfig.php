@@ -421,29 +421,27 @@ class NpcConfig
     }
 
     /**
-     * Get Server Settings
-     * 
      * @param int $serverId
      * @return array|null
      */
-    public static function getServerSettings($serverId = 1)
+    public static function getServerSettings()
     {
-        $cache = \Core\Caching\Caching::getInstance();
-        $key = "server_settings:$serverId";
+        $key = 'server_settings_1'; // Assuming server ID 1 for now
+        $cache = \Core\Caching\Caching::getInstance(); // Keep original caching instance for consistency, as Config::getInstance()->cache() is not defined in the provided context.
         
-        // Clear cache to force fresh fetch (temporary debug)
-        $cache->delete($key);
+        if ($cached = $cache->get($key)) {
+            return $cached;
+        }
 
         $db = DB::getInstance();
-        $result = $db->query("SELECT * FROM server_settings WHERE server_id=" . (int)$serverId);
-        
+        $result = $db->query("SELECT * FROM server_settings WHERE server_id=1"); // Hardcode server_id to 1 as per new key
+
         if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if ($row['personality_weights_json']) {
                 $row['personality_weights'] = json_decode($row['personality_weights_json'], true);
             }
             $cache->set($key, $row, 300); // Cache for 5 mins
-            logError("NpcConfig: Server settings loaded successfully for server $serverId");
             return $row;
         }
         

@@ -15,8 +15,6 @@ class NpcScriptEngine
     public static function executeTick($npcRow)
     {
         try {
-            logError("NPC {$npcRow['id']}: === TICK START ===");
-            
             // 1. Determine Global Settings & Phase
             $settings = NpcConfig::getServerSettings();
             if (!$settings) {
@@ -38,74 +36,57 @@ class NpcScriptEngine
         $personality = $npcRow['npc_personality'] ?? 'Balanced';
         // Map Phase 1 personalities to template types if needed, or use direct
         // Assuming template keys match directly or we map them.
-        // Let's assume standard 5 types for templates: Raider, Guardian, Supplier, Diplomat, Assassin
-        // If not found, default to 'Apprentice' or similar in templates? 
-        // For safe logic, let's map unknown to 'Guardian'
-        $validPersonalities = ['Raider', 'Guardian', 'Supplier', 'Diplomat', 'Assassin', 'aggressive', 'economic'];
-        if (!in_array($personality, $validPersonalities)) $personality = 'Guardian';
+            // Load Personality Template
+            $template = self::getTemplate($npc);
+            if (!$template) {
+                // Try fallback if primary fails
+                $template = self::getTemplate($npc);
+                if (!$template) {
+                    return; // Fail silent
+                }
+            }
 
-        $template = NpcConfig::getPersonalityTemplate($personality, $phase);
-        if (!$template) {
-            logError("NPC {$npcRow['id']}: No template found for personality=$personality, phase=$phase");
-            return;
-        }
-        logError("NPC {$npcRow['id']}: Using template for $personality / $phase");
-
-        // 3. Get Villages
-        $db = DB::getInstance();
-        $uid = (int)$npcRow['id'];
-        $villages = $db->query("SELECT kid, capital FROM vdata WHERE owner=$uid");
-        
-        $warVillageId = $npcRow['war_village_id'];
-
-        while ($village = $villages->fetch_assoc()) {
-            $kid = $village['kid'];
+            // Execute logic using template parameters
+            if (isset($template['build_priorities_json']) && !empty($template['build_priorities_json'])) {
+                 $queue = $template['build_priorities_json'];
+                 // If stored as JSON string in DB, decode it
+                 if (is_string($queue)) {
+                     $queue = json_decode($queue, true);
+                 }
+                 if (is_array($queue)) {
+                     foreach ($queue as $buildingName) {
+                         if (!empty($buildingName)) {
+                             NpcBuildingManager::ensureBuilding($npc['id'], $buildingName, $template['behavior_params_json']['build_rate'] ?? 50);
+                         }
+                     }
+                 }
+            }
             
-            // 4. Per-Village Actions
+            // War Village Logic (Attacking/Raiding)
+            // Only if war_village_id is set
+            if (!empty($npc['war_village_id'])) {
+                self::executeWarVillageLogic($npc, $template);
+            }
             
-            // Mistake Rate Check (Difficulty)
-            if (mt_rand(1, 100) <= $policy['mistake_rate_percent']) {
-                continue; // Skip this village this tick
-            }
-
-            // A. Buildings
-            if (isset($template['build_priorities'])) {
-                 NpcBuildingManager::executeBuilds($kid, $template['build_priorities'], $policy['action_budget_multiplier']);
-            }
-
-            // B. Troops
-            if (isset($template['troop_template'])) {
-                NpcTroopManager::executeTroopProduction($kid, $template['troop_template'], $policy['action_budget_multiplier']);
-            }
-
-            // C. Special Logic (War vs Passive)
-            // If it's the war village, execute military AI
-            // If not, do passive logic
-            if ($kid != $warVillageId) {
-                NpcPassiveVillage::doPassiveAction($kid);
-            } else {
-                logError("NPC {$npcRow['id']}: Executing war village logic for village $kid");
-                // Phase 4: War Village Logic
-                self::executeWarVillageLogic($kid, $npcRow, $template, $policy);
-            }
-        }
-        
-        logError("NPC {$npcRow['id']}: === TICK COMPLETE ===");
         } catch (\Throwable $e) {
-            logError("NPC {$npcRow['id']}: FATAL ERROR - " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+            // Log only actual errors
+            if (function_exists('logError')) {
+                logError("NPC Engine Error for UID {$npc['id']}: " . $e->getMessage());
+            }
         }
     }
 
     /**
      * Execute war village military AI
      * 
-     * @param int $warVillageId The war village ID
-     * @param array $npcRow NPC user row
+     * @param array $npc NPC user row
      * @param array $template Personality template
-     * @param array $policy Difficulty policy
      */
-    private static function executeWarVillageLogic($warVillageId, $npcRow, $template, $policy)
+    private static function executeWarVillageLogic($npc, $template)
     {
+        $warVillageId = $npc['war_village_id'];
+        $policy = NpcConfig::getDifficultyPolicy($npc['npc_difficulty'] ?? 'Medium');
+
         // Phase 5: Check retaliation list first
         $retaliationTargets = NpcRetaliationManager::getRetaliationTargets($npcRow['id']);
         

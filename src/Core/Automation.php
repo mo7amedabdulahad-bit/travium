@@ -485,7 +485,7 @@ class Automation
             $totalCount += $result->num_rows;
             //non-activated emails
             $globalDbConnection = GlobalDB::getAConnection();
-            $result = $globalDbConnection->query("SELECT * FROM activation WHERE worldId={$conf->settings->worldUniqueId}");
+            $result = $globalDbConnection->query("SELECT * FROM activation WHERE world='{$conf->settings->worldId}'");
             while ($row = $result->fetch_assoc()) {
                 //$row['name']
                 $replace = [
