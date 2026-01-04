@@ -154,7 +154,7 @@ class NpcVillagePlacement
                    SQRT(POW(x, 2) + POW(y, 2)) as distance_to_center
             FROM wdata
             WHERE occupied = 0
-              AND oasis = 0
+              AND oasistype = 0
               AND x BETWEEN {$quadrant['min_x']} AND {$quadrant['max_x']}
               AND y BETWEEN {$quadrant['min_y']} AND {$quadrant['max_y']}
               AND SQRT(POW(x, 2) + POW(y, 2)) < 20
@@ -187,7 +187,7 @@ class NpcVillagePlacement
             SELECT w.id, w.x, w.y, w.fieldtype
             FROM wdata w
             WHERE w.occupied = 0
-              AND w.oasis = 0
+              AND w.oasistype = 0
               AND w.x BETWEEN {$quadrant['min_x']} AND {$quadrant['max_x']}
               AND w.y BETWEEN {$quadrant['min_y']} AND {$quadrant['max_y']}
               AND w.fieldtype IN (1, 2, 3, 4, 11, 12, 13)
@@ -220,7 +220,7 @@ class NpcVillagePlacement
             SELECT id, x, y
             FROM wdata
             WHERE occupied = 0
-              AND oasis = 0
+              AND oasistype = 0
               AND (
                   (x BETWEEN {$quadrant['min_x']} AND {$quadrant['min_x']} + 10) OR
                   (x BETWEEN {$quadrant['max_x']} - 10 AND {$quadrant['max_x']}) OR
@@ -254,7 +254,7 @@ class NpcVillagePlacement
             SELECT id, x, y, fieldtype
             FROM wdata
             WHERE occupied = 0
-              AND oasis = 0
+              AND oasistype = 0
               AND x BETWEEN {$quadrant['min_x']} AND {$quadrant['max_x']}
               AND y BETWEEN {$quadrant['min_y']} AND {$quadrant['max_y']}
             ORDER BY fieldtype DESC
