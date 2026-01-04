@@ -1,7 +1,5 @@
 <?php
 
-namespace Controllers;
-
 use Core\Config;
 use Core\Database\DB;
 use Core\NpcCache;
@@ -11,13 +9,81 @@ class NpcDashboardCtrl
 {
     public function __construct()
     {
-        $this->render();
+        $data = $this->getData();
+        $this->renderDashboard($data);
     }
 
-    private function render()
+    private function renderDashboard($data)
     {
-        $data = $this->getData();
-        include dirname(__DIR__) . '/views/npcDashboard.php';
+        $overview = $data['overview'];
+        $npcs = $data['npcs'];
+        $performance = $data['performance'];
+        $events = $data['events'];
+        $cacheStats = $data['cacheStats'];
+        
+        $html = '<h2>NPC Dashboard</h2>';
+        
+        // Server Overview
+        $html .= '<h3>Server Overview</h3>';
+        $html .= '<table class="table">';
+        $html .= '<tr><th>Game Age</th><td>' . htmlspecialchars($overview['gameAge']) . '</td></tr>';
+        $html .= '<tr><th>Phase</th><td>' . htmlspecialchars($overview['phase']) . '</td></tr>';
+        $html .= '<tr><th>Total NPCs</th><td>' . $overview['totalNpcs'] . '</td></tr>';
+        $html .= '<tr><th>Active NPCs</th><td>' . $overview['activeNpcs'] . '</td></tr>';
+        $html .= '<tr><th>Alliances</th><td>' . $overview['allianceCount'] . '</td></tr>';
+        $html .= '</table>';
+        
+        // WW Status
+        $ww = $overview['wwStatus'];
+        $html .= '<h3>World Wonder Status</h3>';
+        $html .= '<table class="table">';
+        $html .= '<tr><th>Contenders</th><td>' . $ww['contenders'] . '</td></tr>';
+        $html .= '<tr><th>Spoilers</th><td>' . $ww['spoilers'] . '</td></tr>';
+        $html .= '<tr><th>Plan Hunting</th><td>' . $ww['planHunting'] . '</td></tr>';
+        $html .= '<tr><th>WW Building</th><td>' . $ww['wwBuilding'] . '</td></tr>';
+        $html .= '</table>';
+        
+        // Performance Metrics
+        if (!isset($performance['error'])) {
+            $html .= '<h3>Performance Metrics (Last Hour)</h3>';
+            $html .= '<table class="table">';
+            $html .= '<tr><th>Total Ticks</th><td>' . ($performance['total_ticks'] ?? 0) . '</td></tr>';
+            $html .= '<tr><th>Avg Tick Duration</th><td>' . ($performance['tick_duration']['avg_ms'] ?? 0) . ' ms</td></tr>';
+            $html .= '<tr><th>P95 Tick Duration</th><td>' . ($performance['tick_duration']['p95_ms'] ?? 0) . ' ms</td></tr>';
+            $html .= '<tr><th>Avg Cache Hit Rate</th><td>' . ($performance['cache_hit_rate']['avg_pct'] ?? 0) . '%</td></tr>';
+            $html .= '</table>';
+        }
+        
+        // Cache Stats
+        if ($cacheStats['enabled']) {
+            $html .= '<h3>Redis Cache Statistics</h3>';
+            $html .= '<table class="table">';
+            $html .= '<tr><th>Hit Rate</th><td>' . ($cacheStats['hit_rate'] ?? 0) . '%</td></tr>';
+            $html .= '<tr><th>Memory Used</th><td>' . ($cacheStats['used_memory_human'] ?? 'N/A') . '</td></tr>';
+            $html .= '</table>';
+        }
+        
+        // NPC List
+        $html .= '<h3>Active NPCs (' . count($npcs) . ')</h3>';
+        $html .= '<table class="table" border="1" cellpadding="5">';
+        $html .= '<tr><th>ID</th><th>Name</th><th>Alliance</th><th>Personality</th><th>Difficulty</th><th>Villages</th><th>WW Role</th><th>Actions</th></tr>';
+        
+        foreach ($npcs as $npc) {
+            $html .= '<tr>';
+            $html .= '<td>' . $npc['id'] . '</td>';
+            $html .= '<td>' . htmlspecialchars($npc['name']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($npc['alliance_tag'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars($npc['npc_personality'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars($npc['npc_difficulty'] ?? '-') . '</td>';
+            $html .= '<td>' . $npc['village_count'] . '</td>';
+            $html .= '<td>' . htmlspecialchars($npc['ww_alliance_role'] ?? 'Neutral') . '</td>';
+            $html .= '<td><a href="admin.php?action=npcDetail&id=' . $npc['id'] . '">View</a></td>';
+            $html .= '</tr>';
+        }
+        
+        $html .= '</table>';
+        
+        Dispatcher::getInstance()->appendContent($html);
     }
 
     private function getData()

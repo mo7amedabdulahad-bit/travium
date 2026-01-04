@@ -1,7 +1,5 @@
 <?php
 
-namespace Controllers;
-
 use Core\Config;
 use Core\Database\DB;
 use Core\NpcCache;
@@ -18,7 +16,7 @@ class NpcDetailCtrl
         $this->npcId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         
         if ($this->npcId <= 0) {
-            echo "Invalid NPC ID";
+            Dispatcher::getInstance()->appendContent("Invalid NPC ID");
             return;
         }
         
