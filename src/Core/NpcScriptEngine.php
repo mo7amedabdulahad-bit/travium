@@ -91,7 +91,7 @@ class NpcScriptEngine
         }
         
         logError("NPC {$npcRow['id']}: === TICK COMPLETE ===");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logError("NPC {$npcRow['id']}: FATAL ERROR - " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
         }
     }
