@@ -87,8 +87,8 @@ class NpcBuildingManager
             // start_time = when it started (NOW)
             // commence = when it finishes (NOW + duration)
             
-            $db->query("INSERT INTO building_upgrade (kid, building_field, isMaster, loop_con, start_time, commence) 
-                        VALUES ($kid, {$location['field']}, 0, 0, $startTime, $completionTime)");
+            $db->query("INSERT INTO building_upgrade (kid, building_field, isMaster, start_time, commence) 
+                        VALUES ($kid, {$location['field']}, 0, $startTime, $completionTime)");
             
             return; // Action taken, done for this tick
         }

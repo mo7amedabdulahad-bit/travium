@@ -41,7 +41,7 @@ class NpcScriptEngine
         // Let's assume standard 5 types for templates: Raider, Guardian, Supplier, Diplomat, Assassin
         // If not found, default to 'Apprentice' or similar in templates? 
         // For safe logic, let's map unknown to 'Guardian'
-        $validPersonalities = ['Raider', 'Guardian', 'Supplier', 'Diplomat', 'Assassin'];
+        $validPersonalities = ['Raider', 'Guardian', 'Supplier', 'Diplomat', 'Assassin', 'aggressive', 'economic'];
         if (!in_array($personality, $validPersonalities)) $personality = 'Guardian';
 
         $template = NpcConfig::getPersonalityTemplate($personality, $phase);
