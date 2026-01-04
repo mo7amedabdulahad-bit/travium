@@ -6,7 +6,7 @@ INSERT IGNORE INTO npc_personality_templates
 
 -- aggressive personality (offensive/raider style)
 ('aggressive', 'Early', 
- '["Barracks","Warehouse","Granary","Marketplace"]',
+ '["Rally Point","Barracks","Warehouse","Granary","Marketplace"]',
  '{"1":20,"2":30,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0}',
  '{"raid_frequency":0.8,"scout_rate":0.3,"attack_preference":"raid"}'),
 
