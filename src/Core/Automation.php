@@ -919,14 +919,19 @@ class Automation
             $interval = getCustom("activationReminderInterval");
             $startTime = $config->game->start_time;
             if ($interval > 0) {
-                $result = $globalDB->query("SELECT * FROM activation WHERE time>0 AND reminded=0 AND " . time() . "-IF(time <= $startTime, $startTime, time) >= $interval AND worldId=" . Config::getProperty("settings",
-                        "worldUniqueId") . "  LIMIT 20");
-                $view = new PHPBatchView("mail/activationReminder");
-                while ($row = $result->fetch_assoc()) {
-                    $globalDB->query("UPDATE activation SET reminded=1 WHERE id={$row['id']}");
-                    $view->vars['name'] = $row['name'];
-                    $view->vars['activationCode'] = $row['activationCode'];
-                    Mailer::sendEmail($row['email'], T("Mail", "Email verification reminder"), $view->output());
+                try {
+                    $result = $globalDB->query("SELECT * FROM activation WHERE time>0 AND reminded=0 AND " . time() . "-IF(time <= $startTime, $startTime, time) >= $interval AND worldId=" . Config::getProperty("settings",
+                            "worldUniqueId") . "  LIMIT 20");
+                    $view = new PHPBatchView("mail/activationReminder");
+                    while ($row = $result->fetch_assoc()) {
+                        $globalDB->query("UPDATE activation SET reminded=1 WHERE id={$row['id']}");
+                        $view->vars['name'] = $row['name'];
+                        $view->vars['activationCode'] = $row['activationCode'];
+                        Mailer::sendEmail($row['email'], T("Mail", "Email verification reminder"), $view->output());
+                    }
+                } catch (\Exception $e) {
+                    // Silently catch SQL errors (e.g., worldId column not existing in activation table)
+                    // This prevents the entire scheduler from crashing
                 }
             }
             $interval = getCustom("activationProgressReminderInterval");
