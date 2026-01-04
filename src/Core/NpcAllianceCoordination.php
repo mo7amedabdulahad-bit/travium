@@ -41,15 +41,23 @@ class NpcAllianceCoordination
         
         // Difficulty-based response rate
         $responseRates = [
-            'Easy' => 0.5,      // 50% chance
-            'Medium' => 0.7,    // 70% chance
-            'Hard' => 1.0       // 100% always respond
+            'Easy' => 0.4,      // 40% chance
+            'Medium' => 0.6,    // 60% chance
+            'Hard' => 0.8       // 80% chance
         ];
-        $responseRate = $responseRates[$difficulty] ?? 0.7;
+        $responseRate = $responseRates[$difficulty] ?? 0.6;
         
         $reinforcementsSent = 0;
         
         foreach ($defenders as $defender) {
+            // Personality filter: Aggressive personalities DON'T defend, they only attack
+            $personality = $defender['personality'] ?? 'Balanced';
+            $aggressivePersonalities = ['Aggressive', 'Raider', 'Assassin'];
+            
+            if (in_array($personality, $aggressivePersonalities)) {
+                continue; // Skip aggressive NPCs - they don't help defend
+            }
+            
             // Random sampling based on difficulty
             if ((mt_rand(0, 100) / 100) > $responseRate) continue;
             
@@ -99,7 +107,7 @@ class NpcAllianceCoordination
         $maxRange = 50; // tiles
         
         $query = "
-            SELECT u.id as user_id, u.war_village_id, u.race, w.x, w.y
+            SELECT u.id as user_id, u.war_village_id, u.race, u.npc_personality as personality, w.x, w.y
             FROM users u
             INNER JOIN vdata v ON u.war_village_id = v.kid
             INNER JOIN wdata w ON v.kid = w.id
