@@ -38,18 +38,17 @@ class NpcScriptEngine
         $policy = NpcConfig::getDifficultyPolicy($difficulty);
         
         $personality = $npcRow['npc_personality'] ?? 'Balanced';
-        // Map Phase 1 personalities to template types if needed, or use direct
-        // Assuming template keys match directly or we map them.
-            // Load Personality Template
-            $template = self::getTemplate($npcRow);
+        
+        // Load Personality Template from database
+        $template = NpcConfig::getPersonalityTemplate($personality, $phase);
+        if (!$template) {
+            // Try with default phase if specific phase not found
+            $template = NpcConfig::getPersonalityTemplate($personality, 'Early');
             if (!$template) {
-                // Try fallback if primary fails
-                $template = self::getTemplate($npcRow);
-                if (!$template) {
-                    NpcPerformanceMonitor::endTick();
-                    return; // Fail silent
-                }
+                NpcPerformanceMonitor::endTick();
+                return; // Fail silent - no template available
             }
+        }
 
             // Execute logic using template parameters
             if (isset($template['build_priorities_json']) && !empty($template['build_priorities_json'])) {
@@ -200,47 +199,6 @@ class NpcScriptEngine
         }
         
         return null; // No retaliation targets in range
-    }
-    
-    /**
-     * Get behavior template for an NPC
-     * 
-     * @param array $npcRow NPC user row
-     * @return array|null Template with behavior parameters
-     */
-    private static function getTemplate($npcRow)
-    {
-        $personality = $npcRow['npc_personality'] ?? 'Balanced';
-        
-        // Basic template based on personality
-        $templates = [
-            'Aggressive' => [
-                'behavior_params_json' => ['build_rate' => 70, 'military_focus' => 80],
-                'build_priorities_json' => ['Barracks', 'Smithy', 'Academy', 'Stable']
-            ],
-            'Raider' => [
-                'behavior_params_json' => ['build_rate' => 60, 'military_focus' => 70],
-                'build_priorities_json' => ['Stable', 'Barracks', 'Marketplace']
-            ],
-            'Assassin' => [
-                'behavior_params_json' => ['build_rate' => 55, 'military_focus' => 65],
-                'build_priorities_json' => ['Academy', 'Smithy', 'Stable']
-            ],
-            'Balanced' => [
-                'behavior_params_json' => ['build_rate' => 50, 'military_focus' => 50],
-                'build_priorities_json' => ['Barracks', 'Warehouse', 'Granary', 'Smithy']
-            ],
-            'Builder' => [
-                'behavior_params_json' => ['build_rate' => 80, 'military_focus' => 30],
-                'build_priorities_json' => ['Warehouse', 'Granary', 'Marketplace', 'Main Building']
-            ],
-            'Defensive' => [
-                'behavior_params_json' => ['build_rate' => 60, 'military_focus' => 60],
-                'build_priorities_json' => ['Barracks', 'Wall', 'Warehouse', 'Granary']
-            ]
-        ];
-        
-        return $templates[$personality] ?? $templates['Balanced'];
     }
     
     /**
