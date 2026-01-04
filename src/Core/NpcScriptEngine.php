@@ -62,10 +62,23 @@ class NpcScriptEngine
                  }
             }
             
+            // Phase 6: World Wonder Operations
+            if (!empty($npcRow['ww_operation_state']) && $npcRow['ww_operation_state'] !== 'Idle') {
+                NpcWWOperations::progressWWOperation($npcRow);
+            }
+            
+            // Phase 7: Village Expansion Check
+            if (NpcExpansionManager::checkExpansionEligibility($npcRow)) {
+                NpcExpansionManager::planExpansion($npcRow);
+            }
+            
+            // Phase 7: Accelerated development for new villages
+            self::developNewVillages($npcRow);
+            
             // War Village Logic (Attacking/Raiding)
             // Only if war_village_id is set
-            if (!empty($npc['war_village_id'])) {
-                self::executeWarVillageLogic($npc, $template);
+            if (!empty($npcRow['war_village_id'])) {
+                self::executeWarVillageLogic($npcRow, $template);
             }
             
         } catch (\Throwable $e) {
@@ -173,5 +186,33 @@ class NpcScriptEngine
         }
         
         return null; // No retaliation targets in range
+    }
+    
+    /**
+     * Develop new villages with accelerated build orders
+     * 
+     * @param array $npcRow NPC user row
+     */
+    private static function developNewVillages($npcRow)
+    {
+        $db = DB::getInstance();
+        
+        // Get all new villages  (< 48 hours old)
+        $newVillages = $db->query("
+            SELECT nv.village_id, nv.village_role, nv.founded_at
+            FROM npc_villages nv
+            WHERE nv.npc_player_id = {$npcRow['id']}
+              AND nv.founded_at IS NOT NULL
+              AND TIMESTAMPDIFF(HOUR, nv.founded_at, NOW()) < 48
+        ");
+        
+        if (!$newVillages || $newVillages->num_rows === 0) return;
+        
+        while ($village = $newVillages->fetch_assoc()) {
+            NpcExpansionManager::developNewVillage(
+                $village['village_id'], 
+                $village['village_role']
+            );
+        }
     }
 }

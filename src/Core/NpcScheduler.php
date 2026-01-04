@@ -132,9 +132,39 @@ class NpcScheduler
                 break;
                 
             case 'WWPlanReleased':
+                // Phase 6: Plans released, transition eligible NPCs to plan hunting
+                NpcWWOperations::onPlansReleased($event['server_id']);
+                break;
+                
             case 'WWUnderAttack':
+                // Phase 6: WW under attack, coordinate defense
+                $wwVillageId = $event['ww_village_id'] ?? $event['target_village_id'];
+                if ($wwVillageId) {
+                    $npcId = (int)$db->fetchScalar("SELECT owner FROM vdata WHERE kid = $wwVillageId");
+                    if ($npcId) {
+                        NpcWWDefender::defendWorldWonder($npcId, $event);
+                    }
+                }
+                break;
+                
+            case 'WWLevelUp':
+                // Phase 6: Enemy WW leveled up, auto-attack if enabled
+                $wwVillageId = $event['ww_village_id'] ?? $event['target_village_id'];
+                if ($wwVillageId) {
+                    NpcWWDefender::attackWWOnLevelUp($wwVillageId);
+                }
+                break;
+                
+            case 'WWDefeated':
+                // Phase 6: WW destroyed/captured, handle fallback
+                $npcId = (int)($event['target_npc_id'] ?? 0);
+                if ($npcId) {
+                    NpcWWOperations::handleWWDefeat($npcId);
+                }
+                break;
+                
             case 'NpcDefeated':
-                // Phase 6 handlers (stub for now)
+                // Future: Handle major NPC defeat
                 break;
         }
     }
