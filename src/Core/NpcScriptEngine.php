@@ -203,6 +203,47 @@ class NpcScriptEngine
     }
     
     /**
+     * Get behavior template for an NPC
+     * 
+     * @param array $npcRow NPC user row
+     * @return array|null Template with behavior parameters
+     */
+    private static function getTemplate($npcRow)
+    {
+        $personality = $npcRow['npc_personality'] ?? 'Balanced';
+        
+        // Basic template based on personality
+        $templates = [
+            'Aggressive' => [
+                'behavior_params_json' => ['build_rate' => 70, 'military_focus' => 80],
+                'build_priorities_json' => ['Barracks', 'Smithy', 'Academy', 'Stable']
+            ],
+            'Raider' => [
+                'behavior_params_json' => ['build_rate' => 60, 'military_focus' => 70],
+                'build_priorities_json' => ['Stable', 'Barracks', 'Marketplace']
+            ],
+            'Assassin' => [
+                'behavior_params_json' => ['build_rate' => 55, 'military_focus' => 65],
+                'build_priorities_json' => ['Academy', 'Smithy', 'Stable']
+            ],
+            'Balanced' => [
+                'behavior_params_json' => ['build_rate' => 50, 'military_focus' => 50],
+                'build_priorities_json' => ['Barracks', 'Warehouse', 'Granary', 'Smithy']
+            ],
+            'Builder' => [
+                'behavior_params_json' => ['build_rate' => 80, 'military_focus' => 30],
+                'build_priorities_json' => ['Warehouse', 'Granary', 'Marketplace', 'Main Building']
+            ],
+            'Defensive' => [
+                'behavior_params_json' => ['build_rate' => 60, 'military_focus' => 60],
+                'build_priorities_json' => ['Barracks', 'Wall', 'Warehouse', 'Granary']
+            ]
+        ];
+        
+        return $templates[$personality] ?? $templates['Balanced'];
+    }
+    
+    /**
      * Develop new villages with accelerated build orders
      * 
      * @param array $npcRow NPC user row
