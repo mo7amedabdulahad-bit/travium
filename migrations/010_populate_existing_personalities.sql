@@ -1,6 +1,10 @@
 -- Populate personality templates for existing NPC personalities
 -- (aggressive, economic, diplomat)
 
+-- Expand personality ENUM to include 'aggressive', 'economic'
+ALTER TABLE npc_personality_templates 
+MODIFY COLUMN personality ENUM('Raider','Guardian','Supplier','Diplomat','Assassin','aggressive','economic') NOT NULL;
+
 INSERT IGNORE INTO npc_personality_templates 
 (personality, phase, build_priorities_json, troop_template_json, behavior_params_json) VALUES
 
