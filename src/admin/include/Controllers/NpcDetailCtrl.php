@@ -101,7 +101,65 @@ class NpcDetailCtrl
         $recentActions = $this->getRecentActions();
         $memory = $this->getMemoryState();
         
-        include __DIR__ . '/../views/npcDetail.tpl.php';
+        $html = '<h2>NPC Detail: ' . htmlspecialchars($npc['name']) . ' (#' . $npc['id'] . ')</h2>';
+        
+        // Basic Info
+        $html .= '<h3>Basic Information</h3>';
+        $html .= '<table class="table" border="1" cellpadding="5">';
+        $html .= '<tr><th>Alliance</th><td>' . htmlspecialchars($npc['alliance_tag'] ?? 'None') . '</td></tr>';
+        $html .= '<tr><th>Personality</th><td>' . htmlspecialchars($npc['npc_personality'] ?? 'N/A') . '</td></tr>';
+        $html .= '<tr><th>Difficulty</th><td>' . htmlspecialchars($npc['npc_difficulty'] ?? 'N/A') . '</td></tr>';
+        $html .= '<tr><th>WW Role</th><td>' . htmlspecialchars($npc['ww_alliance_role'] ?? 'Neutral') . '</td></tr>';
+        $html .= '<tr><th>WW State</th><td>' . htmlspecialchars($npc['ww_operation_state'] ?? 'Idle') . '</td></tr>';
+        $html .= '</table>';
+        
+        // Villages
+        $html .= '<h3>Villages (' . count($villages) . ')</h3>';
+        $html .= '<table class="table" border="1" cellpadding="5">';
+        $html .= '<tr><th>Name</th><th>Coordinates</th><th>Population</th><th>Type</th><th>Role</th></tr>';
+        
+        foreach ($villages as $v) {
+            $html .= '<tr>';
+            $html .= '<td>' . htmlspecialchars($v['name']) . '</td>';
+            $html .= '<td>(' . $v['x'] . '|' . $v['y'] . ')</td>';
+            $html .= '<td>' . $v['pop'] . '</td>';
+            $html .= '<td>' . ($v['fieldtype'] ?? 'Normal') . '</td>';
+            $html .= '<td>' . htmlspecialchars($v['village_role'] ?? 'Main') . '</td>';
+            $html .= '</tr>';
+        }
+        
+        $html .= '</table>';
+        
+        // Recent Actions
+        if (!empty($recentActions)) {
+            $html .= '<h3>Recent Performance (Last ' . count($recentActions) . ' ticks)</h3>';
+            $html .= '<table class="table" border="1" cellpadding="5">';
+            $html .= '<tr><th>Time</th><th>Duration (ms)</th><th>Queries</th><th>Cache Hit Rate</th><th>Actions</th></tr>';
+            
+            foreach ($recentActions as $action) {
+                $html .= '<tr>';
+                $html .= '<td>' . htmlspecialchars($action['timestamp']) . '</td>';
+                $html .= '<td>' . $action['tick_duration_ms'] . '</td>';
+                $html .= '<td>' . $action['queries_executed'] . '</td>';
+                $html .= '<td>' . $action['cache_hit_rate'] . '%</td>';
+                $html .= '<td>' . count($action['actions_taken']) . '</td>';
+                $html .= '</tr>';
+            }
+            
+            $html .= '</table>';
+        }
+        
+        // Manual Controls
+        $html .= '<h3>Manual Controls</h3>';
+        $html .= '<form method="POST">';
+        $html .= '<button type="submit" name="action" value="force_tick">Force Tick</button> ';
+        $html .= '<button type="submit" name="action" value="reset_cooldowns">Reset Cooldowns</button> ';
+        $html .= '<button type="submit" name="action" value="clear_cache">Clear Cache</button>';
+        $html .= '</form>';
+        
+        $html .= '<br><a href="admin.php?action=npcDashboard">← Back to Dashboard</a>';
+        
+        Dispatcher::getInstance()->appendContent($html);
     }
 
     private function getVillages()
