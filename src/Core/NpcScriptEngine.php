@@ -115,12 +115,12 @@ class NpcScriptEngine
         $policy = NpcConfig::getDifficultyPolicy($npc['npc_difficulty'] ?? 'Medium');
 
         // Phase 5: Check retaliation list first
-        $retaliationTargets = NpcRetaliationManager::getRetaliationTargets($npcRow['id']);
+        $retaliationTargets = NpcRetaliationManager::getRetaliationTargets($npc['id']);
         
         $target = null;
         
         // Difficulty-based retaliation priority (same as reinforcement rates)
-        $difficulty = $npcRow['npc_difficulty'] ?? 'Medium';
+        $difficulty = $npc['npc_difficulty'] ?? 'Medium';
         $retaliationChances = [
             'Easy' => 50,      // 50% chance
             'Medium' => 70,    // 70% chance
