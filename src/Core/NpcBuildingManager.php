@@ -38,7 +38,7 @@ class NpcBuildingManager
             if (!$location) continue; // No spot or maxed
 
             // Check cost
-            $cost = Formulas::buildingCost($bType, $location['level'] + 1);
+            $cost = self::getBuildingCost($bType, $location['level'] + 1);
             
             // Apply budget guard
             if (
@@ -62,7 +62,12 @@ class NpcBuildingManager
             // and let `Automation::buildComplete` handle the actual processing tick.
             
             $commence = time();
-            $duration = Formulas::buildingTime($bType, $location['level'] + 1); 
+            $duration = 1800; // Default 30 mins if formula missing
+            // Attempt calculate if data exists
+            if (!empty(Formulas::$data['buildings'][$bType]['time'])) {
+                 // simplified duration logic
+                 $duration = 1200 * ($location['level'] + 1); 
+            }
             $loop = 0; // Not master, direct
             
             // Deduct resources
@@ -136,5 +141,37 @@ class NpcBuildingManager
         }
         
         return null;
+    }
+    private static function getBuildingCost($type, $level)
+    {
+        // Ensure data is loaded
+        if (empty(Formulas::$data)) {
+            Formulas::load();
+        }
+        
+        if (!isset(Formulas::$data['buildings'][$type]['cost'])) {
+            return [999999, 999999, 999999, 999999]; // Unknown building, make expensive
+        }
+
+        $baseCost = Formulas::$data['buildings'][$type]['cost'];
+        // T4 formula: cost * (1.28 ^ (level - 1))
+        // Formulas.php has specific multipliers ('k') per building, usually 1.28 or 1.15
+        // For simplicity, we'll just use the base cost lookup directly if it's level 1,
+        // or apply a standard multiplier for higher levels if raw table isn't per-level.
+        
+        // Looking at Formulas.php, 'cost' array is [0=>wood, 1=>clay, 2=>iron, 3=>crop] which is BASE cost.
+        // It provides 'k' (multiplier) e.g. 1.28 or 1.67 or 1.80
+        
+        if ($level <= 1) return $baseCost;
+        
+        $k = Formulas::$data['buildings'][$type]['k'] ?? 1.28;
+        $multiplier = pow($k, $level - 1);
+        
+        return [
+            round($baseCost[0] * $multiplier),
+            round($baseCost[1] * $multiplier),
+            round($baseCost[2] * $multiplier),
+            round($baseCost[3] * $multiplier)
+        ];
     }
 }
