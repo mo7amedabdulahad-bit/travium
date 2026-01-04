@@ -36,7 +36,7 @@ CREATE INDEX IF NOT EXISTS idx_wdata_coords ON wdata(x, y)
 COMMENT 'For target selection and village placement';
 
 -- Movement table: For arrival time queries  
-CREATE INDEX IF NOT EXISTS idx_movement_arrival ON movement(endtime)
+CREATE INDEX IF NOT EXISTS idx_movement_arrival ON movement(end_time)
 COMMENT 'For processing arriving movements';
 
 -- Vdata table: For owner queries
