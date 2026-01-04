@@ -26,7 +26,7 @@ class NpcRaidManager
         if (!$villageData) return;
         
         $npcUserId = (int)$villageData['owner'];
-        $npcRace = (int)$db->fetchScalar("SELECT tribe FROM users WHERE id=$npcUserId");
+        $npcRace = (int)$db->fetchScalar("SELECT race FROM users WHERE id=$npcUserId");
         
         // Get available troopsconst from units table
         $units = $db->query("SELECT u1,u2,u3,u4,u5,u6,u7,u8,u9,u10,u11 FROM units WHERE kid=$warVillageId")->fetch_assoc();
