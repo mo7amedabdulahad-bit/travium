@@ -79,14 +79,12 @@ class NpcBuildingManager
             // Deduct resources
             $db->query("UPDATE vdata SET wood=wood-{$cost[0]}, clay=clay-{$cost[1]}, iron=iron-{$cost[2]}, crop=crop-{$cost[3]} WHERE kid=$kid");
             
-            // Insert queue - Schema uses specific columns
-            // based on SELECT * FROM building_upgrade: id, kid, building_field, isMaster, loop_con, start_time, commence
-            // 'commence' is actually completion time in T4 codebase usually, or start time depending on logic.
-            // Let's check Village.php:
-            // "INSERT INTO building_upgrade (kid, building_field, isMaster, start_time, commence) VALUES (?, ?, ?, ?, ?)"
-            // start_time = when it started (NOW)
-            // commence = when it finishes (NOW + duration)
-            
+            // IMPORTANT: If new building (level 0), we MUST set the type in fdata so game knows what is building!
+            if ($location['level'] == 0) {
+                 $db->query("UPDATE fdata SET f{$location['field']}t=$bType WHERE kid=$kid");
+            }
+
+            // Insert queue
             $db->query("INSERT INTO building_upgrade (kid, building_field, isMaster, start_time, commence) 
                         VALUES ($kid, {$location['field']}, 0, $startTime, $completionTime)");
             
