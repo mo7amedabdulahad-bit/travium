@@ -86,7 +86,7 @@ class NpcVillagePlacement
         $result = $db->query("
             SELECT AVG(w.x) as avg_x, AVG(w.y) as avg_y
             FROM vdata v
-            JOIN wdata w ON v.wref = w.id
+            JOIN wdata w ON w.id = v.kid
             JOIN users u ON v.owner = u.id
             WHERE u.aid = $allianceId
         ")->fetch_assoc();
