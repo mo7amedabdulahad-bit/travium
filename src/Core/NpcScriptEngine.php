@@ -14,11 +14,15 @@ class NpcScriptEngine
      */
     public static function executeTick($npcRow)
     {
+        // Start performance monitoring
+        NpcPerformanceMonitor::startTick($npcRow['id']);
+        
         try {
             // 1. Determine Global Settings & Phase
             $settings = NpcConfig::getServerSettings();
             if (!$settings) {
                 logError("NPC {$npcRow['id']}: No server settings found, aborting");
+                NpcPerformanceMonitor::endTick();
                 return;
             }
 
@@ -37,11 +41,12 @@ class NpcScriptEngine
         // Map Phase 1 personalities to template types if needed, or use direct
         // Assuming template keys match directly or we map them.
             // Load Personality Template
-            $template = self::getTemplate($npc);
+            $template = self::getTemplate($npcRow);
             if (!$template) {
                 // Try fallback if primary fails
-                $template = self::getTemplate($npc);
+                $template = self::getTemplate($npcRow);
                 if (!$template) {
+                    NpcPerformanceMonitor::endTick();
                     return; // Fail silent
                 }
             }
@@ -56,7 +61,7 @@ class NpcScriptEngine
                  if (is_array($queue)) {
                      foreach ($queue as $buildingName) {
                          if (!empty($buildingName)) {
-                             NpcBuildingManager::ensureBuilding($npc['id'], $buildingName, $template['behavior_params_json']['build_rate'] ?? 50);
+                             NpcBuildingManager::ensureBuilding($npcRow['id'], $buildingName, $template['behavior_params_json']['build_rate'] ?? 50);
                          }
                      }
                  }
@@ -65,11 +70,16 @@ class NpcScriptEngine
             // Phase 6: World Wonder Operations
             if (!empty($npcRow['ww_operation_state']) && $npcRow['ww_operation_state'] !== 'Idle') {
                 NpcWWOperations::progressWWOperation($npcRow);
+                NpcPerformanceMonitor::recordAction('ww_operation_tick', [
+                    'state' => $npcRow['ww_operation_state'],
+                    'role' => $npcRow['ww_alliance_role']
+                ]);
             }
             
             // Phase 7: Village Expansion Check
             if (NpcExpansionManager::checkExpansionEligibility($npcRow)) {
                 NpcExpansionManager::planExpansion($npcRow);
+                NpcPerformanceMonitor::recordAction('expansion_planned');
             }
             
             // Phase 7: Accelerated development for new villages
@@ -81,11 +91,15 @@ class NpcScriptEngine
                 self::executeWarVillageLogic($npcRow, $template);
             }
             
+            // End performance monitoring and log metrics
+            NpcPerformanceMonitor::endTick(true);
+            
         } catch (\Throwable $e) {
             // Log only actual errors
             if (function_exists('logError')) {
-                logError("NPC Engine Error for UID {$npc['id']}: " . $e->getMessage());
+                logError("NPC Engine Error for UID {$npcRow['id']}: " . $e->getMessage());
             }
+            NpcPerformanceMonitor::endTick();
         }
     }
 

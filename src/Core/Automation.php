@@ -86,8 +86,7 @@ class Automation
                     BuildingAction::upgrade($row['kid'], $row['building_field']);
                     
                     // Invalidate building cache for this village
-                    $cache = RedisCache::getInstance();
-                    $cache->delete("village_buildings_{$row['kid']}");
+                    NpcCacheInvalidation::onBuildingComplete($row['kid']);
                 }
             }
         }
@@ -99,8 +98,7 @@ class Automation
                 BuildingAction::downgrade($row['kid'], $row['building_field'], 1, $row['complete']);
                 
                 // Invalidate building cache for this village
-                $cache = RedisCache::getInstance();
-                $cache->delete("village_buildings_{$row['kid']}");
+                NpcCacheInvalidation::onBuildingComplete($row['kid']);
             }
         }
     }
