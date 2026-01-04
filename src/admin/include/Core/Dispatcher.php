@@ -104,6 +104,9 @@ class Dispatcher
                 $this->addMenu($this->data['gameWorldUrl'] . 'dorf1.php', 'Return to server');
             }
             $this->addMenu(FALSE, FALSE);
+            $this->addMenuTitle("NPC System");
+            $this->addMenu('admin.php?action=npcDashboard', '<b style="color: blue;">NPC Dashboard</b>');
+            $this->addMenu(FALSE, FALSE);
             $this->addMenu('admin.php?action=fixes', '<b style="color: darkred;">Fixes (v1.0.0)</b>');
             $this->addMenu('admin.php?action=backups', '<b style="color: green;">Backups (v1.0.1)</b>');
             $this->addMenu('admin.php?action=installNewServer', '<b style="color: darkred;">Installer (v0.0.5)</b>');
