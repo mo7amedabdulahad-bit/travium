@@ -22,9 +22,9 @@ class NpcWWOperations
         
         // Get all NPCs in alliances (not solo players)
         $result = $db->query("
-            SELECT u.id, u.aid, a.name as alliance_name
+            SELECT u.id, u.aid, a.tag as alliance_name
             FROM users u
-            LEFT JOIN alianz a ON u.aid = a.id
+            LEFT JOIN alidata a ON u.aid = a.id
             WHERE u.access = 3 
               AND u.aid > 0
               AND u.ww_operation_state = 'Idle'
