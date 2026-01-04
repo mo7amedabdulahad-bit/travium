@@ -71,6 +71,17 @@ class Automation
         $m = new FarmListModel();
         $m->processAutoRaid();
     }
+    
+    /**
+     * Phase 5: Process NPC scheduler - handles NPC ticks and world events
+     */
+    public function handleNpcScheduler()
+    {
+        // Process up to 10 NPCs per automation cycle
+        if (class_exists('Core\\NpcScheduler')) {
+            \Core\NpcScheduler::processDueNpcs(1, 10);
+        }
+    }
 
     public function buildComplete()
     {
