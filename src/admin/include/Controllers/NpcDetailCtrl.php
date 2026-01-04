@@ -121,7 +121,7 @@ class NpcDetailCtrl
                 nv.founded_at
             FROM vdata v
             JOIN wdata w ON v.kid = w.id
-            LEFT JOIN npc_villages nv ON v.kid = nv.kid
+            LEFT JOIN npc_villages nv ON v.kid = nv.village_id
             WHERE v.owner = {$this->npcId}
             ORDER BY nv.village_number ASC, v.kid ASC
         ";
