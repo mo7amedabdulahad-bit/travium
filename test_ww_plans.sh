@@ -1,6 +1,6 @@
 #!/bin/bash
-# WW Plan Test Script
-# This will test the WWPlanReleased event and show alliance role assignments
+# WW Plan Test Script - Simplified version
+# Tests WWPlanReleased event without needing alliance table lookups
 
 echo "========================================="
 echo "World Wonder Plan Release Test"
@@ -9,7 +9,7 @@ echo ""
 
 # 1. Insert WWPlanReleased event
 echo "Step 1: Triggering WW Plan Release Event..."
-mysql -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
+mariadb -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
 INSERT INTO npc_world_events (server_id, event_type, created_at) 
 VALUES (1, 'WWPlanReleased', NOW());
 EOF
@@ -22,18 +22,16 @@ else
 fi
 
 echo ""
-echo "Step 2: Showing NPC alliances BEFORE processing..."
-mysql -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
+echo "Step 2: Showing NPC counts by alliance BEFORE processing..."
+mariadb -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
 SELECT 
-    a.id as AllianceID,
-    a.name as AllianceName,
+    u.aid as AllianceID,
     COUNT(u.id) as NPCCount,
     SUM(v.pop) as TotalPop
-FROM alianz a
-JOIN users u ON a.id = u.aid
+FROM users u
 LEFT JOIN vdata v ON u.id = v.owner
-WHERE u.access = 3
-GROUP BY a.id, a.name
+WHERE u.access = 3 AND u.aid > 0
+GROUP BY u.aid
 ORDER BY TotalPop DESC
 LIMIT 10;
 EOF
@@ -41,41 +39,49 @@ EOF
 echo ""
 echo "Step 3: Processing the event (running NPC scheduler)..."
 cd /home/travium/htdocs
-php -r "
-require 'src/bootstrap.php';
+
+# Use proper PHP script that defines constants
+php << 'PHPCODE'
+<?php
+define('ROOT_PATH', __DIR__ . '/');
+define('GLOBAL_CONFIG_FILE', ROOT_PATH . 'config.php');
+define('CONNECTION_FILE', ROOT_PATH . 'servers/s1/include/connection.php');
+
+require ROOT_PATH . 'src/bootstrap.php';
+
+echo "Running NPC Scheduler...\n";
 \Core\NpcScheduler::processDueNpcs(1, 50);
-echo \"Scheduler processed\n\";
-"
+echo "✅ Scheduler processed\n";
+?>
+PHPCODE
 
 echo ""
-echo "Step 4: Showing alliance roles AFTER processing..."
-mysql -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
+echo "Step 4: Showing WW roles AFTER processing..."
+mariadb -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
 SELECT 
-    a.name as Alliance,
+    u.aid as AllianceID,
     u.ww_alliance_role as Role,
     u.ww_operation_state as State,
     COUNT(*) as NPCCount
 FROM users u
-JOIN alianz a ON u.aid = a.id
 WHERE u.access = 3 AND u.ww_alliance_role != 'Neutral'
-GROUP BY a.name, u.ww_alliance_role, u.ww_operation_state
-ORDER BY u.ww_alliance_role, a.name;
+GROUP BY u.aid, u.ww_alliance_role, u.ww_operation_state
+ORDER BY u.ww_alliance_role, u.aid;
 EOF
 
 echo ""
-echo "Step 5: Detailed NPC Status..."
-mysql -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
+echo "Step 5: Detailed NPC Status (first 20)..."
+mariadb -u maindb -p7akPHoCSv6We@EVHMtsyNkc6 maindb << EOF
 SELECT 
     u.id as NPC_ID,
     u.name as Name,
-    a.name as Alliance,
+    u.aid as AllianceID,
     u.ww_alliance_role as WWRole,
     u.ww_operation_state as State
 FROM users u
-JOIN alianz a ON u.aid = a.id
 WHERE u.access = 3 
   AND u.ww_alliance_role != 'Neutral'
-ORDER BY u.ww_alliance_role, a.name
+ORDER BY u.ww_alliance_role, u.aid
 LIMIT 20;
 EOF
 
