@@ -70,12 +70,25 @@ class NpcBuildingManager
             }
             $loop = 0; // Not master, direct
             
+            $startTime = time();
+            $completionTime = $startTime + $duration;
+            
+            // Loop upgrade? (loop_con) - Not used for NPCs yet, simplify
+            $loopCon = 0;
+
             // Deduct resources
             $db->query("UPDATE vdata SET wood=wood-{$cost[0]}, clay=clay-{$cost[1]}, iron=iron-{$cost[2]}, crop=crop-{$cost[3]} WHERE kid=$kid");
             
-            // Insert queue
-            $db->query("INSERT INTO building_upgrade (kid, building_field, type, loop_upgrade, commence, duration, isMaster) 
-                        VALUES ($kid, {$location['field']}, $bType, $loop, $commence, $duration, 0)");
+            // Insert queue - Schema uses specific columns
+            // based on SELECT * FROM building_upgrade: id, kid, building_field, isMaster, loop_con, start_time, commence
+            // 'commence' is actually completion time in T4 codebase usually, or start time depending on logic.
+            // Let's check Village.php:
+            // "INSERT INTO building_upgrade (kid, building_field, isMaster, start_time, commence) VALUES (?, ?, ?, ?, ?)"
+            // start_time = when it started (NOW)
+            // commence = when it finishes (NOW + duration)
+            
+            $db->query("INSERT INTO building_upgrade (kid, building_field, isMaster, loop_con, start_time, commence) 
+                        VALUES ($kid, {$location['field']}, 0, 0, $startTime, $completionTime)");
             
             return; // Action taken, done for this tick
         }
