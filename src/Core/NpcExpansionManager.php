@@ -54,13 +54,21 @@ class NpcExpansionManager
         $capitalId = $capital['kid'];
         
         // 5. Check Residence/Palace level (need level 10+)
+        // fdata uses fields f1-f99 where field number = building slot
+        // Residence = type 25, Palace = type 26
         $residenceLevel = (int)$db->fetchScalar("
-SELECT level FROM fdata 
-            WHERE vref = $capitalId AND type IN (25, 26)
-            ORDER BY level DESC LIMIT 1
+            SELECT MAX(f.f25) as residence_level FROM fdata f
+            WHERE f.kid = $capitalId
         ");
         
-        if ($residenceLevel < 10) {
+        $palaceLevel = (int)$db->fetchScalar("
+            SELECT MAX(f.f26) as palace_level FROM fdata f
+            WHERE f.kid = $capitalId
+        ");
+        
+        $maxLevel = max($residenceLevel, $palaceLevel);
+        
+        if ($maxLevel < 10) {
             return false; // Residence/Palace not high enough
         }
         
@@ -316,7 +324,14 @@ SELECT level FROM fdata
     {
         $db = DB::getInstance();
         
-        $vCoords = $db->query("SELECT x, y FROM wdata w JOIN vdata v ON w.id = v.wref WHERE v.kid = $villageId")->fetch_assoc();
+        // Get village coordinates
+        $vCoords = $db->query("
+            SELECT w.x, w.y 
+            FROM wdata w 
+            JOIN vdata v ON w.id = v.kid 
+            WHERE v.kid = $villageId
+        ")->fetch_assoc();
+        
         $tCoords = $db->query("SELECT x, y FROM wdata WHERE id = $tileId")->fetch_assoc();
         
         if (!$vCoords || !$tCoords) return 0;
