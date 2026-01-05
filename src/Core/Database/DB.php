@@ -246,7 +246,9 @@ class DB
         $now = time();
         foreach ($files as $file) {
             if (is_file($file)) {
-                $fileTime = floor((int)explode("-", basename($file))[1] / 1000);
+                $parts = explode("-", basename($file));
+                if (count($parts) < 2) continue;
+                $fileTime = floor((int)$parts[1] / 1000);
                 if (($now - $fileTime) >= ($gameFinished ? 2 : 12) * 3600) { // 2 days
                     unlink($file);
                 }
