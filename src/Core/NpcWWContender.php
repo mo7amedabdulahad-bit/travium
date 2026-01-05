@@ -237,7 +237,7 @@ class NpcWWContender
         
         // Check for existing WW
         $existing = $db->fetchScalar("
-            SELECT kid FROM fdata f
+            SELECT f.kid FROM fdata f
             JOIN vdata v ON f.kid = v.kid
             WHERE v.owner = $npcId AND f.type = 40
             LIMIT 1
