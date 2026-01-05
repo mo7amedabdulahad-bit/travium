@@ -57,12 +57,6 @@ class NpcWWSpoiler
      * @param array $npcRow NPC user row
      * @return array Sorted list of targets [{type, village_id, priority}]
      */
-    /**
-     * Prioritize disruption targets
-     * 
-     * @param array $npcRow NPC user row
-     * @return array Sorted list of targets [{type, village_id, priority}]
-     */
     private static function prioritizeTargets($npcRow)
     {
         $db = DB::getInstance();
@@ -70,51 +64,53 @@ class NpcWWSpoiler
         
         $targets = [];
         
-        // Fetch all Contender villages (broad search)
-        // We filter for WWs and Plans in PHP because fdata is wide/denormalized
-        $result = $db->query("
-            SELECT v.kid, v.owner, u.ww_operation_state
+        // Priority 1: WW villages under construction (highest priority)
+        $wwVillages = $db->query("
+            SELECT v.kid, v.owner, f.level, u.ww_operation_state
+            FROM vdata v
+            JOIN fdata f ON v.kid = f.kid
+            JOIN users u ON v.owner = u.id
+            WHERE f.type = 40
+              AND u.aid != $allianceId
+              AND u.ww_alliance_role = 'Contender'
+            ORDER BY f.level DESC
+            LIMIT 5
+        ");
+        
+        while ($row = $wwVillages->fetch_assoc()) {
+            $targets[] = [
+                'type' => 'ww_village',
+                'village_id' => (int)$row['kid'],
+                'owner_id' => (int)$row['owner'],
+                'priority' => 100 + (int)$row['level'], // Higher level = higher priority
+                'ww_level' => (int)$row['level']
+            ];
+        }
+        
+        // Priority 2: Plan holders from contender alliances
+        $planHolders = $db->query("
+            SELECT v.kid, v.owner
             FROM vdata v
             JOIN users u ON v.owner = u.id
             WHERE u.aid != $allianceId
               AND u.ww_alliance_role = 'Contender'
-            LIMIT 50
+              AND EXISTS (
+                  SELECT 1 FROM fdata f2
+                  WHERE f2.kid = v.kid 
+                    AND f2.type = 27
+                    AND f2.level >= 10
+              )
+            LIMIT 10
         ");
         
-        while ($row = $result->fetch_assoc()) {
-            $kid = (int)$row['kid'];
-            $owner = (int)$row['owner'];
-            
-            // Fetch buildings
-            $fdata = $db->query("SELECT * FROM fdata WHERE kid = $kid")->fetch_assoc();
-            if (!$fdata) continue;
-            
-            // Check for WW (Type 40) or Plans (Type 27 >= Lvl 10)
-            for ($i = 1; $i <= 40; $i++) {
-                $type = (int)($fdata['f' . $i . 't'] ?? 0);
-                $level = (int)($fdata['f' . $i] ?? 0);
-                
-                if ($type == 40) {
-                    $targets[] = [
-                        'type' => 'ww_village',
-                        'village_id' => $kid,
-                        'owner_id' => $owner,
-                        'priority' => 100 + $level,
-                        'ww_level' => $level
-                    ];
-                    break; // Found WW, move to next village
-                } elseif ($type == 27 && $level >= 10) {
-                    $targets[] = [
-                        'type' => 'plan_holder',
-                        'village_id' => $kid,
-                        'owner_id' => $owner,
-                        'priority' => 80
-                    ];
-                    break; // Found plans, move to next village
-                }
-            }
+        while ($row = $planHolders->fetch_assoc()) {
+            $targets[] = [
+                'type' => 'plan_holder',
+                'village_id' => (int)$row['kid'],
+                'owner_id' => (int)$row['owner'],
+                'priority' => 80
+            ];
         }
-
         
         // Priority 3: Resource support villages near WW
         // Villages that are likely sending resources to WW
