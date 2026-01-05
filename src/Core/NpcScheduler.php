@@ -23,7 +23,7 @@ class NpcScheduler
         
         // 1. Select NPCs due for processing
         // Uses index idx_users_next_tick (access, next_tick_at)
-        $result = $db->query("SELECT id, name, next_tick_at, tick_interval_seconds, war_village_id, npc_personality 
+        $result = $db->query("SELECT id, name, aid, next_tick_at, tick_interval_seconds, war_village_id, npc_personality, npc_difficulty, ww_operation_state, ww_alliance_role, expansion_plan_json, npc_memory_json 
                               FROM users 
                               WHERE access = 3 
                               AND next_tick_at <= NOW() 
