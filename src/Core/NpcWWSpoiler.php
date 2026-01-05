@@ -68,7 +68,7 @@ class NpcWWSpoiler
         $wwVillages = $db->query("
             SELECT v.kid, v.owner, f.level, u.ww_operation_state
             FROM vdata v
-            JOIN fdata f ON v.kid = f.vref
+            JOIN fdata f ON v.kid = f.kid
             JOIN users u ON v.owner = u.id
             WHERE f.type = 40
               AND u.aid != $allianceId
@@ -96,7 +96,7 @@ class NpcWWSpoiler
               AND u.ww_alliance_role = 'Contender'
               AND EXISTS (
                   SELECT 1 FROM fdata 
-                  WHERE fdata.vref = v.kid 
+                  WHERE fdata.kid = v.kid 
                     AND fdata.type = 27
                     AND fdata.level >= 10
               )

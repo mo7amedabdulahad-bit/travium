@@ -74,7 +74,7 @@ class NpcWWContender
               AND u.aid > 0
               AND EXISTS (
                   SELECT 1 FROM fdata 
-                  WHERE fdata.vref = v.kid 
+                  WHERE fdata.kid = v.kid 
                     AND fdata.type = 27
                     AND fdata.level >= 10
               )
@@ -168,7 +168,7 @@ class NpcWWContender
         $result = $db->query("
             SELECT COUNT(*) as count
             FROM fdata f
-            JOIN vdata v ON f.vref = v.kid
+            JOIN vdata v ON f.kid = v.kid
             WHERE v.owner = $npcId
               AND f.type = 27
               AND f.level >= 10
@@ -218,7 +218,7 @@ class NpcWWContender
         // Check if WW already exists
         $hasWW = $db->fetchScalar("
             SELECT COUNT(*) FROM fdata 
-            WHERE vref = $wwVillageId AND type = 40
+            WHERE kid = $wwVillageId AND type = 40
         ");
         
         if ($hasWW > 0) {
@@ -246,8 +246,8 @@ class NpcWWContender
         
         // Check for existing WW
         $existing = $db->fetchScalar("
-            SELECT vref FROM fdata f
-            JOIN vdata v ON f.vref = v.kid
+            SELECT kid FROM fdata f
+            JOIN vdata v ON f.kid = v.kid
             WHERE v.owner = $npcId AND f.type = 40
             LIMIT 1
         ");

@@ -112,7 +112,7 @@ class NpcExpansionManager
     {
         $db = DB::getInstance();
         
-        $units = $db->query("SELECT u9, u10 FROM units WHERE vref = $villageId")->fetch_assoc();
+        $units = $db->query("SELECT u9, u10 FROM units WHERE kid = $villageId")->fetch_assoc();
         
         if (!$units) return 0;
         

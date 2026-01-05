@@ -259,9 +259,9 @@ class NpcWWOperations
         $db = DB::getInstance();
         // WW villages have building type 40 in fdata
         return $db->fetchScalar("
-            SELECT f.vref 
+            SELECT f.kid 
             FROM fdata f
-            JOIN vdata v ON f.vref = v.kid
+            JOIN vdata v ON f.kid = v.kid
             WHERE v.owner = $npcId AND f.type = 40
             LIMIT 1
         ");
@@ -275,7 +275,7 @@ class NpcWWOperations
         $db = DB::getInstance();
         return (int)$db->fetchScalar("
             SELECT level FROM fdata 
-            WHERE vref = $villageId AND type = 40
+            WHERE kid = $villageId AND type = 40
         ");
     }
 }

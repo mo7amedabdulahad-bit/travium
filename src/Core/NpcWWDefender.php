@@ -130,7 +130,7 @@ class NpcWWDefender
         
         // Get unit counts from unitsdata table
         // This is simplified - adapt to your troop storage system
-        $result = $db->query("SELECT * FROM units WHERE vref = $villageId LIMIT 1");
+        $result = $db->query("SELECT * FROM units WHERE kid = $villageId LIMIT 1");
         
         if (!$result || $result->num_rows === 0) return [];
         
