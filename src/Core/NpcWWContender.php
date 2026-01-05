@@ -73,10 +73,10 @@ class NpcWWContender
             WHERE u.aid != $allianceId
               AND u.aid > 0
               AND EXISTS (
-                  SELECT 1 FROM fdata 
-                  WHERE fdata.kid = v.kid 
-                    AND fdata.type = 27
-                    AND fdata.level >= 10
+                  SELECT 1 FROM fdata f2 
+                  WHERE f2.kid = v.kid 
+                    AND f2.type = 27
+                    AND f2.level >= 10
               )
             ORDER BY v.pop DESC
             LIMIT 20

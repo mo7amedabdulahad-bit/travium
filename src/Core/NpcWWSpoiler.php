@@ -95,10 +95,10 @@ class NpcWWSpoiler
             WHERE u.aid != $allianceId
               AND u.ww_alliance_role = 'Contender'
               AND EXISTS (
-                  SELECT 1 FROM fdata 
-                  WHERE fdata.kid = v.kid 
-                    AND fdata.type = 27
-                    AND fdata.level >= 10
+                  SELECT 1 FROM fdata f2
+                  WHERE f2.kid = v.kid 
+                    AND f2.type = 27
+                    AND f2.level >= 10
               )
             LIMIT 10
         ");
