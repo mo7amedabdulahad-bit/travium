@@ -172,7 +172,7 @@ class NpcWWDefender
         // Insert movement (attack_type = 2 for reinforcement)
         $db->query("
             INSERT INTO movement (
-                `from`, `to`, attack_type, troops, starttime, endtime
+                `from`, `to`, attack_type, troops, start_time, end_time
             ) VALUES (
                 $fromVillageId, $toVillageId, 2, '$troopString', $startTime, $endTime
             )

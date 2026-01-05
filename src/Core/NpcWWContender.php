@@ -178,11 +178,11 @@ class NpcWWContender
         
         // Check movement table for recent scouts
         $result = $db->query("
-            SELECT MAX(endtime) as last_scout
+            SELECT MAX(end_time) as last_scout
             FROM movement
             WHERE to_vid = $targetId
               AND attack_type = 1
-              AND endtime < " . time()
+              AND end_time < " . time()
         );
         
         $row = $result->fetch_assoc();

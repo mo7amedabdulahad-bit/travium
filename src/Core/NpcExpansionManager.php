@@ -206,7 +206,7 @@ class NpcExpansionManager
         
         $db->query("
             INSERT INTO movement (
-                `from`, `to`, attack_type, troops, starttime, endtime
+                `from`, `to`, attack_type, troops, start_time, end_time
             ) VALUES (
                 $capitalId, $targetTileId, 7, '0,0,0,0,0,0,0,0,3,0', $startTime, $endTime
             )
