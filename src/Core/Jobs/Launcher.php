@@ -225,7 +225,7 @@ class Launcher
                         logError("NpcScheduler ERROR: " . $e->getMessage());
                     }
                 };
-                $jobs[] = new Job('AIProgress:npcScheduler', 10, $job);
+                $jobs[] = new Job('AIProgress:npcScheduler', 30, $job); // Changed to 30s for stability
             }
         }
         $natarsModel = new NatarsModel();
