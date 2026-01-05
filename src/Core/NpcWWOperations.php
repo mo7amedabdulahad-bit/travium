@@ -254,28 +254,49 @@ class NpcWWOperations
     /**
      * Get WW village ID for an NPC
      */
+    /**
+     * Get WW village ID for an NPC
+     */
     private static function getWWVillageId($npcId)
     {
         $db = DB::getInstance();
-        // WW villages have building type 40 in fdata
-        return $db->fetchScalar("
-            SELECT f.kid 
-            FROM fdata f
-            JOIN vdata v ON f.kid = v.kid
-            WHERE v.owner = $npcId AND f.type = 40
-            LIMIT 1
-        ");
+        
+        // Get all villages for the NPC
+        $villages = $db->query("SELECT kid FROM vdata WHERE owner = $npcId");
+        
+        while ($v = $villages->fetch_assoc()) {
+            $kid = $v['kid'];
+            $fdata = $db->query("SELECT * FROM fdata WHERE kid = $kid")->fetch_assoc();
+            
+            if (!$fdata) continue;
+            
+            // Check all building slots for type 40 (WW)
+            for ($i = 1; $i <= 40; $i++) {
+                if (($fdata['f' . $i . 't'] ?? 0) == 40) {
+                    return $kid;
+                }
+            }
+        }
+        
+        return null; // No WW found
     }
     
     /**
      * Get current WW level
      */
-    private static function getWWLevel($villageId)
+    public static function getWWLevel($villageId)
     {
         $db = DB::getInstance();
-        return (int)$db->fetchScalar("
-            SELECT level FROM fdata 
-            WHERE kid = $villageId AND type = 40
-        ");
+        $fdata = $db->query("SELECT * FROM fdata WHERE kid = $villageId")->fetch_assoc();
+        
+        if (!$fdata) return 0;
+        
+        for ($i = 1; $i <= 40; $i++) {
+            if (($fdata['f' . $i . 't'] ?? 0) == 40) {
+                return (int)($fdata['f' . $i] ?? 0);
+            }
+        }
+        
+        return 0;
     }
 }

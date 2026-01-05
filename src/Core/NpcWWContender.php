@@ -59,32 +59,45 @@ class NpcWWContender
      * @param int $allianceId NPC's alliance ID (to exclude own alliance)
      * @return array List of village IDs with plans
      */
+    /**
+     * Identify villages holding WW plans
+     * 
+     * @param int $allianceId NPC's alliance ID (to exclude own alliance)
+     * @return array List of village IDs with plans
+     */
     private static function identifyPlanHolders($allianceId)
     {
         $db = DB::getInstance();
         
-        // WW plans are typically stored in treasuries (building type 27)
-        // In Travian, plans are stored in artifact table
-        // This is a simplified version - adapt to your game's plan storage
+        // Fetch potential plan holders (treasury candidates)
+        // Broad search: All villages in other alliances with decent pop
         $result = $db->query("
-            SELECT DISTINCT v.kid, v.owner
+            SELECT v.kid
             FROM vdata v
             JOIN users u ON v.owner = u.id
             WHERE u.aid != $allianceId
               AND u.aid > 0
-              AND EXISTS (
-                  SELECT 1 FROM fdata f2 
-                  WHERE f2.kid = v.kid 
-                    AND f2.type = 27
-                    AND f2.level >= 10
-              )
             ORDER BY v.pop DESC
-            LIMIT 20
+            LIMIT 50
         ");
         
         $holders = [];
         while ($row = $result->fetch_assoc()) {
-            $holders[] = (int)$row['kid'];
+            $kid = (int)$row['kid'];
+            $fdata = $db->query("SELECT * FROM fdata WHERE kid = $kid")->fetch_assoc();
+            
+            if (!$fdata) continue;
+            
+            // Check for Treasury (Type 27) >= Level 10
+            for ($i = 1; $i <= 40; $i++) {
+                $type = (int)($fdata['f' . $i . 't'] ?? 0);
+                $level = (int)($fdata['f' . $i] ?? 0);
+                
+                if ($type == 27 && $level >= 10) {
+                    $holders[] = $kid;
+                    break;
+                }
+            }
         }
         
         return $holders;
@@ -162,20 +175,27 @@ class NpcWWContender
     {
         $db = DB::getInstance();
         
-        // Check if any of NPC's villages have plans
-        // In Travian, this would check artifact/plan storage
-        // Simplified: check treasury building with high level
-        $result = $db->query("
-            SELECT COUNT(*) as count
-            FROM fdata f
-            JOIN vdata v ON f.kid = v.kid
-            WHERE v.owner = $npcId
-              AND f.type = 27
-              AND f.level >= 10
-        ");
+        $villages = $db->query("SELECT kid FROM vdata WHERE owner = $npcId");
         
-        $row = $result->fetch_assoc();
-        return ($row['count'] ?? 0) > 0;
+        while ($v = $villages->fetch_assoc()) {
+            $kid = $v['kid'];
+            $fdata = $db->query("SELECT * FROM fdata WHERE kid = $kid")->fetch_assoc();
+            
+            if (!$fdata) continue;
+            
+            // Check for Treasury (Type 27) >= Level 10
+            // This is a simplified "Plan" check - in real Travian this would check artifacts table
+            for ($i = 1; $i <= 40; $i++) {
+                $type = (int)($fdata['f' . $i . 't'] ?? 0);
+                $level = (int)($fdata['f' . $i] ?? 0);
+                
+                if ($type == 27 && $level >= 10) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     /**
