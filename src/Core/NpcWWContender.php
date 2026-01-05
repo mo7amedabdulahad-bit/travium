@@ -180,7 +180,7 @@ class NpcWWContender
         $result = $db->query("
             SELECT MAX(end_time) as last_scout
             FROM movement
-            WHERE to_vid = $targetId
+            WHERE to_kid = $targetId
               AND attack_type = 1
               AND end_time < " . time()
         );
