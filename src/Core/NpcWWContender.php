@@ -136,7 +136,7 @@ class NpcWWContender
         // Step 1: Scout if not recently scouted
         $lastScoutTime = self::getLastScoutTime($targetId);
         if (!$lastScoutTime || (time() - $lastScoutTime) > 3600) {
-            NpcScoutingManager::executeScout($fromVillageId, $targetId, $template, $policy);
+            NpcScoutingManager::executeScouts($fromVillageId, $targetId, $template, $policy);
             logError("NPC war village $fromVillageId: Scouting plan holder $targetId");
         }
         
@@ -237,9 +237,8 @@ class NpcWWContender
         
         // Check for existing WW
         $existing = $db->fetchScalar("
-            SELECT f.kid FROM fdata f
-            JOIN vdata v ON f.kid = v.kid
-            WHERE v.owner = $npcId AND f.type = 40
+            SELECT v.kid FROM vdata v
+            WHERE v.owner = $npcId AND v.isWW = 1
             LIMIT 1
         ");
         
