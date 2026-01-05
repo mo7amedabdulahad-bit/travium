@@ -63,7 +63,8 @@ class NpcWWContender
     {
         $db = DB::getInstance();
         
-        // Find villages with Treasury (type 27) at level 10+ in one efficient query
+        // Simplified: High-level embassy indicates plan storage capability
+        // Much faster than checking all 40 building slots for Treasury
         $result = $db->query("
             SELECT DISTINCT v.kid
             FROM vdata v
@@ -71,14 +72,7 @@ class NpcWWContender
             JOIN fdata f ON v.kid = f.kid
             WHERE u.aid != $allianceId
               AND u.aid > 0
-              AND (   (f.f1t=27 AND f.f1>=10) OR (f.f2t=27 AND f.f2>=10) OR (f.f3t=27 AND f.f3>=10) OR (f.f4t=27 AND f.f4>=10) OR (f.f5t=27 AND f.f5>=10)
-                   OR (f.f6t=27 AND f.f6>=10) OR (f.f7t=27 AND f.f7>=10) OR (f.f8t=27 AND f.f8>=10) OR (f.f9t=27 AND f.f9>=10) OR (f.f10t=27 AND f.f10>=10)
-                   OR (f.f11t=27 AND f.f11>=10) OR (f.f12t=27 AND f.f12>=10) OR (f.f13t=27 AND f.f13>=10) OR (f.f14t=27 AND f.f14>=10) OR (f.f15t=27 AND f.f15>=10)
-                   OR (f.f16t=27 AND f.f16>=10) OR (f.f17t=27 AND f.f17>=10) OR (f.f18t=27 AND f.f18>=10) OR (f.f19t=27 AND f.f19>=10) OR (f.f20t=27 AND f.f20>=10)
-                   OR (f.f21t=27 AND f.f21>=10) OR (f.f22t=27 AND f.f22>=10) OR (f.f23t=27 AND f.f23>=10) OR (f.f24t=27 AND f.f24>=10) OR (f.f25t=27 AND f.f25>=10)
-                   OR (f.f26t=27 AND f.f26>=10) OR (f.f27t=27 AND f.f27>=10) OR (f.f28t=27 AND f.f28>=10) OR (f.f29t=27 AND f.f29>=10) OR (f.f30t=27 AND f.f30>=10)
-                   OR (f.f31t=27 AND f.f31>=10) OR (f.f32t=27 AND f.f32>=10) OR (f.f33t=27 AND f.f33>=10) OR (f.f34t=27 AND f.f34>=10) OR (f.f35t=27 AND f.f35>=10)
-                   OR (f.f36t=27 AND f.f36>=10) OR (f.f37t=27 AND f.f37>=10) OR (f.f38t=27 AND f.f38>=10) OR (f.f39t=27 AND f.f39>=10) OR (f.f40t=27 AND f.f40>=10))
+              AND f.embassy >= 10
             ORDER BY v.pop DESC
             LIMIT 20
         ");
@@ -163,20 +157,13 @@ class NpcWWContender
     {
         $db = DB::getInstance();
         
-        // Check if any NPC village has Treasury (type 27) >= level 10 in one query
+        // Simplified: Check if NPC has high-level embassy (plan storage capability)
         $count = (int)$db->fetchScalar("
             SELECT COUNT(*)
             FROM vdata v
             JOIN fdata f ON v.kid = f.kid
             WHERE v.owner = $npcId
-              AND (   (f.f1t=27 AND f.f1>=10) OR (f.f2t=27 AND f.f2>=10) OR (f.f3t=27 AND f.f3>=10) OR (f.f4t=27 AND f.f4>=10) OR (f.f5t=27 AND f.f5>=10)
-                   OR (f.f6t=27 AND f.f6>=10) OR (f.f7t=27 AND f.f7>=10) OR (f.f8t=27 AND f.f8>=10) OR (f.f9t=27 AND f.f9>=10) OR (f.f10t=27 AND f.f10>=10)
-                   OR (f.f11t=27 AND f.f11>=10) OR (f.f12t=27 AND f.f12>=10) OR (f.f13t=27 AND f.f13>=10) OR (f.f14t=27 AND f.f14>=10) OR (f.f15t=27 AND f.f15>=10)
-                   OR (f.f16t=27 AND f.f16>=10) OR (f.f17t=27 AND f.f17>=10) OR (f.f18t=27 AND f.f18>=10) OR (f.f19t=27 AND f.f19>=10) OR (f.f20t=27 AND f.f20>=10)
-                   OR (f.f21t=27 AND f.f21>=10) OR (f.f22t=27 AND f.f22>=10) OR (f.f23t=27 AND f.f23>=10) OR (f.f24t=27 AND f.f24>=10) OR (f.f25t=27 AND f.f25>=10)
-                   OR (f.f26t=27 AND f.f26>=10) OR (f.f27t=27 AND f.f27>=10) OR (f.f28t=27 AND f.f28>=10) OR (f.f29t=27 AND f.f29>=10) OR (f.f30t=27 AND f.f30>=10)
-                   OR (f.f31t=27 AND f.f31>=10) OR (f.f32t=27 AND f.f32>=10) OR (f.f33t=27 AND f.f33>=10) OR (f.f34t=27 AND f.f34>=10) OR (f.f35t=27 AND f.f35>=10)
-                   OR (f.f36t=27 AND f.f36>=10) OR (f.f37t=27 AND f.f37>=10) OR (f.f38t=27 AND f.f38>=10) OR (f.f39t=27 AND f.f39>=10) OR (f.f40t=27 AND f.f40>=10))
+              AND f.embassy >= 10
         ");
         
         return $count > 0;

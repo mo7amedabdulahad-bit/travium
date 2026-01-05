@@ -257,16 +257,11 @@ class NpcWWOperations
     private static function getWWVillageId($npcId)
     {
         $db = DB::getInstance();
-        // Check all 40 building slots for type 40 (WW) in one query
+        // Use existing isWW flag for instant lookup
         return $db->fetchScalar("
-            SELECT v.kid
-            FROM vdata v
-            JOIN fdata f ON v.kid = f.kid
-            WHERE v.owner = $npcId
-              AND (f.f1t=40 OR f.f2t=40 OR f.f3t=40 OR f.f4t=40 OR f.f5t=40 OR f.f6t=40 OR f.f7t=40 OR f.f8t=40 OR f.f9t=40 OR f.f10t=40
-                OR f.f11t=40 OR f.f12t=40 OR f.f13t=40 OR f.f14t=40 OR f.f15t=40 OR f.f16t=40 OR f.f17t=40 OR f.f18t=40 OR f.f19t=40 OR f.f20t=40
-                OR f.f21t=40 OR f.f22t=40 OR f.f23t=40 OR f.f24t=40 OR f.f25t=40 OR f.f26t=40 OR f.f27t=40 OR f.f28t=40 OR f.f29t=40 OR f.f30t=40
-                OR f.f31t=40 OR f.f32t=40 OR f.f33t=40 OR f.f34t=40 OR f.f35t=40 OR f.f36t=40 OR f.f37t=40 OR f.f38t=40 OR f.f39t=40 OR f.f40t=40)
+            SELECT kid
+            FROM vdata
+            WHERE owner = $npcId AND isWW = 1
             LIMIT 1
         ");
     }
