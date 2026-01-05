@@ -257,12 +257,16 @@ class NpcWWOperations
     private static function getWWVillageId($npcId)
     {
         $db = DB::getInstance();
-        // WW villages have building type 40 in fdata
+        // Check all 40 building slots for type 40 (WW) in one query
         return $db->fetchScalar("
-            SELECT f.kid 
-            FROM fdata f
-            JOIN vdata v ON f.kid = v.kid
-            WHERE v.owner = $npcId AND f.type = 40
+            SELECT v.kid
+            FROM vdata v
+            JOIN fdata f ON v.kid = f.kid
+            WHERE v.owner = $npcId
+              AND (f.f1t=40 OR f.f2t=40 OR f.f3t=40 OR f.f4t=40 OR f.f5t=40 OR f.f6t=40 OR f.f7t=40 OR f.f8t=40 OR f.f9t=40 OR f.f10t=40
+                OR f.f11t=40 OR f.f12t=40 OR f.f13t=40 OR f.f14t=40 OR f.f15t=40 OR f.f16t=40 OR f.f17t=40 OR f.f18t=40 OR f.f19t=40 OR f.f20t=40
+                OR f.f21t=40 OR f.f22t=40 OR f.f23t=40 OR f.f24t=40 OR f.f25t=40 OR f.f26t=40 OR f.f27t=40 OR f.f28t=40 OR f.f29t=40 OR f.f30t=40
+                OR f.f31t=40 OR f.f32t=40 OR f.f33t=40 OR f.f34t=40 OR f.f35t=40 OR f.f36t=40 OR f.f37t=40 OR f.f38t=40 OR f.f39t=40 OR f.f40t=40)
             LIMIT 1
         ");
     }
@@ -273,9 +277,21 @@ class NpcWWOperations
     private static function getWWLevel($villageId)
     {
         $db = DB::getInstance();
+        // Use CASE to extract WW level from whichever slot has type 40
         return (int)$db->fetchScalar("
-            SELECT level FROM fdata 
-            WHERE kid = $villageId AND type = 40
+            SELECT CASE
+                WHEN f1t=40 THEN f1 WHEN f2t=40 THEN f2 WHEN f3t=40 THEN f3 WHEN f4t=40 THEN f4 WHEN f5t=40 THEN f5
+                WHEN f6t=40 THEN f6 WHEN f7t=40 THEN f7 WHEN f8t=40 THEN f8 WHEN f9t=40 THEN f9 WHEN f10t=40 THEN f10
+                WHEN f11t=40 THEN f11 WHEN f12t=40 THEN f12 WHEN f13t=40 THEN f13 WHEN f14t=40 THEN f14 WHEN f15t=40 THEN f15
+                WHEN f16t=40 THEN f16 WHEN f17t=40 THEN f17 WHEN f18t=40 THEN f18 WHEN f19t=40 THEN f19 WHEN f20t=40 THEN f20
+                WHEN f21t=40 THEN f21 WHEN f22t=40 THEN f22 WHEN f23t=40 THEN f23 WHEN f24t=40 THEN f24 WHEN f25t=40 THEN f25
+                WHEN f26t=40 THEN f26 WHEN f27t=40 THEN f27 WHEN f28t=40 THEN f28 WHEN f29t=40 THEN f29 WHEN f30t=40 THEN f30
+                WHEN f31t=40 THEN f31 WHEN f32t=40 THEN f32 WHEN f33t=40 THEN f33 WHEN f34t=40 THEN f34 WHEN f35t=40 THEN f35
+                WHEN f36t=40 THEN f36 WHEN f37t=40 THEN f37 WHEN f38t=40 THEN f38 WHEN f39t=40 THEN f39 WHEN f40t=40 THEN f40
+                ELSE 0
+            END AS ww_level
+            FROM fdata
+            WHERE kid = $villageId
         ");
     }
 }

@@ -64,16 +64,30 @@ class NpcWWSpoiler
         
         $targets = [];
         
-        // Priority 1: WW villages under construction (highest priority)
+        // Priority 1: WW villages - Use CASE to extract level efficiently
         $wwVillages = $db->query("
-            SELECT v.kid, v.owner, f.level, u.ww_operation_state
+            SELECT v.kid, v.owner, u.ww_operation_state,
+                   CASE
+                       WHEN f.f1t=40 THEN f.f1 WHEN f.f2t=40 THEN f.f2 WHEN f.f3t=40 THEN f.f3 WHEN f.f4t=40 THEN f.f4 WHEN f.f5t=40 THEN f.f5
+                       WHEN f.f6t=40 THEN f.f6 WHEN f.f7t=40 THEN f.f7 WHEN f.f8t=40 THEN f.f8 WHEN f.f9t=40 THEN f.f9 WHEN f.f10t=40 THEN f.f10
+                       WHEN f.f11t=40 THEN f.f11 WHEN f.f12t=40 THEN f.f12 WHEN f.f13t=40 THEN f.f13 WHEN f.f14t=40 THEN f.f14 WHEN f.f15t=40 THEN f.f15
+                       WHEN f.f16t=40 THEN f.f16 WHEN f.f17t=40 THEN f.f17 WHEN f.f18t=40 THEN f.f18 WHEN f.f19t=40 THEN f.f19 WHEN f.f20t=40 THEN f.f20
+                       WHEN f.f21t=40 THEN f.f21 WHEN f.f22t=40 THEN f.f22 WHEN f.f23t=40 THEN f.f23 WHEN f.f24t=40 THEN f.f24 WHEN f.f25t=40 THEN f.f25
+                       WHEN f.f26t=40 THEN f.f26 WHEN f.f27t=40 THEN f.f27 WHEN f.f28t=40 THEN f.f28 WHEN f.f29t=40 THEN f.f29 WHEN f.f30t=40 THEN f.f30
+                       WHEN f.f31t=40 THEN f.f31 WHEN f.f32t=40 THEN f.f32 WHEN f.f33t=40 THEN f.f33 WHEN f.f34t=40 THEN f.f34 WHEN f.f35t=40 THEN f.f35
+                       WHEN f.f36t=40 THEN f.f36 WHEN f.f37t=40 THEN f.f37 WHEN f.f38t=40 THEN f.f38 WHEN f.f39t=40 THEN f.f39 WHEN f.f40t=40 THEN f.f40
+                       ELSE 0
+                   END AS ww_level
             FROM vdata v
             JOIN fdata f ON v.kid = f.kid
             JOIN users u ON v.owner = u.id
-            WHERE f.type = 40
+            WHERE (f.f1t=40 OR f.f2t=40 OR f.f3t=40 OR f.f4t=40 OR f.f5t=40 OR f.f6t=40 OR f.f7t=40 OR f.f8t=40 OR f.f9t=40 OR f.f10t=40
+                OR f.f11t=40 OR f.f12t=40 OR f.f13t=40 OR f.f14t=40 OR f.f15t=40 OR f.f16t=40 OR f.f17t=40 OR f.f18t=40 OR f.f19t=40 OR f.f20t=40
+                OR f.f21t=40 OR f.f22t=40 OR f.f23t=40 OR f.f24t=40 OR f.f25t=40 OR f.f26t=40 OR f.f27t=40 OR f.f28t=40 OR f.f29t=40 OR f.f30t=40
+                OR f.f31t=40 OR f.f32t=40 OR f.f33t=40 OR f.f34t=40 OR f.f35t=40 OR f.f36t=40 OR f.f37t=40 OR f.f38t=40 OR f.f39t=40 OR f.f40t=40)
               AND u.aid != $allianceId
               AND u.ww_alliance_role = 'Contender'
-            ORDER BY f.level DESC
+            ORDER BY ww_level DESC
             LIMIT 5
         ");
         
@@ -82,24 +96,27 @@ class NpcWWSpoiler
                 'type' => 'ww_village',
                 'village_id' => (int)$row['kid'],
                 'owner_id' => (int)$row['owner'],
-                'priority' => 100 + (int)$row['level'], // Higher level = higher priority
-                'ww_level' => (int)$row['level']
+                'priority' => 100 + (int)$row['ww_level'],
+                'ww_level' => (int)$row['ww_level']
             ];
         }
         
-        // Priority 2: Plan holders from contender alliances
+        // Priority 2: Plan holders with Treasury level 10+
         $planHolders = $db->query("
-            SELECT v.kid, v.owner
+            SELECT DISTINCT v.kid, v.owner
             FROM vdata v
             JOIN users u ON v.owner = u.id
+            JOIN fdata f ON v.kid = f.kid
             WHERE u.aid != $allianceId
               AND u.ww_alliance_role = 'Contender'
-              AND EXISTS (
-                  SELECT 1 FROM fdata f2
-                  WHERE f2.kid = v.kid 
-                    AND f2.type = 27
-                    AND f2.level >= 10
-              )
+              AND (   (f.f1t=27 AND f.f1>=10) OR (f.f2t=27 AND f.f2>=10) OR (f.f3t=27 AND f.f3>=10) OR (f.f4t=27 AND f.f4>=10) OR (f.f5t=27 AND f.f5>=10)
+                   OR (f.f6t=27 AND f.f6>=10) OR (f.f7t=27 AND f.f7>=10) OR (f.f8t=27 AND f.f8>=10) OR (f.f9t=27 AND f.f9>=10) OR (f.f10t=27 AND f.f10>=10)
+                   OR (f.f11t=27 AND f.f11>=10) OR (f.f12t=27 AND f.f12>=10) OR (f.f13t=27 AND f.f13>=10) OR (f.f14t=27 AND f.f14>=10) OR (f.f15t=27 AND f.f15>=10)
+                   OR (f.f16t=27 AND f.f16>=10) OR (f.f17t=27 AND f.f17>=10) OR (f.f18t=27 AND f.f18>=10) OR (f.f19t=27 AND f.f19>=10) OR (f.f20t=27 AND f.f20>=10)
+                   OR (f.f21t=27 AND f.f21>=10) OR (f.f22t=27 AND f.f22>=10) OR (f.f23t=27 AND f.f23>=10) OR (f.f24t=27 AND f.f24>=10) OR (f.f25t=27 AND f.f25>=10)
+                   OR (f.f26t=27 AND f.f26>=10) OR (f.f27t=27 AND f.f27>=10) OR (f.f28t=27 AND f.f28>=10) OR (f.f29t=27 AND f.f29>=10) OR (f.f30t=27 AND f.f30>=10)
+                   OR (f.f31t=27 AND f.f31>=10) OR (f.f32t=27 AND f.f32>=10) OR (f.f33t=27 AND f.f33>=10) OR (f.f34t=27 AND f.f34>=10) OR (f.f35t=27 AND f.f35>=10)
+                   OR (f.f36t=27 AND f.f36>=10) OR (f.f37t=27 AND f.f37>=10) OR (f.f38t=27 AND f.f38>=10) OR (f.f39t=27 AND f.f39>=10) OR (f.f40t=27 AND f.f40>=10))
             LIMIT 10
         ");
         
