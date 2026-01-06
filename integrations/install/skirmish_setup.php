@@ -92,6 +92,7 @@ try {
         ROOT_PATH . 'migrations/003_server_skirmish_settings.sql',  // Create server_settings table
         ROOT_PATH . 'migrations/004_npc_script_templates.sql',      // Personality templates table
         ROOT_PATH . 'migrations/005_npc_scheduler_columns.sql',     // war_village_id + scheduler columns
+        ROOT_PATH . 'migrations/006_npc_alliance_memory.sql',        // npc_memory_json column
         ROOT_PATH . 'migrations/008_fix_npc_difficulty_enum.sql',   // Fix difficulty enum
         ROOT_PATH . 'migrations/009_populate_personality_templates.sql',  // Populate templates
         ROOT_PATH . 'migrations/010_populate_existing_personalities.sql', // Populate personalities
