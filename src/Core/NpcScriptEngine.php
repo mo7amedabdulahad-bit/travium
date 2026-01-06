@@ -66,7 +66,29 @@ class NpcScriptEngine
                  }
             }
             
-            // Phase 6: World Wonder Operations
+            
+            // Phase 6: Military Buildings & Troop Training (AI.php integration)
+            // Execute classic AI building + training logic for each village
+            $db = DB::getInstance();
+            $villages = $db->query("SELECT kid FROM vdata WHERE owner = {$npcRow['id']}");
+            while ($village = $villages->fetch_assoc()) {
+                $kid = $village['kid'];
+                
+                // AI::doSomethingRandom handles:
+                // - Building military structures (barracks, stable, workshop)
+                // - Training troops
+                // - Upgrading resource fields and buildings
+                if (class_exists('Core\\AI')) {
+                    try {
+                        \Core\AI::doSomethingRandom($kid, 2); // Build/train up to 2 things per village
+                    } catch (\Throwable $e) {
+                        // Silently continue if AI fails for this village
+                        logError("AI failed for village $kid: " . $e->getMessage());
+                    }
+                }
+            }
+            
+            // Phase 7: World Wonder Operations
             if (!empty($npcRow['ww_operation_state']) && $npcRow['ww_operation_state'] !== 'Idle') {
                 NpcWWOperations::progressWWOperation($npcRow);
                 NpcPerformanceMonitor::recordAction('ww_operation_tick', [
@@ -75,13 +97,13 @@ class NpcScriptEngine
                 ]);
             }
             
-            // Phase 7: Village Expansion Check
+            // Phase 8: Village Expansion Check
             if (NpcExpansionManager::checkExpansionEligibility($npcRow)) {
                 NpcExpansionManager::planExpansion($npcRow);
                 NpcPerformanceMonitor::recordAction('expansion_planned');
             }
             
-            // Phase 7: Accelerated development for new villages
+            // Phase 9: Accelerated development for new villages
             self::developNewVillages($npcRow);
             
             // War Village Logic (Attacking/Raiding)
