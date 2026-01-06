@@ -112,7 +112,7 @@ class AllianceCtrl extends GameCtrl
             file_put_contents($logFile, "Processing description save\n", FILE_APPEND);
             $db = DB::getInstance();
             
-            // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+            // **FIX: Don't use FILTER_SANITIZE_FULL_SPECIAL_CHARS - it strips BBCode tags []
             $_POST['be1'] = $db->real_escape_string($_POST['be1'] ?? '');
             $_POST['be2'] = $db->real_escape_string($_POST['be2'] ?? '');
             
@@ -205,7 +205,7 @@ class AllianceCtrl extends GameCtrl
     {
         if ($this->selectedAllianceID == $this->session->getAllianceId() && isset($_POST['a']) && $_POST['a'] == 7 && $this->session->hasAlliancePermission(AllianceModel::CHANGE_ALLIANCE_DESC)) {
             $db = DB::getInstance();
-            // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+            // **FIX: Don't use FILTER_SANITIZE_FULL_SPECIAL_CHARS - it strips BBCode tags []
             $_POST['info1'] = $db->real_escape_string($_POST['info1']);
             $_POST['info2'] = $db->real_escape_string($_POST['info2']);
             $db->query("UPDATE alidata SET info1='{$_POST['info1']}', info2='{$_POST['info2']}' WHERE id={$this->selectedAllianceID}");
@@ -382,8 +382,8 @@ class AllianceCtrl extends GameCtrl
         $view->vars['tag'] = $this->selectedAllianceData['tag'];
         $view->vars['name'] = $this->selectedAllianceData['name'];
         if (isset($_POST['a']) && $_POST['a'] == 100) {
-            $view->vars['tag'] = $_POST['ally1'] = $db->real_escape_string(filter_var($_POST['ally1'], FILTER_SANITIZE_STRING));
-            $view->vars['name'] = $_POST['ally2'] = $db->real_escape_string(filter_var($_POST['ally2'], FILTER_SANITIZE_STRING));
+            $view->vars['tag'] = $_POST['ally1'] = $db->real_escape_string(filter_var($_POST['ally1'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+            $view->vars['name'] = $_POST['ally2'] = $db->real_escape_string(filter_var($_POST['ally2'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
             if (StringChecker::isValidName($view->vars['tag']) && StringChecker::isValidName($view->vars['name'])) {
                 //do what!
                 if (empty($view->vars['tag'])) {
@@ -433,7 +433,7 @@ class AllianceCtrl extends GameCtrl
             } else {
                 error_log("Permission OK - processing save");
                 
-                // **FIX: Don't use FILTER_SANITIZE_STRING - it strips BBCode tags []
+                // **FIX: Don't use FILTER_SANITIZE_FULL_SPECIAL_CHARS - it strips BBCode tags []
                 $_POST['be1'] = $db->real_escape_string($_POST['be1'] ?? '');
                 $_POST['be2'] = $db->real_escape_string($_POST['be2'] ?? '');
                 
@@ -525,7 +525,7 @@ class AllianceCtrl extends GameCtrl
                     if (isset($right['e9']) && $right['e9']) {
                         $permission |= AllianceModel::MANAGE_MARKS;
                     }
-                    $rang = $db->real_escape_string(filter_var($right['rang'], FILTER_SANITIZE_STRING));
+                    $rang = $db->real_escape_string(filter_var($right['rang'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
                     if (strlen($rang) > 20) {
                         continue;
                     }
@@ -570,7 +570,7 @@ class AllianceCtrl extends GameCtrl
         $view->vars['disallowInvite'] = $disAllowInvite;
         $db = DB::getInstance();
         if (WebService::isPost() && !$disAllowInvite) {
-            $a_name = filter_var($_POST['a_name'], FILTER_SANITIZE_STRING);
+            $a_name = filter_var($_POST['a_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $m = new AllianceModel();
             $uid = $db->fetchScalar("SELECT id FROM users WHERE name='{$a_name}'");
             if (!$uid || $uid == $this->session->getPlayerId()) {
@@ -656,7 +656,7 @@ class AllianceCtrl extends GameCtrl
         $view = new PHPBatchView("alliance/diplomacy");
         $db = DB::getInstance();
         if (WebService::isPost() && isset($_POST['dipl']) && $_POST['dipl'] >= 1 && $_POST['dipl'] <= 3) {
-            $aTag = $db->real_escape_string(filter_var($_POST['a_name'], FILTER_SANITIZE_STRING));
+            $aTag = $db->real_escape_string(filter_var($_POST['a_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
             $aid = (int)$db->fetchScalar("SELECT id FROM alidata WHERE tag='{$aTag}'");
             $dipl = (int)$_POST['dipl'];
             if (!$aid) {

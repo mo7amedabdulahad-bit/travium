@@ -1122,7 +1122,7 @@ class sendTroops extends RallyPointHTML
     private function getVillageByNameLIKE($name)
     {
         $db = DB::getInstance();
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $name = $db->real_escape_string($name);
         $search = "'%$name%'";
         return $db->fetchScalar("SELECT kid FROM vdata WHERE name LIKE " . $search . " LIMIT 1");

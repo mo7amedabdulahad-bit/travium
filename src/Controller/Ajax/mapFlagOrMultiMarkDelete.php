@@ -11,7 +11,7 @@ class mapFlagOrMultiMarkDelete extends AjaxBase
 {
     public function dispatch()
     {
-        $owner = filter_var($_POST['data']['owner'], FILTER_SANITIZE_STRING);
+        $owner = filter_var($_POST['data']['owner'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $dataId = (int)$_POST['data']['dataId'];
         $db = DB::getInstance();
         if ($owner == 'alliance' && !Session::getInstance()->hasAlliancePermission(AllianceModel::MANAGE_MARKS)) {

@@ -18,7 +18,7 @@ class heroSetAttributes extends AjaxBase
     public function dispatch()
     {
         if (!isset($_POST['resource'], $_POST['attackBehaviour'])) return;
-        $attackBehaviour = filter_var($_POST['attackBehaviour'], FILTER_SANITIZE_STRING);
+        $attackBehaviour = filter_var($_POST['attackBehaviour'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $resource = abs((int)$_POST['resource']);
         $villageModel = new VillageModel();
         if (isset($_POST['attributes']) && is_array($_POST['attributes']) && sizeof($_POST['attributes'])) {

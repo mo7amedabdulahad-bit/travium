@@ -69,7 +69,7 @@ class HeroAuctionCtrl extends GameCtrl
             }
         }
         $action = !isset($_REQUEST['action']) || !in_array($_REQUEST['action'],
-            ['buy', 'sell', 'bids', 'accounting',]) ? 'buy' : filter_var($_REQUEST['action'], FILTER_SANITIZE_STRING);
+            ['buy', 'sell', 'bids', 'accounting',]) ? 'buy' : filter_var($_REQUEST['action'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         //adding menus.
         $view = new PHPBatchView("hero/AuctionMenu");
         $view->vars['action'] = $action;

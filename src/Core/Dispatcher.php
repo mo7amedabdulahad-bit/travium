@@ -37,7 +37,7 @@ class Dispatcher
     private function dispatcher($ctrl = NULL, $print = TRUE)
     {
         if ($ctrl == NULL) {
-            $ctrl = filter_var(basename($_SERVER['PHP_SELF']), FILTER_SANITIZE_STRING);
+            $ctrl = filter_var(basename($_SERVER['PHP_SELF']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $ctrl = explode(".php", $ctrl)[0];
             $ctrl .= 'Cntrl';
         }

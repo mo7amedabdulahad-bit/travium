@@ -168,7 +168,7 @@ class AllianceForum extends AnyCtrl
                                 $this->session->getAllianceId(),
                                 $forum['id'],
                                 $topic['id'],
-                                filter_var($_POST['text'], FILTER_SANITIZE_STRING),
+                                filter_var($_POST['text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
                                 $this->session->isSitter(),
                                 $this->session->hasAlliancePermission(AllianceModel::MANAGE_FORUM));
                             if (!$this->showTopic($isAdmin)) {
@@ -255,7 +255,7 @@ class AllianceForum extends AnyCtrl
             $this->changeChecksum();
             $this->model->editPost($post['id'],
                 $this->session->getPlayerId(),
-                filter_var($_POST['text'], FILTER_SANITIZE_STRING));
+                filter_var($_POST['text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
             $_REQUEST['tid'] = $topic['id'];
             $this->showTopic($isAdmin);
             return FALSE;
@@ -268,7 +268,7 @@ class AllianceForum extends AnyCtrl
         $view->vars['aid'] = $this->selectedAllianceID;
         $view->vars['checkstr'] = $this->getChecksum();
         $view->vars['text'] = isset($_POST['text']) ? filter_var($_POST['text'],
-            FILTER_SANITIZE_STRING) : $post['post'];
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS) : $post['post'];
         $this->view->vars['content'] .= $view->output();
         return FALSE;
     }
@@ -281,7 +281,7 @@ class AllianceForum extends AnyCtrl
         $view->vars['aid'] = $this->selectedAllianceID;
         $view->vars['new'] = TRUE;
         $view->vars['checkstr'] = $this->getChecksum();
-        $view->vars['text'] = isset($_POST['text']) ? filter_var($_POST['text'], FILTER_SANITIZE_STRING) : '';
+        $view->vars['text'] = isset($_POST['text']) ? filter_var($_POST['text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $this->view->vars['content'] .= $view->output();
         return FALSE;
     }
@@ -307,7 +307,7 @@ class AllianceForum extends AnyCtrl
             }
             $this->model->editTopic($topic,
                 $this->session->getAllianceId(),
-                filter_var($_POST['thema'], FILTER_SANITIZE_STRING),
+                filter_var($_POST['thema'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
                 (int)$_POST['fid']);
             $_REQUEST['fid'] = $forum['id'];
             $this->showForum($isAdmin);
@@ -340,9 +340,9 @@ class AllianceForum extends AnyCtrl
             if (!empty($_POST['text']) && !empty($_POST['thema'])) {
                 $options = [];
                 if (isset($_POST['umfrage_thema'])) {
-                    if (!empty(filter_var($_POST['umfrage_thema'], FILTER_SANITIZE_STRING))) {
+                    if (!empty(filter_var($_POST['umfrage_thema'], FILTER_SANITIZE_FULL_SPECIAL_CHARS))) {
                         for ($i = 1; $i <= 8; ++$i) {
-                            $x = filter_var($_POST['option_' . $i], FILTER_SANITIZE_STRING);
+                            $x = filter_var($_POST['option_' . $i], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                             if (strlen($x) > 60) {
                                 continue;
                             }
@@ -367,9 +367,9 @@ class AllianceForum extends AnyCtrl
                 $tid = $this->model->addTopic($this->session->getPlayerId(),
                     $this->session->getAllianceId(),
                     $forum['id'],
-                    filter_var($_POST['thema'], FILTER_SANITIZE_STRING),
-                    filter_var($_POST['text'], FILTER_SANITIZE_STRING),
-                    filter_var($_POST['umfrage_thema'], FILTER_SANITIZE_STRING),
+                    filter_var($_POST['thema'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                    filter_var($_POST['text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                    filter_var($_POST['umfrage_thema'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
                     $options,
                     $ends);
                 $this->redirect("allianz.php?aid={$this->selectedAllianceID}&s=2&fid={$forum['id']}&tid=$tid");
@@ -380,12 +380,12 @@ class AllianceForum extends AnyCtrl
         $view->vars['aid'] = $this->selectedAllianceID;
         for ($i = 1; $i <= 8; ++$i) {
             $view->vars['option_' . $i] = isset($_POST['option_' . $i]) ? filter_var($_POST['option_' . $i],
-                FILTER_SANITIZE_STRING) : '';
+                FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         }
         $view->vars['Survey'] = isset($_POST['umfrage_thema']) ? filter_var($_POST['umfrage_thema'],
-            FILTER_SANITIZE_STRING) : '';
-        $view->vars['thema'] = isset($_POST['thema']) ? filter_var($_POST['thema'], FILTER_SANITIZE_STRING) : '';
-        $view->vars['text'] = isset($_POST['text']) ? filter_var($_POST['text'], FILTER_SANITIZE_STRING) : '';
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
+        $view->vars['thema'] = isset($_POST['thema']) ? filter_var($_POST['thema'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
+        $view->vars['text'] = isset($_POST['text']) ? filter_var($_POST['text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $view->vars['days'] = '';
         $view->vars['month'] = '';
         $view->vars['year'] = '';
@@ -717,8 +717,8 @@ class AllianceForum extends AnyCtrl
                 $bid = isset($_POST['bid']) ? ($_POST['bid'] == 1 ? 0 : ($_POST['bid'] == 2 ? 1 : ($_POST['bid'] == 0 ? 2 : 3))) : 0;
                 $this->model->addForum(
                     $this->session->getAllianceId(),
-                    filter_var($_POST['u1'], FILTER_SANITIZE_STRING),
-                    filter_var($_POST['u2'], FILTER_SANITIZE_STRING),
+                    filter_var($_POST['u1'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                    filter_var($_POST['u2'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
                     $bid,
                     isset($_POST['for_sitters']) && $_POST['for_sitters'] == 1 ? 1 : 0,
                     isset($_POST['allys_by_id']) ? $_POST['allys_by_id'] : NULL,
@@ -746,8 +746,8 @@ class AllianceForum extends AnyCtrl
         if (WebService::isPost()) {
             if (!empty($_POST['u1'])) {
                 $this->model->editForum($forum['id'],
-                    filter_var($_POST['u1'], FILTER_SANITIZE_STRING),
-                    filter_var($_POST['u2'], FILTER_SANITIZE_STRING),
+                    filter_var($_POST['u1'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                    filter_var($_POST['u2'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
                     isset($_POST['for_sitter']) && $_POST['for_sitter'] == 1 ? 1 : 0,
                     isset($_POST['bnds']) ? $_POST['bnds'] : NULL,
                     isset($_POST['allys_by_id']) ? $_POST['allys_by_id'] : NULL,

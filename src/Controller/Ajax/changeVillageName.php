@@ -23,7 +23,7 @@ class changeVillageName extends AjaxBase
             $this->response['errorMsg'] = 'As a sitter you don`t have access to this part.';
             return;
         }
-        $name = clean_string_from_white(filter_var($_POST['name'], FILTER_SANITIZE_STRING));
+        $name = clean_string_from_white(filter_var($_POST['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
         $did = (int)$_POST['did'];
         if($did <> Village::getInstance()->getKid()) {
             $this->response['error'] = TRUE;

@@ -210,10 +210,10 @@ class EmbassyCtrl extends AnyCtrl
                     $this->redirect('options.php?s=4');
                 }
                 if (isset($_POST['ally1'])) {
-                    $view->vars['tag'] = filter_var($_POST['ally1'], FILTER_SANITIZE_STRING);
+                    $view->vars['tag'] = filter_var($_POST['ally1'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 }
                 if (isset($_POST['ally2'])) {
-                    $view->vars['name'] = filter_var($_POST['ally2'], FILTER_SANITIZE_STRING);
+                    $view->vars['name'] = filter_var($_POST['ally2'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 }
                 if (empty($view->vars['tag']) || empty($view->vars['name'])) {
                     if (empty($view->vars['tag'])) {

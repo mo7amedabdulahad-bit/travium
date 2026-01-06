@@ -19,7 +19,7 @@ class checkRecipient extends AjaxBase
             }
             $this->response['success'] = 'success';
             foreach($_REQUEST['recipients'] as $recipient){
-                $recipient = filter_var($recipient, FILTER_SANITIZE_STRING);
+                $recipient = filter_var($recipient, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 $this->checkRecipient($recipient);
                 if($this->response['error']){
                     unset($this->response['success']);
