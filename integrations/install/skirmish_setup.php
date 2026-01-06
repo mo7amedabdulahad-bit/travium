@@ -86,6 +86,7 @@ try {
     }
 
     $migrations = [
+        ROOT_PATH . 'migrations/003_server_skirmish_settings.sql',  // Create server_settings table
         ROOT_PATH . 'migrations/008_fix_npc_difficulty_enum.sql',
         ROOT_PATH . 'migrations/010_populate_existing_personalities.sql'
     ];
