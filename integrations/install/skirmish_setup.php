@@ -94,7 +94,9 @@ try {
         ROOT_PATH . 'migrations/005_npc_scheduler_columns.sql',     // war_village_id + scheduler columns
         ROOT_PATH . 'migrations/008_fix_npc_difficulty_enum.sql',   // Fix difficulty enum
         ROOT_PATH . 'migrations/009_populate_personality_templates.sql',  // Populate templates
-        ROOT_PATH . 'migrations/010_populate_existing_personalities.sql'  // Populate personalities
+        ROOT_PATH . 'migrations/010_populate_existing_personalities.sql', // Populate personalities
+        ROOT_PATH . 'migrations/011_ww_operations.sql',             // WW operation columns
+        ROOT_PATH . 'migrations/012_village_expansion.sql'          // Village expansion columns
     ];
 
     foreach ($migrations as $mig) {
