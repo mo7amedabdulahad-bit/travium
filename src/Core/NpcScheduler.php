@@ -70,6 +70,11 @@ class NpcScheduler
             }
         }
 
+        // Log summary
+        if ($processedCount > 0) {
+            logError("[NpcScheduler] Processed $processedCount NPCs");
+        }
+
         return $processedCount;
     }
     
