@@ -303,7 +303,7 @@ class NpcExpansionManager
             // Use higher build rate for new villages
             $ownerId = (int)$db->fetchScalar("SELECT owner FROM vdata WHERE kid = $villageId");
             if ($ownerId) {
-                NpcBuildingManager::ensureBuilding($ownerId, $building, 80);
+                // Building is now handled by AI.php integration in NpcScriptEngine
             }
         }
     }

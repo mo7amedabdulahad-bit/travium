@@ -221,7 +221,7 @@ class NpcWWContender
         
         // Queue WW construction
         // Note: This would integrate with your building queue system
-        NpcBuildingManager::ensureBuilding($npcRow['id'], 'World Wonder', 100);
+        // WW building is now handled by AI.php integration in NpcScriptEngine
         
         NpcWWOperations::transitionState($npcRow['id'], 'PlanSecured', 'WWBuilding');
         logError("NPC {$npcRow['id']}: Started WW construction at village $wwVillageId");
