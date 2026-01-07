@@ -103,6 +103,18 @@ try {
     foreach ($migrations as $mig) {
         applyMigration($db, $mig);
     }
+    
+    // Fix MySQL timezone to match system (+04:00 for UAE/Dubai)
+    // This prevents NPC scheduling issues where DB time differs from server time
+    echo "[Skirmish] Setting MySQL timezone to +04:00...\n";
+    try {
+        $db->query("SET GLOBAL time_zone = '+04:00'");
+        $db->query("SET SESSION time_zone = '+04:00'");
+        debugLog("MySQL timezone set to +04:00");
+    } catch (Exception $e) {
+        echo "[WARNING] Could not set MySQL timezone: " . $e->getMessage() . "\n";
+        echo "          You may need to run: sudo mysql -u root -p -e \"SET GLOBAL time_zone = '+04:00';\"\n";
+    }
 
     // ---------------------------------------------------
     // 0.1 Initialize Server Settings EARLY
