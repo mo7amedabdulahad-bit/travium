@@ -50,22 +50,12 @@ class NpcScriptEngine
             }
         }
 
-            // Execute logic using template parameters
-            if (isset($template['build_priorities_json']) && !empty($template['build_priorities_json'])) {
-                 $queue = $template['build_priorities_json'];
-                 // If stored as JSON string in DB, decode it
-                 if (is_string($queue)) {
-                     $queue = json_decode($queue, true);
-                 }
-                 if (is_array($queue)) {
-                     foreach ($queue as $buildingName) {
-                         if (!empty($buildingName)) {
-                             NpcBuildingManager::ensureBuilding($npcRow['id'], $buildingName, $template['behavior_params_json']['build_rate'] ?? 50);
-                         }
-                     }
-                 }
-            }
-            
+        
+        // Execute logic using template parameters
+        // Note: Building is handled by AI.php (Phase 6 below), not template-based
+        // Template priorities were causing errors with non-existent ensureBuilding() method
+        
+        
             
             // Phase 6: Military Buildings & Troop Training (AI.php integration)
             // Execute classic AI building + training logic for each village
