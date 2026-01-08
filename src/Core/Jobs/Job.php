@@ -48,16 +48,25 @@ class Job
 
                 $nextLoop = miliseconds();
                 $consecutiveFailures = 0; // Track consecutive failures to prevent infinite error loops
+                $lastHeartbeat = time();
+                
+                logError("[$prgName] Daemon started. PID: " . getmypid());
 
                 while ($loop) {
                     mt_srand((int)make_seed());
+                    
+                    // Heartbeat every 60 seconds
+                    if (time() - $lastHeartbeat > 60) {
+                        logError("[$prgName] Heartbeat - Memory: " . floor(memory_get_usage() / 1024 / 1024) . "MB");
+                        $lastHeartbeat = time();
+                    }
                     
                     // BUGFIX: Validate database connection before each loop iteration
                     if (!$db->checkConnection()) {
                         logError("[$prgName] Database connection lost, attempting to reconnect...");
                         $consecutiveFailures++;
                         if ($consecutiveFailures > 10) {
-                            logError("[$prgName] Too many consecutive database failures (10+), exiting daemon to prevent zombie process");
+                            logError("[$prgName] Too many consecutive database failures (10+), exiting daemon (Code 1)");
                             $loop = false;
                             break;
                         }
@@ -67,16 +76,24 @@ class Job
                     
                     $config->dynamic = (object)$db->query("SELECT * FROM config LIMIT 1")->fetch_assoc();
                     if ($config->dynamic->needsRestart == 1) {
+                        logError("[$prgName] needsRestart flag detected. Exiting daemon to reload (Code 1)");
                         $loop = false;
                         pcntl_signal_dispatch();
                         continue;
                     }
                     $exclude = $name == 'postService' && $config->dynamic->postServiceDone == 0;
-                    if ($config->dynamic->finishStatusSet && !$exclude) $loop = false;
+                    if ($config->dynamic->finishStatusSet && !$exclude) {
+                        logError("[$prgName] Finish status set. Exiting daemon (Code 1)");
+                        $loop = false;
+                    }
+                    
                     try {
                         if ($config->dynamic->automationState || $exclude) {
                             $this->runJob($callBack, TRUE);
                             $consecutiveFailures = 0; // Reset counter on successful job execution
+                        } else {
+                            // Log occasionally if automation is paused
+                            if (rand(0, 100) < 5) logError("[$prgName] Automation paused (automationState=0)");
                         }
                     } catch (\Exception $e) {
                         $consecutiveFailures++;
@@ -87,7 +104,7 @@ class Job
                         $db->forceNewDatabase();
                         
                         if ($consecutiveFailures > 10) {
-                            logError("[$prgName] Too many consecutive exceptions (10+), exiting daemon");
+                            logError("[$prgName] Too many consecutive exceptions (10+), exiting daemon (Code 1)");
                             $loop = false;
                             break;
                         }
@@ -101,7 +118,7 @@ class Job
                         $db->forceNewDatabase();
                         
                         if ($consecutiveFailures > 10) {
-                            logError("[$prgName] Too many consecutive fatal errors (10+), exiting daemon");
+                            logError("[$prgName] Too many consecutive fatal errors (10+), exiting daemon (Code 1)");
                             $loop = false;
                             break;
                         }
@@ -114,7 +131,8 @@ class Job
                         gc_collect_cycles(); //Forces collection of any existing garbage cycles
                     }
                 }
-                exit();
+                logError("[$prgName] Daemon loop ended. Exiting process with code 1 to trigger systemd restart.");
+                exit(1);
             }
         } else {
             $this->setInterval($interval);
