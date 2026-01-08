@@ -152,7 +152,9 @@ class DB
             sleep(2);
         }
         $ping = TRUE;
-        if (($this->lastPing - time()) > 100 || $force) {
+        // BUGFIX: Corrected inverted time calculation (was: $this->lastPing - time())
+        // This ensures we ping every 100 seconds to keep connection alive
+        if ((time() - $this->lastPing) > 100 || $force) {
             // ping() deprecated in PHP 8.4 - just check connection exists
             $ping = ($this->mysqli && !$this->mysqli->connect_error);
             $try = 0;
@@ -160,7 +162,7 @@ class DB
                 ++$try;
                 $this->forceNewDatabase();
                 $ping = ($this->mysqli && !$this->mysqli->connect_error);
-                logError("Could not ping MySQL");
+                logError("Could not ping MySQL (attempt $try/20)");
                 sleep(1);
             }
             if ($ping) $this->lastPing = time();

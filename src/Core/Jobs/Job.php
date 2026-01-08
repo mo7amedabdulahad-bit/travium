@@ -47,9 +47,24 @@ class Job
                 gc_enable();
 
                 $nextLoop = miliseconds();
+                $consecutiveFailures = 0; // Track consecutive failures to prevent infinite error loops
 
                 while ($loop) {
                     mt_srand((int)make_seed());
+                    
+                    // BUGFIX: Validate database connection before each loop iteration
+                    if (!$db->checkConnection()) {
+                        logError("[$prgName] Database connection lost, attempting to reconnect...");
+                        $consecutiveFailures++;
+                        if ($consecutiveFailures > 10) {
+                            logError("[$prgName] Too many consecutive database failures (10+), exiting daemon to prevent zombie process");
+                            $loop = false;
+                            break;
+                        }
+                        sleep(2);
+                        continue; // Skip this iteration, retry connection next loop
+                    }
+                    
                     $config->dynamic = (object)$db->query("SELECT * FROM config LIMIT 1")->fetch_assoc();
                     if ($config->dynamic->needsRestart == 1) {
                         $loop = false;
@@ -59,12 +74,37 @@ class Job
                     $exclude = $name == 'postService' && $config->dynamic->postServiceDone == 0;
                     if ($config->dynamic->finishStatusSet && !$exclude) $loop = false;
                     try {
-                        if ($config->dynamic->automationState || $exclude) $this->runJob($callBack, TRUE);
+                        if ($config->dynamic->automationState || $exclude) {
+                            $this->runJob($callBack, TRUE);
+                            $consecutiveFailures = 0; // Reset counter on successful job execution
+                        }
                     } catch (\Exception $e) {
+                        $consecutiveFailures++;
+                        logError("[$prgName] Exception in job execution (failure #$consecutiveFailures): " . $e->getMessage());
                         ErrorHandler::getInstance()->handleExceptions($e);
+                        
+                        // BUGFIX: Reconnect database after exception
+                        $db->forceNewDatabase();
+                        
+                        if ($consecutiveFailures > 10) {
+                            logError("[$prgName] Too many consecutive exceptions (10+), exiting daemon");
+                            $loop = false;
+                            break;
+                        }
                         sleep(2);
                     } catch (\Error $e) {
+                        $consecutiveFailures++;
+                        logError("[$prgName] Fatal error in job execution (failure #$consecutiveFailures): " . $e->getMessage());
                         ErrorHandler::getInstance()->handleExceptions($e);
+                        
+                        // BUGFIX: Reconnect database after error
+                        $db->forceNewDatabase();
+                        
+                        if ($consecutiveFailures > 10) {
+                            logError("[$prgName] Too many consecutive fatal errors (10+), exiting daemon");
+                            $loop = false;
+                            break;
+                        }
                         sleep(2);
                     }
                     if ($config->game->start_time > time()) sleep(5);

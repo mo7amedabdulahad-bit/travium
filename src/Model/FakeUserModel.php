@@ -21,9 +21,11 @@ class FakeUserModel
         
         // Batch collect user IDs for hero XP update
         $userIds = [];
-        while ($row = $stmt->fetch_assoc()) {
-            $userIds[] = $row['id'];
-            $db->query("UPDATE users SET lastHeroExpCheck=" . time() . " WHERE id={$row['id']}");
+        if ($stmt) {
+            while ($row = $stmt->fetch_assoc()) {
+                $userIds[] = $row['id'];
+                $db->query("UPDATE users SET lastHeroExpCheck=" . time() . " WHERE id={$row['id']}");
+            }
         }
         
         // Batch hero XP update (10 queries → 1 query = 90% reduction)
@@ -46,6 +48,13 @@ class FakeUserModel
         $time = time() - $checkInterval;
         $now = time();
         $results = $db->query("SELECT kid, lastVillageCheck FROM vdata v WHERE lastVillageCheck < $time AND (SELECT access FROM users WHERE id=v.owner)=3 LIMIT $limit");
+        
+        if (!$results) {
+            // BUGFIX: Handle failed query to prevent crash
+            // logError("FakeUserModel: Village query failed - " . $db->mysqli->error);
+            return;
+        }
+
         while ($row = $results->fetch_assoc()) {
             $db->query("UPDATE vdata SET lastVillageCheck=$now WHERE kid={$row['kid']}");
             

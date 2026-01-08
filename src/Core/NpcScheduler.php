@@ -43,6 +43,9 @@ class NpcScheduler
                 // Execute NPC Logic via ScriptEngine
                 if (class_exists('Core\NpcScriptEngine')) {
                     \Core\NpcScriptEngine::executeTick($npc);
+                } else {
+                    // BUGFIX: Log error if engine missing instead of silent failure
+                    logError("NpcScheduler: Core\\NpcScriptEngine class not found - NPC ID {$npc['id']} skipped logic");
                 }
 
                 $processedCount++;
@@ -56,9 +59,13 @@ class NpcScheduler
                 $stagger = rand(0, 30);
                 $totalDelay = $interval + $stagger;
                 
-                $db->query("UPDATE users 
+                $updateResult = $db->query("UPDATE users 
                             SET next_tick_at = DATE_ADD(NOW(), INTERVAL $totalDelay SECOND) 
                             WHERE id = " . $npc['id']);
+                            
+                if (!$updateResult) {
+                    logError("NpcScheduler: Failed to update next_tick_at for NPC {$npc['id']}: " . $db->mysqli->error);
+                }
 
             } catch (\Exception $e) {
                 logError("NPC Processing Error (ID: {$npc['id']}): " . $e->getMessage());
