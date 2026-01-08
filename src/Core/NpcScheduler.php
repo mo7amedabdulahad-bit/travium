@@ -54,18 +54,22 @@ class NpcScheduler
 
                 $processedCount++;
                 
-                // Calculate next run time
+                // Calculate next run time with random stagger
                 // Add interval to NOW() to ensure we don't fall behind if skipped
                 $interval = (int)$npc['tick_interval_seconds'];
                 if ($interval < 60) $interval = 60; // Safety floor
                 
+                // Add random stagger (0-30 seconds) to prevent all NPCs scheduling at same time
+                $stagger = rand(0, 30);
+                $totalDelay = $interval + $stagger;
+                
                 $db->query("UPDATE users 
-                            SET next_tick_at = DATE_ADD(NOW(), INTERVAL $interval SECOND) 
+                            SET next_tick_at = DATE_ADD(NOW(), INTERVAL $totalDelay SECOND) 
                             WHERE id = " . $npc['id']);
                 
                 // DEBUG: Log reschedule
                 $newNextTick = $db->fetchScalar("SELECT next_tick_at FROM users WHERE id = " . $npc['id']);
-                logError("[DEBUG] NPC {$npc['id']} ({$npc['name']}) rescheduled to $newNextTick (interval: {$interval}s)");
+                logError("[DEBUG] NPC {$npc['id']} ({$npc['name']}) rescheduled to $newNextTick (interval: {$interval}s + {$stagger}s stagger)");
 
             } catch (\Exception $e) {
                 logError("NPC Processing Error (ID: {$npc['id']}): " . $e->getMessage());
