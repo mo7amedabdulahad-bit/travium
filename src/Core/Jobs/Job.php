@@ -119,10 +119,17 @@ class Job
     private function checkInterval($daemon)
     {
         if ($daemon) return true;
-        if (time() - $this->lastReload >= $this->interval) {
-            return TRUE;
+        $timeSinceLastRun = time() - $this->lastReload;
+        $shouldRun = $timeSinceLastRun >= $this->interval;
+        
+        // DEBUG: Log for NPC scheduler specifically
+        if (strpos($this->name, 'npcScheduler') !== false) {
+            if (!$shouldRun) {
+                logError("[DEBUG Job] NpcScheduler: NOT running yet (last run {$timeSinceLastRun}s ago, interval {$this->interval}s)");
+            }
         }
-        return FALSE;
+        
+        return $shouldRun;
     }
 
     private function updateLastReload()
@@ -133,8 +140,14 @@ class Job
     public function runAction()
     {
         try {
+            // DEBUG: Log when job is called
+            if (strpos($this->name, 'npcScheduler') !== false) {
+                logError("[DEBUG Job] NpcScheduler runAction() called");
+            }
+            
             $this->runJob($this->callback);
         } catch (\Exception $e) {
+            logError("[Job ERROR] {$this->name}: " . $e->getMessage());
             ErrorHandler::getInstance()->handleExceptions($e);
         }
     }
