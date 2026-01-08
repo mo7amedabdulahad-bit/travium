@@ -21,12 +21,6 @@ class NpcScheduler
         // Phase 5: Process world events BEFORE processing NPCs
         self::processWorldEvents($serverId);
         
-        // DEBUG: Log scheduler state
-        $totalNpcs = (int)$db->fetchScalar("SELECT COUNT(*) FROM users WHERE access=3");
-        $dueNpcs = (int)$db->fetchScalar("SELECT COUNT(*) FROM users WHERE access=3 AND next_tick_at <= NOW()");
-        $dbNow = $db->fetchScalar("SELECT NOW()");
-        logError("[DEBUG] NpcScheduler: $dueNpcs/$totalNpcs NPCs are due. DB time: $dbNow");
-        
         // 1. Select NPCs due for processing
         // Uses index idx_users_next_tick (access, next_tick_at)
         $result = $db->query("SELECT id, name, aid, next_tick_at, tick_interval_seconds, war_village_id, npc_personality, npc_difficulty, ww_operation_state, ww_alliance_role, expansion_plan_json, npc_memory_json 
@@ -37,7 +31,6 @@ class NpcScheduler
                               LIMIT " . (int)$maxPerRun);
 
         if (!$result || $result->num_rows === 0) {
-            logError("[DEBUG] NpcScheduler: No NPCs selected (query returned 0 rows)");
             return 0;
         }
 
@@ -66,10 +59,6 @@ class NpcScheduler
                 $db->query("UPDATE users 
                             SET next_tick_at = DATE_ADD(NOW(), INTERVAL $totalDelay SECOND) 
                             WHERE id = " . $npc['id']);
-                
-                // DEBUG: Log reschedule
-                $newNextTick = $db->fetchScalar("SELECT next_tick_at FROM users WHERE id = " . $npc['id']);
-                logError("[DEBUG] NPC {$npc['id']} ({$npc['name']}) rescheduled to $newNextTick (interval: {$interval}s + {$stagger}s stagger)");
 
             } catch (\Exception $e) {
                 logError("NPC Processing Error (ID: {$npc['id']}): " . $e->getMessage());
