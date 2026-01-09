@@ -183,7 +183,18 @@ class Job
     private function checkInterval($daemon)
     {
         if ($daemon) return true;
-        return time() - $this->lastReload >= $this->interval;
+        
+        $elapsed = time() - $this->lastReload;
+        $ready = $elapsed >= $this->interval;
+        
+        // Debug logging for specific job to diagnose scheduling issues
+        if (!$ready && strpos($this->name, 'npcScheduler') !== false) {
+             // Only log every 5 seconds or so to avoid massive spam?
+             // For now, spam is acceptable to catch the state.
+             logError("[{$this->name}] checkInterval: Skipped. Interval: {$this->interval}, Elapsed: $elapsed. LastReload: {$this->lastReload}, Now: " . time());
+        }
+        
+        return $ready;
     }
 
     private function updateLastReload()
