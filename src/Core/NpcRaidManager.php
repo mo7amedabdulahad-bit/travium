@@ -61,8 +61,8 @@ class NpcRaidManager
         $calculator->setMinSpeed($speeds);
         $travelTime = $calculator->calc();
         
-        $startTime = time();
-        $endTime = $startTime + $travelTime;
+        $startTime = time() * 1000;
+        $endTime = $startTime + ($travelTime * 1000);
         
         // Create movement using existing game model
         $movementModel = new MovementsModel();
