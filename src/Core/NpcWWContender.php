@@ -182,7 +182,7 @@ class NpcWWContender
             FROM movement
             WHERE to_kid = $targetId
               AND attack_type = 1
-              AND end_time < " . time()
+              AND end_time < " . (time() * 1000)
         );
         
         $row = $result->fetch_assoc();

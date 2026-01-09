@@ -201,8 +201,8 @@ class NpcExpansionManager
         $distance = self::calculateDistance($capitalId, $targetTileId);
         $travelTime = ceil($distance / 5) * 3600; // 5 tiles/hour
         
-        $startTime = time();
-        $endTime = $startTime + $travelTime;
+        $startTime = time() * 1000;
+        $endTime = $startTime + ($travelTime * 1000);
         
         $db->query("
             INSERT INTO movement (

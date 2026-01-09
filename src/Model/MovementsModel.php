@@ -64,6 +64,22 @@ class MovementsModel
                     "movementFailed" . $attack_type,
                     sprintf("Troops: %s", implode(",", array_values($units))));
             }
+        } else {
+             // NEW: Trigger Alliance Defense Event if attacking an alliance member
+             if (($attack_type == self::ATTACKTYPE_NORMAL || $attack_type == self::ATTACKTYPE_RAID) && $mode == 0) {
+                 // Get target info efficiently
+                 $target = $db->query("SELECT u.aid, u.id FROM vdata v JOIN users u ON v.owner = u.id WHERE v.kid = $to_kid")->fetch_assoc();
+                 
+                 // If target has an alliance, record the event
+                 if ($target && !empty($target['aid'])) {
+                     $attackerId = $db->fetchScalar("SELECT owner FROM vdata WHERE kid=$kid");
+                     
+                     if (class_exists('Core\NpcWorldEvents')) {
+                         // Default serverId to 1 for now, finding real ID might require config
+                         \Core\NpcWorldEvents::recordAllianceAttacked(1, $target['aid'], $attackerId, $to_kid);
+                     }
+                 }
+             }
         }
         return $result;
     }

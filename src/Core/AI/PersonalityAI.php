@@ -70,39 +70,109 @@ class PersonalityAI
         $config = NpcConfig::getNpcConfig($uid);
         
         if (!$config || !isset($config['npc_personality'])) {
-            // Fallback to random if not an NPC
             return self::selectRandom($buildings, $creationTime);
         }
 
         $personality = $config['npc_personality'];
         $personalityStats = $config['personality_stats'];
+        $age = time() - $creationTime;
 
-        // Early game: focus on resource fields
-        if ((time() - $creationTime) < 5400) { // First 1.5 hours
-            return mt_rand(1, 18); // Always resource fields early
+        // 1. EARLY GAME: Focus strictly on resource fields
+        if ($age < 5400) { // First 1.5 hours
+            return mt_rand(1, 18); 
         }
 
-        // Determine if should build resource field or building
+        // 2. ESSENTIALS CHECK: Ensure core buildings exist after early game
+        $essentialField = self::checkEssentialBuildings($buildings, $personality);
+        if ($essentialField !== false) {
+            return $essentialField;
+        }
+
+        // 3. PERSONALITY LOGIC
+        // Aggressive: Military > Resource > Economy
+        // Economic: Resource > Economy > Military
+        
         $militaryFocus = $personalityStats['military_focus'];
         $economyFocus = $personalityStats['economy_focus'];
+        
+        // Smart correction: If resources are critically low (negative crop), prioritize crop fields
+        // This would require resource data which we don't strictly have here, but we can assume
+        // Granary/Warehouse importance in selectEconomyBuilding.
 
-        // Roll to decide: resource field, military building, or economy building
         $roll = mt_rand(1, 100);
 
+        if ($personality === 'Aggressive' || $personality === 'Raider') {
+            // Aggressive Logic: Prioritize Military, but don't neglect supply
+            if ($roll <= 60) {
+                return self::selectMilitaryBuilding($buildings, $personality);
+            } elseif ($roll <= 80) {
+                return mt_rand(1, 18); // Resources to fuel army
+            } else {
+                return self::selectEconomyBuilding($buildings, $personality); // Storage for army
+            }
+        } elseif ($personality === 'Economic' || $personality === 'Farmer') {
+            // Economic Logic: Resources > Storage > Market
+            if ($roll <= 70) {
+                return mt_rand(1, 18);
+            } elseif ($roll <= 90) {
+                return self::selectEconomyBuilding($buildings, $personality);
+            } else {
+                return self::selectMilitaryBuilding($buildings, $personality); // Defense
+            }
+        } 
+        
+        // Fallback / Balanced Logic
         if ($roll <= $economyFocus) {
-            // Economy-focused: prioritize resource fields or economy buildings
-            if (mt_rand(1, 100) <= 60) {
-                return mt_rand(1, 18); // Resource field
+             if (mt_rand(1, 100) <= 60) {
+                return mt_rand(1, 18);
             } else {
                 return self::selectEconomyBuilding($buildings, $personality);
             }
         } elseif ($roll <= ($economyFocus + $militaryFocus)) {
-            // Military-focused: select military building
             return self::selectMilitaryBuilding($buildings, $personality);
         } else {
-            // Balanced/other: select from personality preferences
             return self::selectPreferredBuilding($buildings, $personality, $personalityStats);
         }
+    }
+
+    /**
+     * Check for essential buildings that every village needs
+     * Rally Point, Warehouse, Granary, Barracks
+     */
+    private static function checkEssentialBuildings($buildings, $personality)
+    {
+        // Check Warehouse (GID 10)
+        if (!self::hasBuilding($buildings, 10)) return self::findEmptySlot($buildings, 19, 38);
+        
+        // Check Granary (GID 11)
+        if (!self::hasBuilding($buildings, 11)) return self::findEmptySlot($buildings, 19, 38);
+        
+        // Check Rally Point (GID 16) - usually slot 39
+        if (!isset($buildings[39]) || $buildings[39]['item_id'] == 0) return 39;
+
+        // Check Barracks (GID 19)
+        if (!self::hasBuilding($buildings, 19)) return self::findEmptySlot($buildings, 19, 38);
+
+        // Check Market (GID 17) - useful for all
+        if (!self::hasBuilding($buildings, 17)) return self::findEmptySlot($buildings, 19, 38);
+
+        return false;
+    }
+
+    private static function hasBuilding($buildings, $gid)
+    {
+        foreach ($buildings as $b) {
+            if (isset($b['item_id']) && $b['item_id'] == $gid) return true;
+        }
+        return false;
+    }
+
+    private static function findEmptySlot($buildings, $min, $max)
+    {
+        for ($i = $min; $i <= $max; $i++) {
+            if (isset($buildings[$i]) && $buildings[$i]['item_id'] == 0) return $i;
+        }
+        return mt_rand($min, $max); // Fallback
     }
 
     /**

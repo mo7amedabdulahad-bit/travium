@@ -161,8 +161,8 @@ class NpcWWDefender
         $speed = 5; // Base speed, adjust based on slowest unit
         $travelTime = ceil($distance / $speed) * 3600;
         
-        $startTime = time();
-        $endTime = $startTime + $travelTime;
+        $startTime = time() * 1000;
+        $endTime = $startTime + ($travelTime * 1000);
         
         // Build troop string (t1, t2, ..., t10)
         $troopString = implode(',', array_map(function($count) {
