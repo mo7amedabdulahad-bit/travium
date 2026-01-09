@@ -26,6 +26,7 @@ class Launcher
         self::getInstance()->gameProgress();
         self::getInstance()->routineJobs();
         self::getInstance()->AIProgress();
+        self::getInstance()->NpcProgress();
         self::getInstance()->postService();
     }
 
@@ -210,24 +211,6 @@ class Launcher
             $job = [$farmListModel, 'refreshNpcFarmLists'];
             $jobs[] = new Job('AIProgress:refreshFarmLists', 86400, $job); // 24 hours
         }
-        {
-            // **NEW: Phase 2 NPC Scheduler**
-            // Process NPC logic every 30 seconds (adjust as needed for load)
-            if (class_exists('Core\NpcScheduler')) {
-                // Lambda used to wrap static call if needed, or direct array callable
-                $job = function() {
-                    try {
-                        $count = \Core\NpcScheduler::processDueNpcs(1, 10);
-                        if ($count > 0) {
-                            logError("NpcScheduler: Processed $count NPCs");
-                        }
-                    } catch (\Exception $e) {
-                        logError("NpcScheduler ERROR: " . $e->getMessage());
-                    }
-                };
-                $jobs[] = new Job('AIProgress:npcScheduler', 30, $job); // Changed to 30s for stability
-            }
-        }
         $natarsModel = new NatarsModel();
         {
             $job = [$natarsModel, 'handleNatarVillages'];
@@ -238,6 +221,28 @@ class Launcher
             $jobs[] = new Job('AIProgress:handleNatarExpansion', 15, $job);
         }
         new Job('AIProgress', 5, $jobs, TRUE);
+    }
+
+    public function NpcProgress()
+    {
+        $jobs = [];
+        // **NEW: Phase 2 NPC Scheduler**
+        // Process NPC logic every 30 seconds (adjust as needed for load)
+        // Moved to dedicated daemon for stability
+        if (class_exists('Core\NpcScheduler')) {
+            $job = function() {
+                try {
+                    $count = \Core\NpcScheduler::processDueNpcs(1, 10);
+                    if ($count > 0) {
+                        logError("NpcScheduler: Processed $count NPCs");
+                    }
+                } catch (\Exception $e) {
+                    logError("NpcScheduler ERROR: " . $e->getMessage());
+                }
+            };
+            $jobs[] = new Job('NpcProgress:npcScheduler', 30, $job);
+        }
+        new Job('NpcProgress', 5, $jobs, TRUE);
     }
 
     public function postService()
