@@ -164,7 +164,7 @@ class Job
                     if (method_exists($cb, "runAction")) {
                         // Log sub-job execution start
                         $subJobName = property_exists($cb, 'name') ? $cb->name : 'Unknown SubJob';
-                        logError("[$prgName] Starting sub-job: $subJobName");
+                        logError("[{$this->name}] Starting sub-job: $subJobName");
 
                         $cb->runAction();
                         

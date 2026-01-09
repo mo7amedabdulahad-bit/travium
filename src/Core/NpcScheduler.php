@@ -31,8 +31,11 @@ class NpcScheduler
                               LIMIT " . (int)$maxPerRun);
 
         if (!$result || $result->num_rows === 0) {
+            logError("[NpcScheduler] No NPCs due for processing.");
             return 0;
         }
+
+        logError("[NpcScheduler] Found " . $result->num_rows . " NPCs due.");
 
         $processedCount = 0;
         
