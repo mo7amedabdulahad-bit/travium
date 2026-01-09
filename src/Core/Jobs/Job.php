@@ -163,12 +163,12 @@ class Job
                 try {
                     if (method_exists($cb, "runAction")) {
                         // Log sub-job execution start
-                        $subJobName = property_exists($cb, 'name') ? $cb->name : 'Unknown SubJob';
-                        logError("[{$this->name}] Starting sub-job: $subJobName");
+                        // $subJobName = property_exists($cb, 'name') ? $cb->name : 'Unknown SubJob';
+                        // logError("[{$this->name}] Starting sub-job: $subJobName");
 
                         $cb->runAction();
                         
-                        // logError("[$prgName] Finished sub-job: $subJobName");
+                        // logError("[{$this->name}] Finished sub-job: $subJobName");
                     } else {
                         logError(print_r($this, TRUE));
                     }
@@ -185,16 +185,7 @@ class Job
         if ($daemon) return true;
         
         $elapsed = time() - $this->lastReload;
-        $ready = $elapsed >= $this->interval;
-        
-        // Debug logging for specific job to diagnose scheduling issues
-        if (!$ready && strpos($this->name, 'npcScheduler') !== false) {
-             // Only log every 5 seconds or so to avoid massive spam?
-             // For now, spam is acceptable to catch the state.
-             logError("[{$this->name}] checkInterval: Skipped. Interval: {$this->interval}, Elapsed: $elapsed. LastReload: {$this->lastReload}, Now: " . time());
-        }
-        
-        return $ready;
+        return $elapsed >= $this->interval;
     }
 
     private function updateLastReload()

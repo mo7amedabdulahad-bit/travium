@@ -244,7 +244,9 @@ class NatarsModel
             $pop = $percent * 900;
             $twentyPercent = $pop * 0.15;
             if ($natarsShouldBe > $countNatarsVillages) {
-                $newVillageCount = min((int)$natarsShouldBe - $countNatarsVillages, 500);
+                // BUGFIX: Reduced limit from 500 to 5 prevents execution time timeouts and high CPU load
+                // Since this runs every 15 seconds, it will catch up quickly (20 villages/min).
+                $newVillageCount = min((int)$natarsShouldBe - $countNatarsVillages, 5);
                 for ($i = 1; $i <= $newVillageCount; ++$i) {
                     make_seed();
                     $r = [];
