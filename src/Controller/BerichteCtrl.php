@@ -782,8 +782,8 @@ class BerichteCtrl extends GameCtrl
 
     private function renderTroopsTable($notice, $data, $uid, $isDefender, $role, $troopHeadline, $race, $units, $killed = null, $trapped = null, $other = null, $params = [])
     {
-        $params['won'] = (!is_array($killed) || !array_sum($killed)) && (!is_array($trapped) || !array_sum($trapped));
-        $params['skull'] = array_sum($units) > 0 && array_sum($units) == ((is_array($killed) ? array_sum($killed) : 0) + (is_array($trapped) ? array_sum($trapped) : 0));
+        $params['won'] = (!is_array($killed) || !array_sum(array_map('intval', $killed))) && (!is_array($trapped) || !array_sum(array_map('intval', $trapped)));
+        $params['skull'] = array_sum(array_map('intval', $units)) > 0 && array_sum(array_map('intval', $units)) == ((is_array($killed) ? array_sum(array_map('intval', $killed)) : 0) + (is_array($trapped) ? array_sum(array_map('intval', $trapped)) : 0));
 
         //hide opponents units.
         if ($this->isNotMine($data['notice'])) {
