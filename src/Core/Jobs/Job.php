@@ -162,7 +162,13 @@ class Job
             foreach ($callBack as $cb) {
                 try {
                     if (method_exists($cb, "runAction")) {
+                        // Log sub-job execution start
+                        $subJobName = property_exists($cb, 'name') ? $cb->name : 'Unknown SubJob';
+                        logError("[$prgName] Starting sub-job: $subJobName");
+
                         $cb->runAction();
+                        
+                        // logError("[$prgName] Finished sub-job: $subJobName");
                     } else {
                         logError(print_r($this, TRUE));
                     }
