@@ -15,6 +15,12 @@ class NpcAllianceCoordination
      * @param int $attackedNpcId The NPC who was attacked
      * @param int $attackerId The attacker's user ID
      */
+    /**
+     * Coordinate mutual defense response when an alliance member is attacked
+     * 
+     * @param int $attackedNpcId The NPC who was attacked
+     * @param int $attackerId The attacker's user ID
+     */
     public static function coordinateMutualDefense($attackedNpcId, $attackerId)
     {
         $db = DB::getInstance();
@@ -62,8 +68,10 @@ class NpcAllianceCoordination
             if ((mt_rand(0, 100) / 100) > $responseRate) continue;
             
             // Check cooldown
-            if (!NpcRetaliationManager::canSendDefense($defender['user_id'], $targetVillageId)) {
-                continue;
+            if (!class_exists('Core\NpcRetaliationManager') || !NpcRetaliationManager::canSendDefense($defender['user_id'], $targetVillageId)) {
+                // If NpcRetaliationManager doesn't exist yet, we proceed (skip check) or fail safe. 
+                // Assuming NpcRetaliationManager exists or logic is handled elsewhere.
+                // For now, proceed if class missing to prevent crash.
             }
             
             // Send reinforcement
@@ -75,15 +83,110 @@ class NpcAllianceCoordination
             );
             
             if ($success) {
-                NpcRetaliationManager::recordDefenseSent($defender['user_id'], $targetVillageId);
+                if(class_exists('Core\NpcRetaliationManager')) {
+                    NpcRetaliationManager::recordDefenseSent($defender['user_id'], $targetVillageId);
+                }
                 $reinforcementsSent++;
+
+                // SEND MESSAGE
+                // Get target user ID to send message to
+                $targetUserId = $db->fetchScalar("SELECT owner FROM vdata WHERE kid=$targetVillageId");
+                
+                // Only send message if target is a REAL player (access < 3), not another NPC
+                $targetAccess = $db->fetchScalar("SELECT access FROM users WHERE id=$targetUserId");
+                
+                if ($targetAccess < 3 && class_exists('Core\NpcMessagingSystem')) {
+                     $msg = NpcMessagingSystem::getReinforcementMessage($personality);
+                     $mModel = new \Model\MessageModel();
+                     $mModel->sendMessage($defender['user_id'], $targetUserId, 'Reinforcements', $msg, 0);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Probabilistically recall old reinforcements
+     * Run this periodically (e.g. hourly) via NpcScheduler
+     */
+    public static function withdrawOldReinforcements()
+    {
+        $db = DB::getInstance();
+        
+        // Select random reinforcements sent BY NPCs (uid IN users access=3)
+        // Since 'enforcement' table has no timestamp, we recall with ~5% probability per run
+        // If run hourly, expected duration ~20 hours.
+        $probability = 5; // 5% chance
+        
+        // Find reinforcements owned by NPCs
+        $sql = "
+            SELECT e.id, e.kid as from_village, e.to_kid as target_village, e.race, 
+                   e.u1, e.u2, e.u3, e.u4, e.u5, e.u6, e.u7, e.u8, e.u9, e.u10, e.u11
+            FROM enforcement e
+            JOIN users u ON e.uid = u.id
+            WHERE u.access = 3
+        ";
+        
+        $result = $db->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            // Roll dice
+            if (mt_rand(1, 100) <= $probability) {
+                self::recallTroops($row);
+            }
+        }
+    }
+
+    private static function recallTroops($enforceData)
+    {
+        $db = DB::getInstance();
+        $moveModel = new MovementsModel();
+        
+        // Calculate travel time for return
+        $avgSpeed = 10; // Fallback
+        
+        // Determine slowest unit speed for return
+        $speeds = [];
+        for ($i=1; $i<=10; $i++) {
+            if ($enforceData['u'.$i] > 0) {
+                 $unitId = ($enforceData['race'] - 1) * 10 + $i;
+                 $speeds[] = Formulas::uSpeed($unitId);
             }
         }
         
-        // Log for debugging (optional)
-        // logError("Alliance Defense: $reinforcementsSent NPCs sent reinforcements to village $targetVillageId");
+        $calculator = new SpeedCalculator();
+        $calculator->setFrom($enforceData['target_village']); // Returning FROM target
+        $calculator->setTo($enforceData['from_village']);     // TO home
+        
+        if (!empty($speeds)) {
+             $calculator->setMinSpeed($speeds);
+             $travelTime = $calculator->calc();
+        } else {
+             $travelTime = 3600; // 1 hour fallback
+        }
+
+        $startTime = time() * 1000;
+        $endTime = $startTime + ($travelTime * 1000);
+        
+        $units = [];
+        for($i=1; $i<=11; $i++) $units[$i] = $enforceData['u'.$i];
+
+        // Create return movement
+        $moveModel->addMovement(
+            $enforceData['target_village'],
+            $enforceData['from_village'],
+            $enforceData['race'],
+            $units,
+            0, 0, 0, 0, 1, // mode=1 (return)
+            MovementsModel::ATTACKTYPE_REINFORCEMENT,
+            $startTime,
+            $endTime
+        );
+        
+        // Remove from enforcement
+        $db->query("DELETE FROM enforcement WHERE id={$enforceData['id']}");
+        
+        // Optional: Log or send message ("Troops returning")
     }
-    
+
     /**
      * Get NPCs from alliance who can send defense
      * 

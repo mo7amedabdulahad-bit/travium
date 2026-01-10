@@ -155,8 +155,69 @@ class AI_MAIN
         $stableUnits = array_map("unitIdToNr", TroopBuilding::_getTroopBuildingTroopsStatic($race, 20));
         $onlyGreatBarracks = sizeof($this->training_buildings['barracks']) == 1 && $this->training_buildings['barracks'][0]['item_id'] == 29;
         $onlyGreatStable = sizeof($stable) == 1 && $stable[0]['item_id'] == 30;
+        
+        // --- NPC Personality Logic ---
+        $offenseFocus = 50; // Default
+        $defenseFocus = 50;
+        
+        // Fetch personality from NpcConfig if available
+        if (class_exists('Core\NpcConfig')) {
+            $npcConf = NpcConfig::getNpcConfig($this->village['owner']);
+            if ($npcConf && isset($npcConf['offense_focus'])) {
+                $offenseFocus = $npcConf['offense_focus'];
+                $defenseFocus = $npcConf['defense_focus'];
+            }
+        }
+        
+        // Define Unit Roles (1=Offense, 2=Defense, 3=Both/Spy/Ram/Cat)
+        // This is a simplified map. 
+        // Romans: 1=Leg(Def/Off), 2=Praet(Def), 3=Imp(Off), 4=Equites Leg(Off), 5=Equites Imp(Off), 6=Caesaris(Off)
+        // Teutons: 11=Club(Off), 12=Spear(Def), 13=Axe(Off), 14=Scout, 15=Paladin(Def), 16=Teutonic(Off)
+        // Gauls: 21=Phalanx(Def), 22=Sword(Off), 23=Path(Spy), 24=TT(Off), 25=Druid(Def), 26=Haeduan(Off)
+        // Egyptians: 51=SlaveKey(Def), 52=Ash(Def), 53=Khop(Off), 54=Soph(Spy), 55=Resheph(Off), 56=Char(Off)
+        // Huns: 61=Merc(Off), 62=Bow(Def), 63=Spot(Spy), 64=Steppe(Off), 65=Marks(Off), 66=Maraud(Off)
+        
+        $roles = [
+            // Romans
+            1 => 'hybrid', 2 => 'defense', 3 => 'offense', 4 => 'offense', 5 => 'offense', 6 => 'offense',
+            // Teutons
+            11 => 'offense', 12 => 'defense', 13 => 'offense', 14 => 'spy', 15 => 'defense', 16 => 'offense',
+            // Gauls
+            21 => 'defense', 22 => 'offense', 23 => 'spy', 24 => 'offense', 25 => 'defense', 26 => 'offense',
+            // Egyptians
+            51 => 'defense', 52 => 'defense', 53 => 'offense', 54 => 'spy', 55 => 'offense', 56 => 'offense',
+            // Huns
+            61 => 'offense', 62 => 'defense', 63 => 'spy', 64 => 'offense', 65 => 'offense', 66 => 'offense'
+        ];
+
+        // Determine desire for this training cycle
+        $roll = mt_rand(1, 100);
+        $desiredRole = 'hybrid';
+        
+        if ($roll <= $offenseFocus) {
+            $desiredRole = 'offense';
+        } else {
+            $desiredRole = 'defense';
+        }
+
         foreach ($this->training_buildings['available'] as $i) {
             if ($i > 1 && !$this->researches['u' . $i] && !self::SKIP_RESEARCH) continue;
+            
+            // Filter by Personality Role
+            $unitId = nrToUnitId($i, $race);
+            $role = $roles[$unitId] ?? 'hybrid'; // Default to hybrid if unknown
+            
+            // Offense focus: prioritize Offense units, accept Hybrid, reject Defense (if possible)
+            if ($desiredRole == 'offense' && $role == 'defense') {
+                 // 80% chance to skip defense unit when focusing offense
+                 if (mt_rand(1, 100) <= 80) continue;
+            }
+            // Defense focus: prioritize Defense units, accept Hybrid, reject Offense
+            if ($desiredRole == 'defense' && $role == 'offense') {
+                 // 80% chance to skip offense unit when focusing defense
+                 if (mt_rand(1, 100) <= 80) continue; 
+            }
+            
             $isGreat = false;
             $isBarracks = in_array($i, $barracksUnits);
             $isStable = in_array($i, $stableUnits);
@@ -178,6 +239,8 @@ class AI_MAIN
             ];
         }
         if (!sizeof($arr)) return false;
+        
+        // Weighted Shuffle? Standard shuffle is fine since we filtered the list
         shuffle($arr);
         $selected = $arr[mt_rand(0, sizeof($arr) - 1)];
         if ($selected['isBarracks']) {

@@ -21,6 +21,13 @@ class NpcScheduler
         // Phase 5: Process world events BEFORE processing NPCs
         self::processWorldEvents($serverId);
         
+        // Maintenance: Occasionally withdraw old reinforcements (0.1% chance per run ~ once per 1-2 hours)
+        if (mt_rand(1, 1000) === 1) {
+            if (class_exists('Core\NpcAllianceCoordination')) {
+                \Core\NpcAllianceCoordination::withdrawOldReinforcements();
+            }
+        }
+        
         // 1. Select NPCs due for processing
         // Uses index idx_users_next_tick (access, next_tick_at)
         $result = $db->query("SELECT id, name, aid, next_tick_at, tick_interval_seconds, war_village_id, npc_personality, npc_difficulty, ww_operation_state, ww_alliance_role, expansion_plan_json, npc_memory_json 
