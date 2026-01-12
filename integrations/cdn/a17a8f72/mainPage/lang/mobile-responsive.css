@@ -5,6 +5,19 @@
  */
 
 /* =====================================================
+   PREVENT ZOOM OUT ON MOBILE
+   ===================================================== */
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    min-width: 320px !important;
+}
+
+/* =====================================================
    DESKTOP VIEW (> 620px) - No Changes
    ===================================================== */
 @media screen and (min-width: 621px) {
@@ -17,36 +30,145 @@
    ===================================================== */
 @media screen and (max-width: 620px) {
 
+    /* ============ PREVENT PAGE ZOOM OUT ============ */
+
+    html,
+    body {
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
     /* ============ NAVIGATION TO BOTTOM ============ */
 
     #header {
         position: fixed !important;
-        bottom: -8px !important;
+        bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
         z-index: 500 !important;
         background: rgba(44, 24, 16, 0.95) !important;
         border-top: 2px solid #8B5A2B !important;
+        padding: 4px 0 !important;
     }
 
     #navigation {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)) !important;
-        padding: 8px 0 !important;
+        grid-template-columns: repeat(6, 1fr) !important;
+        grid-gap: 4px !important;
+        padding: 0 !important;
         margin: 0 !important;
+        list-style: none !important;
     }
 
     #navigation li {
-        margin: 0 auto !important;
+        margin: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    #navigation li a {
+        display: block !important;
+        width: 40px !important;
+        height: 40px !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
     }
 
     /* Hide desktop-only elements */
-    #outOfGame {
+    #outOfGame,
+    #goldSilver,
+    #navigation li.clear {
         display: none !important;
     }
 
-    #goldSilver {
-        display: none !important;
+    /* ============ STOCK BAR OPTIMIZATION ============ */
+
+    #stockBar {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 8px 4px !important;
+        margin: 0 !important;
+        font-size: 10px !important;
+        background: rgba(44, 24, 16, 0.9) !important;
+    }
+
+    #stockBar li {
+        flex-shrink: 0 !important;
+        margin: 0 2px !important;
+        padding: 4px !important;
+        min-width: 60px !important;
+    }
+
+    #stockBar .value {
+        font-size: 9px !important;
+        white-space: nowrap !important;
+    }
+
+    #stockBar i {
+        transform: scale(0.8) !important;
+    }
+
+    /* Warehouse and Granary labels */
+    #stockBarWarehouseWrapper,
+    #stockBarGranaryWrapper {
+        min-width: 50px !important;
+    }
+
+    /* ============ MAIN CONTENT ADJUSTMENTS ============ */
+
+    #contentOuterContainer {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 0 60px 0 !important;
+        /* Space for bottom nav */
+        box-sizing: border-box !important;
+    }
+
+    #center {
+        width: 100% !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    #content {
+        width: 100% !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* ============ GAME BOARD SCALING (Dorf1 - Resource Fields) ============ */
+
+    #resourceFieldContainer {
+        width: 100% !important;
+        max-width: 100% !important;
+        transform-origin: top center !important;
+        margin: 0 auto !important;
+    }
+
+    /* Scale down the resource field map to fit mobile */
+    #resourceFieldContainer map,
+    #resourceFieldContainer img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* ============ VILLAGE MAP SCALING (Dorf2 - Buildings) ============ */
+
+    #village_map {
+        width: 100% !important;
+        max-width: 100% !important;
+        transform-origin: top center !important;
+        margin: 0 auto !important;
+    }
+
+    #village_map img {
+        max-width: 100% !important;
+        height: auto !important;
     }
 
     /* ============ LEFT SIDEBAR (Info Box) ============ */
@@ -62,8 +184,11 @@
         transform: translateX(-100%) !important;
         transition: transform 250ms ease !important;
         overflow-y: auto !important;
+        overflow-x: hidden !important;
         background: #2c1810 !important;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5) !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
     }
 
     /* Left Sidebar - OPEN state */
@@ -85,14 +210,32 @@
         transform: translateX(100%) !important;
         transition: transform 250ms ease !important;
         overflow-y: auto !important;
+        overflow-x: hidden !important;
         background: #2c1810 !important;
         box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5) !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
     }
 
     /* Right Sidebar - OPEN state */
     #sidebarAfterContent.mobileOpened {
         transform: translateX(0) !important;
         background-color: rgba(44, 24, 16, 0.98) !important;
+    }
+
+    /* ============ SIDEBAR CONTENT OPTIMIZATION ============ */
+
+    /* Make sidebar boxes more compact */
+    #sidebarBeforeContent .sidebarBox,
+    #sidebarAfterContent .sidebarBox {
+        margin-bottom: 8px !important;
+        font-size: 11px !important;
+    }
+
+    #sidebarBeforeContent .sidebarBoxTitle,
+    #sidebarAfterContent .sidebarBoxTitle {
+        font-size: 12px !important;
+        padding: 4px !important;
     }
 
     /* ============ OVERLAY BACKDROP ============ */
@@ -138,6 +281,11 @@
         background: rgba(139, 90, 43, 0.9) !important;
     }
 
+    .sidebarToggleLeft:active,
+    .sidebarToggleRight:active {
+        background: rgba(139, 90, 43, 1) !important;
+    }
+
     .sidebarToggleLeft {
         left: 0 !important;
         border-left: none !important;
@@ -158,30 +306,18 @@
         display: none !important;
     }
 
-    /* ============ MAIN CONTENT ADJUSTMENTS ============ */
+    /* ============ TABLES AND FORMS OPTIMIZATION ============ */
 
-    #contentOuterContainer {
-        width: 100% !important;
-        margin: 0 !important;
-        padding-bottom: 70px !important;
-        /* Space for bottom nav */
+    table {
+        font-size: 11px !important;
     }
 
-    #center {
-        width: 100% !important;
-        margin: 0 !important;
-    }
-
-    /* ============ STOCK BAR OPTIMIZATION ============ */
-
-    #stockBar {
-        flex-wrap: wrap !important;
-        font-size: 10px !important;
-        justify-content: center !important;
-    }
-
-    #stockBar li {
-        margin: 2px !important;
+    input[type="text"],
+    input[type="password"],
+    textarea,
+    select {
+        font-size: 14px !important;
+        max-width: 100% !important;
     }
 
     /* ============ PREVENT DESKTOP SIDEBARS ============ */
@@ -191,6 +327,30 @@
     #sidebarAfterContent:not(.mobileOpened) {
         display: block !important;
         /* Keep in DOM for JS */
+    }
+}
+
+/* =====================================================
+   VERY SMALL SCREENS (<= 375px)
+   ===================================================== */
+@media screen and (max-width: 375px) {
+
+    #stockBar {
+        font-size: 9px !important;
+    }
+
+    #stockBar li {
+        min-width: 50px !important;
+        padding: 2px !important;
+    }
+
+    #stockBar .value {
+        font-size: 8px !important;
+    }
+
+    #navigation li a {
+        width: 35px !important;
+        height: 35px !important;
     }
 }
 

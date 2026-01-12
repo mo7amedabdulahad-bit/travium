@@ -11,7 +11,7 @@ use Core\Helper\PreferencesHelper;
     <meta http-equiv="imagetoolbar" content="no"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="content-language" content="<?=get_locale(); ?>"/>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <link href="<?=get_gpack_link_and_hash("compact.css"); ?>"
           rel="stylesheet" type="text/css"/>
     <link href="<?=get_gpack_link_and_hash("lang.css"); ?>"
