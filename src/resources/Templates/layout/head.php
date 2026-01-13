@@ -22,7 +22,7 @@ use Core\Helper\PreferencesHelper;
     <?php endif; ?>
     <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
     <!-- Mobile Responsiveness -->
-    <link rel="stylesheet" href="/integrations/cdn/a17a8f72/mainPage/lang/travian_mobile_official.css" type="text/css"/>
+    <link href="<?=get_gpack_cdn_mainPage_url()?>lang/travian_mobile_official.css" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
