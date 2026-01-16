@@ -158,11 +158,92 @@
     function init() {
         if (isMobile()) {
             createBottomNav();
+            startStatusRefresh(); // Start attack/build/movement indicators
         }
 
         window.addEventListener('resize', debouncedResize);
 
         console.log('[Mobile Nav] Initialized');
+    }
+
+    // ========== ADVANCED MOBILE INDICATORS ==========
+
+    // Check for incoming attacks
+    function checkIncomingAttacks() {
+        const movementsContainer = document.querySelector('.movements.incomingAttacks, #movements .incomingAttacks');
+        if (movementsContainer) {
+            const attacks = movementsContainer.querySelectorAll('.troopMovement, .villageMove');
+            return attacks.length;
+        }
+        return 0;
+    }
+
+    // Check building queue
+    function getBuildingQueueCount() {
+        const buildQueue = document.querySelectorAll('.buildingList .buildDuration, .finishNow');
+        return buildQueue.length;
+    }
+
+    // Check troop movements
+    function getTroopMovements() {
+        const movements = document.querySelectorAll('.movements .troopMovement');
+        return movements.length;
+    }
+
+    // Create status indicators
+    function createStatusIndicators() {
+        if (!isMobile()) return;
+
+        // Remove existing indicators
+        removeStatusIndicators();
+
+        // Attack Warning
+        const attackCount = checkIncomingAttacks();
+        if (attackCount > 0) {
+            const warning = document.createElement('div');
+            warning.className = 'mobileAttackWarning';
+            warning.innerHTML = `⚔️ ${attackCount} incoming attack${attackCount > 1 ? 's' : ''}!`;
+            document.body.appendChild(warning);
+        }
+
+        // Building Queue
+        const buildCount = getBuildingQueueCount();
+        if (buildCount > 0) {
+            const buildIndicator = document.createElement('div');
+            buildIndicator.className = 'mobileBuildQueue';
+            buildIndicator.innerHTML = `<span class="icon">🏗️</span>${buildCount}`;
+            document.body.appendChild(buildIndicator);
+        }
+
+        // Troop Movements (excluding attacks)
+        const movementCount = getTroopMovements() - attackCount;
+        if (movementCount > 0) {
+            const movementIndicator = document.createElement('div');
+            movementIndicator.className = 'mobileTroopMovement';
+            movementIndicator.innerHTML = `🚶 ${movementCount}`;
+            document.body.appendChild(movementIndicator);
+        }
+    }
+
+    // Remove status indicators
+    function removeStatusIndicators() {
+        const indicators = document.querySelectorAll('.mobileAttackWarning, .mobileBuildQueue, .mobileTroopMovement');
+        indicators.forEach(indicator => indicator.remove());
+    }
+
+    // Refresh indicators periodically
+    function startStatusRefresh() {
+        if (!isMobile()) return;
+
+        // Initial creation
+        createStatusIndicators();
+
+        // Refresh every 10 seconds
+        setInterval(function () {
+            if (isMobile()) {
+                createStatusIndicators();
+            }
+        }, 10000);
     }
 
     // Auto-start
