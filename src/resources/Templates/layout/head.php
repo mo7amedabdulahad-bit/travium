@@ -23,6 +23,8 @@ use Core\Helper\PreferencesHelper;
     <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
     <!-- Mobile Responsive Design -->
     <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=1" rel="stylesheet" type="text/css"/>
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile-navigation.css?v=1" rel="stylesheet" type="text/css"/>
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile-sidebars.css?v=1" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
@@ -115,4 +117,7 @@ use Core\Helper\PreferencesHelper;
         </div>
     </noscript>
     <!-- End of Statcounter Code -->
+    <!-- Mobile Navigation & Sidebars -->
+    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-sidebars.js?v=1"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-navigation.js?v=1"></script>
 </head>
