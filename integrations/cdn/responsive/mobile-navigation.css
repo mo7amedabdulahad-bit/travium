@@ -124,14 +124,7 @@
         box-sizing: border-box !important;
     }
 
-    /* Scale content to fit without scrolling */
-    #center {
-        transform: scale(0.92);
-        transform-origin: top center;
-        width: 108.7%;
-        /* Compensate for scale down */
-        margin: 0 auto;
-    }
+
 
     /* Server Time Display - Top Left */
     #servertime {

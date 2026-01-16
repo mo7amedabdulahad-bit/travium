@@ -36,17 +36,9 @@
 
     /* Fix tables that cause horizontal scroll */
     table {
-        max-width: 100% !important;
-        table-layout: fixed !important;
-    }
-
-    /* Make village map fit */
-    #village_map,
-    .village {
-        max-width: 100% !important;
-        overflow: hidden !important;
-        transform: scale(0.9);
-        transform-origin: top center;
+        max-width: 100%;
+        overflow-x: auto;
+        display: block;
     }
 
     /* Ensure minimum touch target size of 44x44px */
