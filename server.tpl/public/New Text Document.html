@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Legends: Solo T4.6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #1e1e1e;
+            --bg-container: #9c9a9d;
+            --res-wood: #654321;
+            --res-clay: #b5651d;
+            --res-iron: #808080;
+            --res-crop: #daa520;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #333;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
+            color: #333;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* T5 Layout Grid */
+        #game-layout {
+            display: grid;
+            grid-template-columns: 80px 1fr 60px; /* Hero, Main, Quests */
+            grid-template-rows: 60px 1fr 60px; /* Header, Content, Footer */
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* Header (Resource Bar) */
+        .header-bar {
+            grid-column: 1 / -1;
+            background: linear-gradient(to bottom, #f7f7f7, #dcdcdc);
+            border-bottom: 1px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+
+        .res-pill {
+            display: flex;
+            align-items: center;
+            background: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 8px;
+            min-width: 120px;
+            position: relative;
+            height: 32px;
+        }
+
+        .res-icon {
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            left: -12px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+            z-index: 2;
+        }
+
+        .res-bar-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #ccc;
+            width: 100%;
+        }
+        
+        /* Left Sidebar (Hero) */
+        .sidebar-left {
+            grid-row: 2 / -1;
+            background: #2b2b2b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 2px solid #444;
+            z-index: 10;
+        }
+
+        .hero-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            background: #555;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .side-btn {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: linear-gradient(to bottom, #4a4a4a, #333);
+            border: 1px solid #555;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .side-btn:hover, .side-btn.active {
+            background: linear-gradient(to bottom, #fcfcfc, #dcdcdc);
+            color: #333;
+            border-color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        .side-btn.active::after {
+            content: ''; position: absolute; right: -5px; top: 15px;
+            border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 10px solid #fff;
+        }
+
+        /* Right Sidebar (Quests) */
+        .sidebar-right {
+            grid-row: 2 / -1;
+            background: #e8e8e8;
+            border-left: 1px solid #ccc;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quest-master {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #7bb336;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Main View */
+        .main-stage {
+            grid-column: 2;
+            grid-row: 2 / -1;
+            background-color: #637f42; /* Grass base */
+            background-image: url('https://www.transparenttextures.com/patterns/grass.png');
+            background-size: auto;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Village Background (Inner) */
+        .village-bg {
+            background: radial-gradient(circle, #7e6b5a 20%, #637f42 70%);
+        }
+
+        /* Isometric Map */
+        .iso-map {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            transform: scale(0.9); 
+        }
+
+        .iso-tile {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            transform-origin: center;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.2s;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .iso-tile:hover { filter: brightness(1.2); transform: scale(1.1) translateY(-5px); z-index: 50; }
+        
+        /* Image handling for Gpack vs Fallback */
+        .iso-img {
+            max-width: 90px; max-height: 90px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 3px rgba(0,0,0,0.4));
+        }
+
+        .lvl-tag {
+            position: absolute;
+            bottom: 15px;
+            right: 25px;
+            background: #222;
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            border: 1px solid #fff;
+            z-index: 20;
+            font-weight: bold;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Modal T5 Style */
+        .t5-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+        .t5-modal {
+            background: #fff;
+            width: 500px;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid #444;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .t5-modal-header {
+            background: linear-gradient(to bottom, #4a4a4a, #2b2b2b);
+            color: #d4af37;
+            padding: 10px 15px;
+            font-weight: bold;
+            display: flex; justify-content: space-between;
+            border-bottom: 2px solid #d4af37;
+        }
+        .t5-btn {
+            background: linear-gradient(to bottom, #8cc348, #7bb336);
+            border: 1px solid #5d8a2a;
+            color: white;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+        }
+        .t5-btn:hover { background: linear-gradient(to bottom, #9ed15c, #8cc348); filter: brightness(1.1); }
+        .t5-btn:active { transform: translateY(1px); box-shadow: inset 0 2px 2px rgba(0,0,0,0.2); }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-layout">
+        
+        <!-- TOP RESOURCE BAR -->
+        <header class="header-bar">
+            <!-- Wood -->
+            <div class="res-pill">
+                <img id="icon-wood" src="" class="res-icon" onerror="this.src='https://img.icons8.com/color/96/forest.png'">
+                <div class="flex flex-col w-full pl-5">
+                    <div class="flex justify-between text-xs font-bold text-gray-700">
+                        <span id="res-wood">0</span>
+                        <span class="text-[9px] text-gray-500" id="prod-wood">+10</span>
+                    </div>
+                    <div class="relative w-full h-1 bg-gray-300 rounded mt-1 overflow-hidden">
+                        <div id="bar-wood" class="absolute left-0 top-0 h-full bg-[#654321]" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Clay -->
+            <div class="res-pill">
+                <img id="icon-clay" src="" class="res-icon" onerror="this.src='https://img.icons8.com/color/96/brick.png'">
+                <div class="flex flex-col w-full pl-5">
+                    <div class="flex justify-between text-xs font-bold text-gray-700">
+                        <span id="res-clay">0</span>
+                        <span class="text-[9px] text-gray-500" id="prod-clay">+10</span>
+                    </div>
+                    <div class="relative w-full h-1 bg-gray-300 rounded mt-1 overflow-hidden">
+                        <div id="bar-clay" class="absolute left-0 top-0 h-full bg-[#b5651d]" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Iron -->
+            <div class="res-pill">
+                <img id="icon-iron" src="" class="res-icon" onerror="this.src='https://img.icons8.com/color/96/iron-ore.png'">
+                <div class="flex flex-col w-full pl-5">
+                    <div class="flex justify-between text-xs font-bold text-gray-700">
+                        <span id="res-iron">0</span>
+                        <span class="text-[9px] text-gray-500" id="prod-iron">+10</span>
+                    </div>
+                    <div class="relative w-full h-1 bg-gray-300 rounded mt-1 overflow-hidden">
+                        <div id="bar-iron" class="absolute left-0 top-0 h-full bg-[#808080]" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crop -->
+            <div class="res-pill">
+                <img id="icon-crop" src="" class="res-icon" onerror="this.src='https://img.icons8.com/color/96/wheat.png'">
+                <div class="flex flex-col w-full pl-5">
+                    <div class="flex justify-between text-xs font-bold text-gray-700">
+                        <span id="res-crop">0</span>
+                        <span class="text-[9px] text-gray-500" id="prod-crop">+10</span>
+                    </div>
+                    <div class="relative w-full h-1 bg-gray-300 rounded mt-1 overflow-hidden">
+                        <div id="bar-crop" class="absolute left-0 top-0 h-full bg-[#daa520]" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Granary Info -->
+            <div class="text-[10px] text-gray-500 flex flex-col items-end border-l border-gray-300 pl-2">
+                <div><i class="fas fa-warehouse"></i> <span id="cap-storage">800</span></div>
+                <div><i class="fas fa-shopping-basket"></i> <span id="cap-granary">800</span></div>
+            </div>
+        </header>
+
+        <!-- LEFT SIDEBAR (HERO) -->
+        <aside class="sidebar-left">
+            <div class="hero-avatar" onclick="showToast('Hero is currently resting.')">
+                <img src="img/hero_head.png" onerror="this.src='https://img.icons8.com/color/96/gladiator.png'" alt="Hero">
+                <div class="absolute bottom-0 right-0 bg-blue-500 text-white text-[9px] px-1 rounded-tl border border-white">100%</div>
+            </div>
+
+            <button onclick="switchView('fields')" id="btn-fields" class="side-btn active" title="Resources">
+                <i class="fas fa-th-large"></i>
+            </button>
+            <button onclick="switchView('village')" id="btn-village" class="side-btn" title="Village">
+                <i class="fas fa-home"></i>
+            </button>
+            <button onclick="switchView('map')" id="btn-map" class="side-btn" title="Map">
+                <i class="fas fa-globe-europe"></i>
+            </button>
+            <button onclick="switchView('reports')" id="btn-reports" class="side-btn" title="Reports">
+                <i class="fas fa-scroll"></i>
+                <div id="notif-badge" class="hidden absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full border border-white"></div>
+            </button>
+        </aside>
+
+        <!-- MAIN STAGE -->
+        <main class="main-stage" id="main-view">
+            <!-- Content Injected Here -->
+        </main>
+
+        <!-- RIGHT SIDEBAR (QUESTS) -->
+        <aside class="sidebar-right">
+            <div class="quest-master" title="Daily Quests">
+                <img src="img/quest_master.png" onerror="this.src='https://img.icons8.com/color/96/scroll.png'" class="w-10 h-10 p-1">
+            </div>
+            <div class="w-full text-center text-[9px] text-gray-500">Quests</div>
+            
+            <div class="mt-4 w-full flex flex-col items-center">
+                <div class="text-[10px] font-bold text-[#b8860b] mb-1">Gold</div>
+                <div class="bg-yellow-100 border border-yellow-300 px-2 py-1 rounded text-xs font-bold text-yellow-800 flex items-center gap-1">
+                    <img src="img/gold.png" onerror="this.src='https://img.icons8.com/color/48/coins.png'" class="w-4 h-4"> 50
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="t5-modal-overlay hidden">
+        <div class="t5-modal bounce-in">
+            <div class="t5-modal-header">
+                <span id="modal-title">Construct</span>
+                <button onclick="closeModal()" class="text-white hover:text-red-400"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-body" class="p-6 bg-[#f7f7f7]"></div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[#333] text-white px-6 py-2 rounded-full shadow-xl opacity-0 transition-opacity z-[200] pointer-events-none">
+        Action Completed
+    </div>
+
+    <script>
+        /* --- ASSETS CONFIGURATION (LOCAL vs REMOTE) --- */
+        // NOTE: If you extract 'img.rar' to the same folder, the local paths will work.
+        // Otherwise, it will fallback to Icons8/Online urls.
+        
+        // Travian GID Mapping based on 'img.rar' structure
+        // Patterns seen: img/un/h/gidXX.gif
+        const LOCAL_PATH_BASE = "img/un/h/";
+
+        const BUILDING_TYPES = {
+            woodcutter: { id: 1, name: "Woodcutter", res: "wood", baseCost: [40, 100, 50, 60], baseProd: 3, fallback: 'https://img.icons8.com/color/96/forest.png' },
+            claypit:    { id: 2, name: "Clay Pit", res: "clay", baseCost: [80, 40, 80, 50], baseProd: 3, fallback: 'https://img.icons8.com/color/96/brick.png' },
+            ironmine:   { id: 3, name: "Iron Mine", res: "iron", baseCost: [100, 80, 30, 60], baseProd: 3, fallback: 'https://img.icons8.com/color/96/iron-ore.png' },
+            cropland:   { id: 4, name: "Cropland", res: "crop", baseCost: [70, 90, 70, 20], baseProd: 3, fallback: 'https://img.icons8.com/color/96/wheat.png' },
+            
+            main:       { id: 15, name: "Main Building", baseCost: [70, 40, 60, 20], desc: "Reduces build time", fallback: 'https://img.icons8.com/color/96/parthenon.png' },
+            warehouse:  { id: 10, name: "Warehouse", baseCost: [130, 160, 90, 40], desc: "Storage capacity", fallback: 'https://img.icons8.com/color/96/warehouse.png' },
+            granary:    { id: 11, name: "Granary", baseCost: [80, 100, 70, 20], desc: "Crop capacity", fallback: 'https://img.icons8.com/color/96/silo.png' },
+            barracks:   { id: 19, name: "Barracks", baseCost: [210, 140, 260, 120], desc: "Train infantry", fallback: 'https://img.icons8.com/color/96/military-base.png' },
+            wall:       { id: 31, name: "Wall", baseCost: [50, 50, 20, 10], desc: "Defensive bonus", fallback: 'https://img.icons8.com/color/96/great-wall.png' },
+            
+            // Special
+            empty:      { id: 0, fallback: 'https://img.icons8.com/fluency/96/construction-site.png' },
+            center:     { id: 99, fallback: 'https://img.icons8.com/color/96/village.png' } // Placeholder ID
+        };
+
+        // Helper to generate image tag with safe fallback
+        function getImgHtml(typeKey, cssClass="iso-img") {
+            const b = BUILDING_TYPES[typeKey] || BUILDING_TYPES.empty;
+            // The uploaded RAR structure suggests "img/un/h/gidXX.gif"
+            const localSrc = `${LOCAL_PATH_BASE}gid${b.id}.gif`;
+            return `<img src="${localSrc}" class="${cssClass}" onerror="this.onerror=null; this.src='${b.fallback}'">`;
+        }
+
+        /* --- STATE --- */
+        let state = {
+            res: { wood: 500, clay: 500, iron: 500, crop: 500 },
+            cap: { storage: 800, granary: 800 },
+            prod: { wood: 10, clay: 10, iron: 10, crop: 10 },
+            buildings: {}, // id -> {type, level}
+            fields: [],
+            troops: 0,
+            view: 'fields'
+        };
+
+        // Init Fields
+        for(let i=0; i<18; i++) {
+            let type = i<4?'woodcutter':i<8?'claypit':i<12?'ironmine':'cropland';
+            state.fields.push({id: i, type: type, level: 0});
+        }
+        // Init Village Slots
+        for(let i=0; i<11; i++) state.buildings[i] = {type: (i===0?'main':null), level: (i===0?1:0)};
+
+        // Resource Icons Init (Local or Fallback)
+        function initResIcons() {
+            // Local resource path guess: img/res/l1.gif etc (typical travian)
+            // If not found in user RAR, falls back to Icons8
+            const map = {
+                'icon-wood': { local: 'img/res/l1.gif', fallback: 'https://img.icons8.com/color/96/forest.png' },
+                'icon-clay': { local: 'img/res/l2.gif', fallback: 'https://img.icons8.com/color/96/brick.png' },
+                'icon-iron': { local: 'img/res/l3.gif', fallback: 'https://img.icons8.com/color/96/iron-ore.png' },
+                'icon-crop': { local: 'img/res/l4.gif', fallback: 'https://img.icons8.com/color/96/wheat.png' }
+            };
+            for(let id in map) {
+                let img = document.getElementById(id);
+                img.src = map[id].local;
+                img.onerror = () => { img.src = map[id].fallback; img.onerror = null; };
+            }
+        }
+
+        /* --- LOGIC --- */
+        setInterval(() => {
+            ['wood','clay','iron','crop'].forEach(r => {
+                let add = (state.prod[r] / 3600);
+                if(r === 'crop') add -= (state.troops/3600);
+                state.res[r] = Math.min(state.res[r] + add, r==='crop'?state.cap.granary:state.cap.storage);
+                state.res[r] = Math.max(state.res[r], 0);
+            });
+            updateHeader();
+        }, 1000);
+
+        function updateHeader() {
+            ['wood','clay','iron','crop'].forEach(r => {
+                const val = Math.floor(state.res[r]);
+                document.getElementById(`res-${r}`).innerText = val;
+                document.getElementById(`prod-${r}`).innerText = `+${state.prod[r]}`;
+                const max = r==='crop'?state.cap.granary:state.cap.storage;
+                document.getElementById(`bar-${r}`).style.width = `${Math.min(100, (val/max)*100)}%`;
+            });
+        }
+
+        /* --- RENDERER --- */
+        function switchView(view) {
+            state.view = view;
+            const stage = document.getElementById('main-view');
+            stage.innerHTML = '';
+            
+            document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${view}`).classList.add('active');
+
+            if(view === 'fields') renderFields(stage);
+            if(view === 'village') renderVillage(stage);
+            if(view === 'map') renderMap(stage);
+            if(view === 'reports') renderReports(stage);
+        }
+
+        const FIELDS_POS = [
+             {l: 25, t: 15}, {l: 50, t: 10}, {l: 75, t: 15},
+             {l: 15, t: 35}, {l: 85, t: 35},
+             {l: 10, t: 60}, {l: 90, t: 60},
+             {l: 25, t: 80}, {l: 50, t: 85}, {l: 75, t: 80},
+             {l: 35, t: 30}, {l: 65, t: 30},
+             {l: 25, t: 50}, {l: 75, t: 50},
+             {l: 35, t: 70}, {l: 65, t: 70},
+             {l: 50, t: 25}, {l: 50, t: 75}
+        ];
+
+        const VILLAGE_POS = [
+            {l: 50, t: 50}, // Center
+            {l: 35, t: 40}, {l: 65, t: 40},
+            {l: 35, t: 60}, {l: 65, t: 60},
+            {l: 20, t: 50}, {l: 80, t: 50},
+            {l: 50, t: 30}, {l: 50, t: 70},
+            {l: 40, t: 20}, {l: 60, t: 20}
+        ];
+
+        function renderFields(stage) {
+            stage.classList.remove('village-bg');
+            const wrap = document.createElement('div');
+            wrap.className = 'iso-map';
+            
+            // Village Center Link
+            const center = document.createElement('div');
+            center.className = 'absolute';
+            center.style.left = '50%'; center.style.top = '50%';
+            center.style.transform = 'translate(-50%, -50%)';
+            center.innerHTML = getImgHtml('center', 'w-24 drop-shadow-lg hover:scale-110 transition cursor-pointer');
+            center.onclick = () => switchView('village');
+            wrap.appendChild(center);
+
+            state.fields.forEach((f, idx) => {
+                const pos = FIELDS_POS[idx] || {l: 50, t: 50};
+                const el = document.createElement('div');
+                el.className = 'iso-tile';
+                el.style.left = `${pos.l}%`;
+                el.style.top = `${pos.t}%`;
+                el.style.transform = 'translate(-50%, -50%)';
+                
+                el.innerHTML = `
+                    ${getImgHtml(f.type)}
+                    ${f.level > 0 ? `<div class="lvl-tag">${f.level}</div>` : ''}
+                `;
+                el.onclick = () => openModal(f, 'field');
+                wrap.appendChild(el);
+            });
+            stage.appendChild(wrap);
+        }
+
+        function renderVillage(stage) {
+            stage.classList.add('village-bg');
+            const wrap = document.createElement('div');
+            wrap.className = 'iso-map';
+
+            Object.keys(state.buildings).forEach(id => {
+                const b = state.buildings[id];
+                const pos = VILLAGE_POS[id] || {l: 50, t: 50};
+                const el = document.createElement('div');
+                el.className = 'iso-tile';
+                el.style.left = `${pos.l}%`;
+                el.style.top = `${pos.t}%`;
+                el.style.transform = 'translate(-50%, -50%)';
+
+                // If empty, use empty key
+                const typeKey = b.type ? b.type : 'empty';
+                const opacity = !b.type ? 'opacity-70' : '';
+                
+                el.innerHTML = `
+                    ${getImgHtml(typeKey, "iso-img " + opacity)}
+                    ${b.level > 0 ? `<div class="lvl-tag">${b.level}</div>` : ''}
+                `;
+                el.onclick = () => b.type ? openModal({id, ...b}, 'building') : openBuildModal(id);
+                wrap.appendChild(el);
+            });
+            stage.appendChild(wrap);
+        }
+
+        function renderMap(stage) {
+            stage.classList.remove('village-bg');
+            const grid = document.createElement('div');
+            // Grid Layout
+            grid.style.display = 'grid';
+            grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+            grid.style.gap = '2px';
+            grid.style.background = '#3e2723';
+            grid.style.padding = '5px';
+            grid.style.borderRadius = '4px';
+
+            for(let i=0; i<49; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'relative w-[60px] h-[60px] cursor-pointer border border-white/10';
+                
+                const isCenter = i === 24;
+                const isOasis = Math.random() < 0.1;
+                const isNPC = !isCenter && !isOasis && Math.random() < 0.2;
+
+                if(isCenter) {
+                    cell.style.backgroundColor = '#ffd700';
+                    cell.innerHTML = getImgHtml('center', 'w-full h-full p-1 object-contain');
+                } else if (isNPC) {
+                    cell.style.backgroundColor = '#c0392b';
+                    cell.innerHTML = getImgHtml('wall', 'w-full h-full p-2 opacity-90 object-contain');
+                    cell.onclick = () => { showToast("Scouts sent..."); setTimeout(() => showToast("Target Weak!"), 1500); };
+                } else if (isOasis) {
+                    cell.style.backgroundColor = '#2980b9';
+                    cell.innerHTML = `<i class="fas fa-water text-white/50 absolute bottom-1 right-1 text-xs"></i>`;
+                } else {
+                    cell.style.backgroundColor = '#4caf50';
+                    cell.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/grass.png')";
+                }
+                grid.appendChild(cell);
+            }
+            stage.appendChild(grid);
+        }
+
+        function renderReports(stage) {
+            stage.classList.remove('village-bg');
+            stage.innerHTML = `<div class="bg-white p-8 rounded shadow text-center text-gray-500">
+                <i class="fas fa-feather-alt text-4xl mb-4 text-[#ccc]"></i>
+                <p>No new scrolls from the front lines.</p>
+            </div>`;
+        }
+
+        /* --- UI ACTIONS --- */
+        function openModal(obj, ctx) {
+            const overlay = document.getElementById('modal-overlay');
+            const body = document.getElementById('modal-body');
+            document.getElementById('modal-title').innerText = BUILDING_TYPES[obj.type].name;
+            overlay.classList.remove('hidden');
+
+            const cost = BUILDING_TYPES[obj.type].baseCost.map(c => c * (obj.level+1));
+            const b = BUILDING_TYPES[obj.type];
+
+            let extra = '';
+            if(obj.type === 'barracks') {
+                extra = `
+                <div class="mt-4 pt-4 border-t border-gray-300">
+                    <h4 class="font-bold mb-2">Recruitment</h4>
+                    <div class="flex gap-2">
+                        <button onclick="trainUnit()" class="t5-btn text-xs">Train Legionnaire (Cost: 100 Wood)</button>
+                    </div>
+                </div>`;
+            }
+
+            // Modal Icon uses fallback for safety if local missing
+            body.innerHTML = `
+                <div class="flex gap-4 mb-4">
+                    ${getImgHtml(obj.type, "w-20 h-20 bg-gray-200 rounded border p-1 object-contain")}
+                    <div>
+                        <div class="font-bold text-lg">Level ${obj.level}</div>
+                        <div class="text-sm text-gray-600">Upgrade to Level ${obj.level+1}</div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-3 rounded border mb-4 flex justify-between text-sm">
+                    <div class="text-[#654321] font-bold"><i class="fas fa-tree"></i> ${cost[0]}</div>
+                    <div class="text-[#b5651d] font-bold"><i class="fas fa-cubes"></i> ${cost[1]}</div>
+                    <div class="text-[#808080] font-bold"><i class="fas fa-mountain"></i> ${cost[2]}</div>
+                    <div class="text-[#daa520] font-bold"><i class="fas fa-wheat"></i> ${cost[3]}</div>
+                </div>
+
+                <button class="w-full t5-btn py-3 text-lg" onclick="upgrade(${obj.id}, '${ctx}')">Upgrade Building</button>
+                ${extra}
+            `;
+        }
+
+        function openBuildModal(id) {
+            const overlay = document.getElementById('modal-overlay');
+            const body = document.getElementById('modal-body');
+            document.getElementById('modal-title').innerText = "New Construction Site";
+            overlay.classList.remove('hidden');
+            
+            let html = '<div class="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">';
+            ['warehouse','granary','barracks','wall'].forEach(k => {
+                const b = BUILDING_TYPES[k];
+                html += `
+                    <div class="bg-white border rounded p-2 hover:bg-gray-50 cursor-pointer flex flex-col items-center text-center" onclick="buildNew(${id}, '${k}')">
+                        ${getImgHtml(k, "w-12 h-12 mb-1 object-contain")}
+                        <div class="font-bold text-xs">${b.name}</div>
+                        <div class="text-[10px] text-gray-500">${b.desc}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            body.innerHTML = html;
+        }
+
+        function upgrade(id, ctx) {
+            if(state.res.wood > 50) {
+                state.res.wood -= 50;
+                if(ctx === 'field') {
+                    const f = state.fields.find(x => x.id === id);
+                    f.level++;
+                    state.prod[BUILDING_TYPES[f.type].res] += 5;
+                    switchView('fields');
+                } else {
+                    state.buildings[id].level++;
+                    if(state.buildings[id].type === 'warehouse') state.cap.storage += 800;
+                    switchView('village');
+                }
+                closeModal();
+                showToast("Construction started");
+            } else {
+                showToast("Not enough resources!");
+            }
+        }
+
+        function buildNew(id, type) {
+            state.buildings[id].type = type;
+            state.buildings[id].level = 1;
+            closeModal();
+            switchView('village');
+            showToast("Foundation laid");
+        }
+
+        function trainUnit() {
+            if(state.res.wood >= 100) {
+                state.res.wood -= 100;
+                state.troops += 1;
+                showToast("Troop trained!");
+                closeModal();
+            } else {
+                showToast("Need more resources");
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.top = '100px';
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.top = '20px';
+            }, 2000);
+        }
+
+        // Init
+        initResIcons();
+        switchView('fields');
+        updateHeader();
+
+    </script>
+</body>
+</html>
