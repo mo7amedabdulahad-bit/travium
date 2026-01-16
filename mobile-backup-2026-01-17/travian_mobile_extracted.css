@@ -1,0 +1,1024 @@
+/* ========================================
+   TRAVIAN OFFICIAL MOBILE CSS
+   Extracted from imports_compressed.css
+   ======================================== */
+
+
+/* ========== .mobileOptimized Rules ========== */
+
+.mobileOptimized #contextualHelp{display:none}
+
+
+.mobileOptimized #contextmenu a{white-space:nowrap}
+
+
+.mobileOptimized #mapContainer{position:relative!important}
+
+
+.mobileOptimized #mapContainer .toolbar{transform:scale(1.25);transform-origin:top left}
+
+
+.mobileOptimized #mapContainer #mapCoordEnter{transform:none}
+
+
+.mobileOptimized .countrySelection{max-width:600px}
+
+
+.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV0,.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV4{max-width:600px}
+
+
+.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV0 .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV4 .dialogContents{width:866px;transform:scale(.6666666667);transform-origin:left 0}
+
+
+.mobileOptimized .dialogV2.dialogWrapper .oneTimeOfferAnnouncement .dialogContents{width:auto}
+
+
+.mobileOptimized #oneTimeOfferNotification{display:none}
+
+
+.mobileOptimized .dialog.basic.transactionHistory{max-width:600px}
+
+
+.mobileOptimized .dialog.basic.transactionHistory .dialogContents{width:710px;transform:scale(.8083333333);transform-origin:left 0}
+
+
+.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV0.premiumFeaturePackage .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV4.premiumFeaturePackage .dialogContents{width:591px;transform:scale(.96)}
+
+
+.mobileOptimized #center div#contentOuterContainer{max-width:600px}
+
+
+.mobileOptimized #center div#contentOuterContainer #content.logout{min-width:600px;max-width:600px;margin:0 10px;overflow-x:auto}
+
+
+.mobileOptimized .contextMenuWrapper{inset:194px 0 133px 0}
+
+
+.mobileOptimized .dialogOverlay>.dialogWrapper{transition:transform 250ms ease-out}
+
+
+.mobileOptimized .dialogOverlay>.dialogWrapper.withSidebarBeforeContent{transform:translateX(420px)}
+
+
+.mobileOptimized .dialogOverlay>.dialogWrapper.withSidebarAfterContent{transform:translateX(-420px)}
+
+
+.mobileOptimized .dialogOverlay.doNotCoverHeader.stickToHeader{grid-template-rows:55px auto}
+
+
+.mobileOptimized .dialogV2.dialogWrapper .dialogContents{width:calc(600px - 20px)}
+
+
+.mobileOptimized #content .contentNavi.subNavi{top:65px;width:565px;position:absolute;left:50%;transform:translateX(-50%)}
+
+
+.mobileOptimized #content .contentNavi.subNavi+.navigationSpacer{padding-top:50px;margin-bottom:10px}
+
+
+.mobileOptimized #toastStack{align-content:start}
+
+
+.mobileOptimized .toastStack{flex-direction:column-reverse}
+
+
+.mobileOptimized .toastWrapper{transform:translateY(-100%)}
+
+
+.mobileOptimized .sidebar .quickLinks{--headerButtonsMargin:25px}
+
+
+.mobileOptimized .sidebar .quickLinks .settings{display:none}
+
+
+.mobileOptimized .sidebar #sidebarBoxVillageList .content .villageList .dragObject .listEntry .dragAndDrop{opacity:1}
+
+
+.mobileOptimized #topBar{position:fixed;bottom:-8px;z-index:500;width:100%;min-width:auto;padding:0;display:block;grid-template-columns:none}
+
+
+.mobileOptimized #topBar #header:before{border-left-width:0;border-right-width:0}
+
+
+.mobileOptimized #topBar #logo{display:none}
+
+
+.mobileOptimized.activate #topBar,.mobileOptimized.error_site #topBar,.mobileOptimized.login #topBar,.mobileOptimized.logout #topBar{height:119px}
+
+
+.mobileOptimized.activate #topBar #logo,.mobileOptimized.error_site #topBar #logo,.mobileOptimized.login #topBar #logo,.mobileOptimized.logout #topBar #logo{display:block;position:absolute;top:50%;transform:translateY(-60%);z-index:3;height:5.5em;width:300px;margin:0;background:0 0;border:none;box-shadow:none}
+
+
+.mobileOptimized.activate #topBar #logo svg,.mobileOptimized.error_site #topBar #logo svg,.mobileOptimized.login #topBar #logo svg,.mobileOptimized.logout #topBar #logo svg{width:173px;height:60px;margin-top:7px}
+
+
+.mobileOptimized.activate #topBar #logo.light svg path,.mobileOptimized.error_site #topBar #logo.light svg path,.mobileOptimized.login #topBar #logo.light svg path,.mobileOptimized.logout #topBar #logo.light svg path{fill:#231f20}
+
+
+.mobileOptimized.activate #topBar #header:before,.mobileOptimized.error_site #topBar #header:before,.mobileOptimized.login #topBar #header:before,.mobileOptimized.logout #topBar #header:before{display:block}
+
+
+.mobileOptimized.error_site #header:before{display:none}
+
+
+.mobileOptimized.mainLayoutDisabled #topBar{z-index:37}
+
+
+.mobileOptimized #header{width:100%;position:relative;height:120px}
+
+
+.mobileOptimized #header #navigation{display:grid;max-width:100%;height:66px;left:50%;transform:scale(1.3) translateX(-50%);transform-origin:left;top:14px}
+
+
+.mobileOptimized #header #navigation>a.dailyQuests.dailyQuests,.mobileOptimized #header #navigation>a.dailyQuests.statistics,.mobileOptimized #header #navigation>a.map.dailyQuests,.mobileOptimized #header #navigation>a.map.statistics,.mobileOptimized #header #navigation>a.messages.dailyQuests,.mobileOptimized #header #navigation>a.messages.statistics,.mobileOptimized #header #navigation>a.mobileMenuButton.dailyQuests,.mobileOptimized #header #navigation>a.mobileMenuButton.statistics,.mobileOptimized #header #navigation>a.mobileShopButton.dailyQuests,.mobileOptimized #header #navigation>a.mobileShopButton.statistics,.mobileOptimized #header #navigation>a.reports.dailyQuests,.mobileOptimized #header #navigation>a.reports.statistics,.mobileOptimized #header #navigation>a.statistics.dailyQuests,.mobileOptimized #header #navigation>a.statistics.statistics,.mobileOptimized #header #navigation>label.dailyQuests.dailyQuests,.mobileOptimized #header #navigation>label.dailyQuests.statistics,.mobileOptimized #header #navigation>label.map.dailyQuests,.mobileOptimized #header #navigation>label.map.statistics,.mobileOptimized #header #navigation>label.messages.dailyQuests,.mobileOptimized #header #navigation>label.messages.statistics,.mobileOptimized #header #navigation>label.mobileMenuButton.dailyQuests,.mobileOptimized #header #navigation>label.mobileMenuButton.statistics,.mobileOptimized #header #navigation>label.mobileShopButton.dailyQuests,.mobileOptimized #header #navigation>label.mobileShopButton.statistics,.mobileOptimized #header #navigation>label.reports.dailyQuests,.mobileOptimized #header #navigation>label.reports.statistics,.mobileOptimized #header #navigation>label.statistics.dailyQuests,.mobileOptimized #header #navigation>label.statistics.statistics{display:none}
+
+
+.mobileOptimized #header #navigation>a.mobileMenuButton,.mobileOptimized #header #navigation>a.mobileShopButton,.mobileOptimized #header #navigation>label.mobileMenuButton,.mobileOptimized #header #navigation>label.mobileShopButton{display:block}
+
+
+.mobileOptimized #header #navigation>a.mobileMenuButton:first-child,.mobileOptimized #header #navigation>a.mobileShopButton:first-child,.mobileOptimized #header #navigation>label.mobileMenuButton:first-child,.mobileOptimized #header #navigation>label.mobileShopButton:first-child{grid-column-start:7}
+
+
+.mobileOptimized #header #navigation>a.village.resourceView.mobileShopButton,.mobileOptimized #header #navigation>label.village.resourceView.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}
+
+
+.mobileOptimized #header #navigation>a.village.resourceView.mobileShopButton:after,.mobileOptimized #header #navigation>label.village.resourceView.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}
+
+
+.mobileOptimized #header #navigation>a.village.buildingView.mobileShopButton,.mobileOptimized #header #navigation>label.village.buildingView.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}
+
+
+.mobileOptimized #header #navigation>a.village.buildingView.mobileShopButton:after,.mobileOptimized #header #navigation>label.village.buildingView.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}
+
+
+.mobileOptimized #header #navigation>a.map.mobileShopButton,.mobileOptimized #header #navigation>label.map.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}
+
+
+.mobileOptimized #header #navigation>a.map.mobileShopButton:after,.mobileOptimized #header #navigation>label.map.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}
+
+
+
+/* ========== .mobileForced Rules ========== */
+
+.mobileForced #contextualHelp{display:none}
+
+
+.mobileForced #contextmenu a{white-space:nowrap}
+
+
+.mobileForced #mapContainer{position:relative!important}
+
+
+.mobileForced #mapContainer .toolbar{transform:scale(1.25);transform-origin:top left}
+
+
+.mobileForced #mapContainer #mapCoordEnter{transform:none}
+
+
+.mobileForced .countrySelection{max-width:600px}
+
+
+.mobileForced .dialogV2.dialogWrapper .dialog.paymentShopV0,.mobileForced .dialogV2.dialogWrapper .dialog.paymentShopV4{max-width:600px}
+
+
+.mobileForced .dialogV2.dialogWrapper .dialog.paymentShopV0 .dialogContents,.mobileForced .dialogV2.dialogWrapper .dialog.paymentShopV4 .dialogContents{width:866px;transform:scale(.6666666667);transform-origin:left 0}
+
+
+.mobileForced .dialogV2.dialogWrapper .oneTimeOfferAnnouncement .dialogContents{width:auto}
+
+
+.mobileForced #oneTimeOfferNotification{display:none}
+
+
+.mobileForced .dialog.basic.transactionHistory{max-width:600px}
+
+
+.mobileForced .dialog.basic.transactionHistory .dialogContents{width:710px;transform:scale(.8083333333);transform-origin:left 0}
+
+
+.mobileForced .dialogV2.dialogWrapper .dialog.paymentShopV0.premiumFeaturePackage .dialogContents,.mobileForced .dialogV2.dialogWrapper .dialog.paymentShopV4.premiumFeaturePackage .dialogContents{width:591px;transform:scale(.96)}
+
+
+.mobileForced #center div#contentOuterContainer{max-width:600px}
+
+
+.mobileForced #center div#contentOuterContainer #content.logout{min-width:600px;max-width:600px;margin:0 10px;overflow-x:auto}
+
+
+.mobileForced .contextMenuWrapper{inset:194px 0 133px 0}
+
+
+.mobileForced .dialogOverlay>.dialogWrapper{transition:transform 250ms ease-out}
+
+
+.mobileForced .dialogOverlay>.dialogWrapper.withSidebarBeforeContent{transform:translateX(420px)}
+
+
+.mobileForced .dialogOverlay>.dialogWrapper.withSidebarAfterContent{transform:translateX(-420px)}
+
+
+.mobileForced .dialogOverlay.doNotCoverHeader.stickToHeader{grid-template-rows:55px auto}
+
+
+.mobileForced .dialogV2.dialogWrapper .dialogContents{width:calc(600px - 20px)}
+
+
+.mobileForced #content .contentNavi.subNavi{top:65px;width:565px;position:absolute;left:50%;transform:translateX(-50%)}
+
+
+.mobileForced #content .contentNavi.subNavi+.navigationSpacer{padding-top:50px;margin-bottom:10px}
+
+
+.mobileForced #toastStack{align-content:start}
+
+
+.mobileForced .toastStack{flex-direction:column-reverse}
+
+
+.mobileForced .toastWrapper{transform:translateY(-100%)}
+
+
+.mobileForced .sidebar .quickLinks{--headerButtonsMargin:25px}
+
+
+.mobileForced .sidebar .quickLinks .settings{display:none}
+
+
+.mobileForced .sidebar #sidebarBoxVillageList .content .villageList .dragObject .listEntry .dragAndDrop{opacity:1}
+
+
+.mobileForced #topBar{position:fixed;bottom:-8px;z-index:500;width:100%;min-width:auto;padding:0;display:block;grid-template-columns:none}
+
+
+.mobileForced #topBar #header:before{border-left-width:0;border-right-width:0}
+
+
+.mobileForced #topBar #logo{display:none}
+
+
+.mobileForced.activate #topBar,.mobileForced.error_site #topBar,.mobileForced.login #topBar,.mobileForced.logout #topBar{height:119px}
+
+
+.mobileForced.activate #topBar #logo,.mobileForced.error_site #topBar #logo,.mobileForced.login #topBar #logo,.mobileForced.logout #topBar #logo{display:block;position:absolute;top:50%;transform:translateY(-60%);z-index:3;height:5.5em;width:300px;margin:0;background:0 0;border:none;box-shadow:none}
+
+
+.mobileForced.activate #topBar #logo svg,.mobileForced.error_site #topBar #logo svg,.mobileForced.login #topBar #logo svg,.mobileForced.logout #topBar #logo svg{width:173px;height:60px;margin-top:7px}
+
+
+.mobileForced.activate #topBar #logo.light svg path,.mobileForced.error_site #topBar #logo.light svg path,.mobileForced.login #topBar #logo.light svg path,.mobileForced.logout #topBar #logo.light svg path{fill:#231f20}
+
+
+.mobileForced.activate #topBar #header:before,.mobileForced.error_site #topBar #header:before,.mobileForced.login #topBar #header:before,.mobileForced.logout #topBar #header:before{display:block}
+
+
+.mobileForced.error_site #header:before{display:none}
+
+
+.mobileForced.mainLayoutDisabled #topBar{z-index:37}
+
+
+.mobileForced #header{width:100%;position:relative;height:120px}
+
+
+.mobileForced #header #navigation{display:grid;max-width:100%;height:66px;left:50%;transform:scale(1.3) translateX(-50%);transform-origin:left;top:14px}
+
+
+.mobileForced #header #navigation>a.dailyQuests.dailyQuests,.mobileForced #header #navigation>a.dailyQuests.statistics,.mobileForced #header #navigation>a.map.dailyQuests,.mobileForced #header #navigation>a.map.statistics,.mobileForced #header #navigation>a.messages.dailyQuests,.mobileForced #header #navigation>a.messages.statistics,.mobileForced #header #navigation>a.mobileMenuButton.dailyQuests,.mobileForced #header #navigation>a.mobileMenuButton.statistics,.mobileForced #header #navigation>a.mobileShopButton.dailyQuests,.mobileForced #header #navigation>a.mobileShopButton.statistics,.mobileForced #header #navigation>a.reports.dailyQuests,.mobileForced #header #navigation>a.reports.statistics,.mobileForced #header #navigation>a.statistics.dailyQuests,.mobileForced #header #navigation>a.statistics.statistics,.mobileForced #header #navigation>label.dailyQuests.dailyQuests,.mobileForced #header #navigation>label.dailyQuests.statistics,.mobileForced #header #navigation>label.map.dailyQuests,.mobileForced #header #navigation>label.map.statistics,.mobileForced #header #navigation>label.messages.dailyQuests,.mobileForced #header #navigation>label.messages.statistics,.mobileForced #header #navigation>label.mobileMenuButton.dailyQuests,.mobileForced #header #navigation>label.mobileMenuButton.statistics,.mobileForced #header #navigation>label.mobileShopButton.dailyQuests,.mobileForced #header #navigation>label.mobileShopButton.statistics,.mobileForced #header #navigation>label.reports.dailyQuests,.mobileForced #header #navigation>label.reports.statistics,.mobileForced #header #navigation>label.statistics.dailyQuests,.mobileForced #header #navigation>label.statistics.statistics{display:none}
+
+
+.mobileForced #header #navigation>a.mobileMenuButton,.mobileForced #header #navigation>a.mobileShopButton,.mobileForced #header #navigation>label.mobileMenuButton,.mobileForced #header #navigation>label.mobileShopButton{display:block}
+
+
+.mobileForced #header #navigation>a.mobileMenuButton:first-child,.mobileForced #header #navigation>a.mobileShopButton:first-child,.mobileForced #header #navigation>label.mobileMenuButton:first-child,.mobileForced #header #navigation>label.mobileShopButton:first-child{grid-column-start:7}
+
+
+.mobileForced #header #navigation>a.village.resourceView.mobileShopButton,.mobileForced #header #navigation>label.village.resourceView.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}
+
+
+.mobileForced #header #navigation>a.village.resourceView.mobileShopButton:after,.mobileForced #header #navigation>label.village.resourceView.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}
+
+
+.mobileForced #header #navigation>a.village.buildingView.mobileShopButton,.mobileForced #header #navigation>label.village.buildingView.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}
+
+
+.mobileForced #header #navigation>a.village.buildingView.mobileShopButton:after,.mobileForced #header #navigation>label.village.buildingView.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}
+
+
+.mobileForced #header #navigation>a.map.mobileShopButton,.mobileForced #header #navigation>label.map.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}
+
+
+.mobileForced #header #navigation>a.map.mobileShopButton:after,.mobileForced #header #navigation>label.map.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #contextualHelp{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #contextmenu a{white-space:nowrap}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #mapContainer{position:relative!important}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #mapContainer .toolbar{transform:scale(1.25);transform-origin:top left}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #mapContainer #mapCoordEnter{transform:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .countrySelection{max-width:600px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV0,.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV4{max-width:600px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV0 .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV4 .dialogContents{width:866px;transform:scale(.6666666667);transform-origin:left 0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .oneTimeOfferAnnouncement .dialogContents{width:auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #oneTimeOfferNotification{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialog.basic.transactionHistory{max-width:600px}.mobileOptimized .dialog.basic.transactionHistory .dialogContents{width:710px;transform:scale(.8083333333);transform-origin:left 0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV0.premiumFeaturePackage .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .dialog.paymentShopV4.premiumFeaturePackage .dialogContents{width:591px;transform:scale(.96)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.logout.mobileOptimized #center div#contentOuterContainer{max-width:600px}body.logout.mobileOptimized #center div#contentOuterContainer #content.logout{min-width:600px;max-width:600px;margin:0 10px;overflow-x:auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .contextMenuWrapper{inset:194px 0 133px 0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogOverlay>.dialogWrapper{transition:transform 250ms ease-out}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogOverlay>.dialogWrapper.withSidebarBeforeContent{transform:translateX(420px)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogOverlay>.dialogWrapper.withSidebarAfterContent{transform:translateX(-420px)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogOverlay.doNotCoverHeader.stickToHeader{grid-template-rows:55px auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .dialogContents{width:calc(600px - 20px)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content .contentNavi.subNavi{top:65px;width:565px;position:absolute;left:50%;transform:translateX(-50%)}.mobileOptimized #content .contentNavi.subNavi+.navigationSpacer{padding-top:50px;margin-bottom:10px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #toastStack{align-content:start}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .toastStack{flex-direction:column-reverse}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .toastWrapper{transform:translateY(-100%)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .sidebar .quickLinks{--headerButtonsMargin:25px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .sidebar .quickLinks .settings{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .sidebar #sidebarBoxVillageList .content .villageList .dragObject .listEntry .dragAndDrop{opacity:1}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBar{position:fixed;bottom:-8px;z-index:500;width:100%;min-width:auto;padding:0;display:block;grid-template-columns:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBar #header:before{border-left-width:0;border-right-width:0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBar #logo{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized.activate #topBar,.mobileOptimized.error_site #topBar,.mobileOptimized.login #topBar,.mobileOptimized.logout #topBar{height:119px}.mobileOptimized.activate #topBar #logo,.mobileOptimized.error_site #topBar #logo,.mobileOptimized.login #topBar #logo,.mobileOptimized.logout #topBar #logo{display:block;position:absolute;top:50%;transform:translateY(-60%);z-index:3;height:5.5em;width:300px;margin:0;background:0 0;border:none;box-shadow:none}.mobileOptimized.activate #topBar #logo svg,.mobileOptimized.error_site #topBar #logo svg,.mobileOptimized.login #topBar #logo svg,.mobileOptimized.logout #topBar #logo svg{width:173px;height:60px;margin-top:7px}.mobileOptimized.activate #topBar #logo.light svg path,.mobileOptimized.error_site #topBar #logo.light svg path,.mobileOptimized.login #topBar #logo.light svg path,.mobileOptimized.logout #topBar #logo.light svg path{fill:#231f20}.mobileOptimized.activate #topBar #header:before,.mobileOptimized.error_site #topBar #header:before,.mobileOptimized.login #topBar #header:before,.mobileOptimized.logout #topBar #header:before{display:block}.mobileOptimized.error_site #header:before{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized.mainLayoutDisabled #topBar{z-index:37}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header{width:100%;position:relative;height:120px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header #navigation{display:grid;max-width:100%;height:66px;left:50%;transform:scale(1.3) translateX(-50%);transform-origin:left;top:14px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header #navigation>a.dailyQuests.dailyQuests,.mobileOptimized #header #navigation>a.dailyQuests.statistics,.mobileOptimized #header #navigation>a.map.dailyQuests,.mobileOptimized #header #navigation>a.map.statistics,.mobileOptimized #header #navigation>a.messages.dailyQuests,.mobileOptimized #header #navigation>a.messages.statistics,.mobileOptimized #header #navigation>a.mobileMenuButton.dailyQuests,.mobileOptimized #header #navigation>a.mobileMenuButton.statistics,.mobileOptimized #header #navigation>a.mobileShopButton.dailyQuests,.mobileOptimized #header #navigation>a.mobileShopButton.statistics,.mobileOptimized #header #navigation>a.reports.dailyQuests,.mobileOptimized #header #navigation>a.reports.statistics,.mobileOptimized #header #navigation>a.statistics.dailyQuests,.mobileOptimized #header #navigation>a.statistics.statistics,.mobileOptimized #header #navigation>label.dailyQuests.dailyQuests,.mobileOptimized #header #navigation>label.dailyQuests.statistics,.mobileOptimized #header #navigation>label.map.dailyQuests,.mobileOptimized #header #navigation>label.map.statistics,.mobileOptimized #header #navigation>label.messages.dailyQuests,.mobileOptimized #header #navigation>label.messages.statistics,.mobileOptimized #header #navigation>label.mobileMenuButton.dailyQuests,.mobileOptimized #header #navigation>label.mobileMenuButton.statistics,.mobileOptimized #header #navigation>label.mobileShopButton.dailyQuests,.mobileOptimized #header #navigation>label.mobileShopButton.statistics,.mobileOptimized #header #navigation>label.reports.dailyQuests,.mobileOptimized #header #navigation>label.reports.statistics,.mobileOptimized #header #navigation>label.statistics.dailyQuests,.mobileOptimized #header #navigation>label.statistics.statistics{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header #navigation>a.mobileMenuButton,.mobileOptimized #header #navigation>a.mobileShopButton,.mobileOptimized #header #navigation>label.mobileMenuButton,.mobileOptimized #header #navigation>label.mobileShopButton{display:block}.mobileOptimized #header #navigation>a.mobileMenuButton:first-child,.mobileOptimized #header #navigation>a.mobileShopButton:first-child,.mobileOptimized #header #navigation>label.mobileMenuButton:first-child,.mobileOptimized #header #navigation>label.mobileShopButton:first-child{grid-column-start:7}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header #navigation>a.village.resourceView.mobileShopButton,.mobileOptimized #header #navigation>label.village.resourceView.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.village.resourceView.mobileShopButton:after,.mobileOptimized #header #navigation>label.village.resourceView.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}.mobileOptimized #header #navigation>a.village.buildingView.mobileShopButton,.mobileOptimized #header #navigation>label.village.buildingView.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.village.buildingView.mobileShopButton:after,.mobileOptimized #header #navigation>label.village.buildingView.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}.mobileOptimized #header #navigation>a.map.mobileShopButton,.mobileOptimized #header #navigation>label.map.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.map.mobileShopButton:after,.mobileOptimized #header #navigation>label.map.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}.mobileOptimized #header #navigation>a.reports.mobileShopButton,.mobileOptimized #header #navigation>label.reports.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.reports.mobileShopButton:after,.mobileOptimized #header #navigation>label.reports.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}.mobileOptimized #header #navigation>a.messages.mobileShopButton,.mobileOptimized #header #navigation>label.messages.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.messages.mobileShopButton:after,.mobileOptimized #header #navigation>label.messages.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}.mobileOptimized #header #navigation>a.mobileMenuButton.mobileShopButton,.mobileOptimized #header #navigation>label.mobileMenuButton.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.mobileMenuButton.mobileShopButton:after,.mobileOptimized #header #navigation>label.mobileMenuButton.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}.mobileOptimized #header #navigation>a.mobileShopButton.mobileShopButton,.mobileOptimized #header #navigation>label.mobileShopButton.mobileShopButton{background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;box-shadow:none}.mobileOptimized #header #navigation>a.mobileShopButton.mobileShopButton:after,.mobileOptimized #header #navigation>label.mobileShopButton.mobileShopButton:after{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:3;border-radius:50%;width:52px;height:52px;background-image:url(../img_ltr/hud/topBar/shop.png);background-size:cover}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header .currency{height:54px;width:84px;position:fixed;top:0;right:0;grid-template-columns:24px 1fr;grid-template-rows:23px 23px;line-height:25px;padding:3px;box-sizing:border-box}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header .currency svg.goldCoin{grid-row-start:1}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header .currency svg.silverCoin{grid-column-start:1;grid-row-start:2}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header .currency div{font-size:14px;padding:0}.mobileOptimized #header .currency div:first-of-type{grid-row-start:1}.mobileOptimized #header .currency div:last-of-type{grid-column-start:2;grid-row-start:2}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header .shop{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header .shopNotification{width:30px;height:30px;line-height:30px;font-size:17px;right:55px;top:13px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header a.layoutButton.referAFriend{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header input#mobileMenuState~#navigation label{background-image:linear-gradient(to bottom,#cbb198,#7b6050)}.mobileOptimized #header input#mobileMenuState~#navigation label:before{box-shadow:0 -1px 0 0 #89735d,0 1px 0 0 #aa9789,-1px 0 0 0 #8e7360,1px 0 0 0 #8e7360,inset 0 0 3px 0 rgba(0,0,0,.5);background-color:#5e4538;filter:none}.mobileOptimized #header input#mobileMenuState~#navigation .mobileMenuButton:after{background-position:0 -868px;top:-3px}.mobileOptimized #header input#mobileMenuState:checked~#navigation .mobileMenuButton{background-image:linear-gradient(to bottom,#dbc1a8,#b49581)}.mobileOptimized #header input#mobileMenuState:checked~#navigation .mobileMenuButton:before{filter:saturate(.8) brightness(1.2);background-color:#7a6153;box-shadow:0 -1px 0 0 #9b856f,0 1px 0 0 #bca99b,-1px 0 0 0 #a08572,1px 0 0 0 #a08572,inset 0 0 3px 0 rgba(0,0,0,.5)}.mobileOptimized #header input#mobileMenuState:checked~#navigation .mobileMenuButton:after{background-position:0 -930px;top:-5px}.mobileOptimized #header input#mobileMenuState:checked~nav#mobileMenu{pointer-events:auto;transform:rotateX(0);opacity:1}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header nav#mobileMenu{position:fixed;bottom:110px;right:0;max-width:40%;max-height:calc(100% - 164px);display:block;background-color:#e3d8c4;font-size:24px;padding:30px 25px 10px;opacity:0;transform:rotateX(-90deg);transform-origin:bottom center;transition-duration:.5s;pointer-events:none}.mobileOptimized #header nav#mobileMenu ul{padding:0;margin:0;list-style:none}.mobileOptimized #header nav#mobileMenu ul li{line-height:21px}.mobileOptimized #header nav#mobileMenu ul li:not(:last-of-type){margin-bottom:30px}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon{display:inline-grid;grid-template-columns:auto auto;vertical-align:bottom}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon i,.mobileOptimized #header nav#mobileMenu ul li .inlineIcon svg{grid-column-start:1;grid-row-start:1;margin-right:5px;align-self:center}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon span{grid-column-start:2;grid-row-start:1;align-self:center;display:inline-block}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon{grid-template-columns:20px 1fr;align-items:center;width:100%}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon svg{width:22px;height:22px;fill:#5E463A}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon svg.rewardAvailable{fill:#991915}.mobileOptimized #header nav#mobileMenu ul li .inlineIcon span{padding-left:20px}.mobileOptimized #header nav#mobileMenu ul li .disabledLink,.mobileOptimized #header nav#mobileMenu ul li a{color:#5e463a;font-weight:700}.mobileOptimized #header nav#mobileMenu ul li .disabledLink.disabledLink span,.mobileOptimized #header nav#mobileMenu ul li .disabledLink.disabledLink svg,.mobileOptimized #header nav#mobileMenu ul li a.disabledLink span,.mobileOptimized #header nav#mobileMenu ul li a.disabledLink svg{opacity:.5}.mobileOptimized #header nav#mobileMenu ul li a.referAFriend svg .plus{stroke:#E3D8C4}.mobileOptimized #header nav#mobileMenu ul:last-of-type{font-size:18px}.mobileOptimized #header nav#mobileMenu ul:last-of-type li{line-height:18px}.mobileOptimized #header nav#mobileMenu ul:last-of-type li:not(:last-of-type){margin-bottom:15px}.mobileOptimized #header nav#mobileMenu:not(.mobileMenuActivate) .lobbyItem{display:none}.mobileOptimized #header nav#mobileMenu.mobileMenuActivate .loginItem,.mobileOptimized #header nav#mobileMenu.mobileMenuActivate .mainpageItem,.mobileOptimized #header nav#mobileMenu.mobileMenuActivate .registerItem{display:none}.mobileOptimized #header nav#mobileMenu svg.divider{margin:30px auto;fill:rgba(94,70,58,0.4)}.mobileOptimized #header nav#mobileMenu .avatarSelection{display:none}.mobileOptimized #header nav#mobileMenu .avatarSelection hr{margin-left:-25px;margin-right:-25px;border-style:outset;border-width:thin}.mobileOptimized #header nav#mobileMenu .avatarSelection .title{font-size:14px;color:#888}.mobileOptimized #header nav#mobileMenu .avatarSelection .sittings{margin-top:10px}.mobileOptimized #header nav#mobileMenu .avatarSelection .sitting{display:grid;grid-template-columns:30px 1fr;grid-auto-flow:column;column-gap:10px;color:#5e463a;font-weight:700;align-items:center;margin-left:-25px;margin-right:-25px;padding:7px 25px}.mobileOptimized #header nav#mobileMenu .avatarSelection .sitting .slot{justify-self:start;display:inline-grid;align-content:center;justify-content:center;color:#fff;width:27px;height:27px;font-size:20px;border-radius:3px;font-weight:400}.mobileOptimized #header nav#mobileMenu .avatarSelection .sitting .slot1{background:#99c019}.mobileOptimized #header nav#mobileMenu .avatarSelection .sitting .slot2{background:#f78c1f}.mobileOptimized #header nav#mobileMenu .avatarSelection .sitting.active{background-color:#d6ccbb}.mobileOptimized #header nav#mobileMenu .avatarSelection a.exit{color:#5e463a;font-weight:700;margin-top:20px;display:block}.mobileOptimized #header nav#mobileMenu .avatarSelection a.exit .inlineIcon{display:inline-grid;vertical-align:bottom;grid-template-columns:20px 1fr;align-items:center;width:100%}.mobileOptimized #header nav#mobileMenu .avatarSelection a.exit .inlineIcon svg{width:22px;height:22px;fill:#5E463A}.mobileOptimized #header nav#mobileMenu .avatarSelection a.exit .inlineIcon span{padding-left:20px;padding-right:20px}.mobileOptimized #header nav#mobileMenu .copyright{font-size:11px;margin-bottom:0;text-align:center}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #header #dailyQuestReminder{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBarHeroWrapper{display:block;width:119px;transform:none;left:0;top:10px;z-index:39}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBarHeroWrapper #topBarHero{margin-left:20px;margin-top:30px;background-image:url(../img_ltr/hud/topBar/hero/frame/heroFrameStandalone.png);background-size:cover;transform:scale(1.3);transform-origin:top left}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBarHeroWrapper #topBarHero .heroStatus{left:3px;top:0;transform:scale(1.2)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBarHeroWrapper #topBarHero .layoutButton.adventure,.mobileOptimized #topBarHeroWrapper #topBarHero .layoutButton.auction{transform:scale(1.3)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBarHeroWrapper #topBarHero .layoutButton.adventure{top:-10px;left:55px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #topBarHeroWrapper #topBarHero .layoutButton.auction{top:19px;left:98px;transform-origin:top}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.rearrangeBuildings.mobileOptimized #topBarHeroWrapper,body:not(.village1):not(.village2).mobileOptimized #topBarHeroWrapper{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized nav#outOfGame{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #stockBar{grid-template-columns:auto auto;grid-template-rows:28px;background-image:linear-gradient(to bottom,#cba467 5%,#f3e2ae 13%,#efbf7b 32%,#aa8050 48%,#835e35 72%,#ad8a54 93%,#d7b672 100%);border:1px solid #34220d;border-radius:4px}.mobileOptimized #stockBar:before{content:"";position:absolute;top:2px;right:2px;bottom:2px;left:2px;background-color:#664e40;border:solid 1px #44321d;border-radius:1px}.mobileOptimized #stockBar{padding:3px;left:-15px;transform:scale(1.5);transform-origin:top left;position:fixed;top:0;left:0;width:362px;z-index:38}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.village2.mobileOptimized #stockBar{top:0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #stockBar .granary,.mobileOptimized #stockBar .warehouse{padding:0;border:none;background:0 0}.mobileOptimized #stockBar .granary:before,.mobileOptimized #stockBar .warehouse:before{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #stockBar .granary .capacity,.mobileOptimized #stockBar .warehouse .capacity{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #stockBar .warehouse{grid-template-columns:88px 88px 88px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #stockBar .granary{grid-column-start:2;grid-template-columns:88px}.mobileOptimized #stockBar .granary .stockBarButton{margin:0}.mobileOptimized #stockBar .granary .stockBarButton:last-of-type{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.mobileOptimized{min-width:620px;background-size:50% 620px,50% 620px}body.mobileOptimized div#background{position:absolute;top:0;right:0;bottom:0;left:0;position:fixed;height:100%;top:54px;overflow:visible}body.mobileOptimized div#background:before{height:54px;position:fixed;top:0;z-index:37}body.mobileOptimized.rearrangeBuildings div#background:after{content:"";width:100%;height:54px;top:-54px;background-color:rgba(0,0,0,.8);z-index:38;position:absolute}body.mobileOptimized.activate div#background,body.mobileOptimized.error_site div#background,body.mobileOptimized.login div#background,body.mobileOptimized.logout div#background{top:0}body.mobileOptimized.activate.error_site #background:before,body.mobileOptimized.error_site.error_site #background:before,body.mobileOptimized.login.error_site #background:before,body.mobileOptimized.logout.error_site #background:before{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.perspectiveResources[data-theme=default].mobileOptimized div#background{background-image:url(../img_ltr/themes/default/background/bgResources_mobile.jpg)}body.perspectiveResources[data-theme=default].mobileOptimized div#background.isShore{background-image:url(../img_ltr/themes/default/background/bgResources_shore_mobile.jpg)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.perspectiveResources[data-theme=night].mobileOptimized div#background{background-image:url(../img_ltr/themes/night/background/bgResources_mobile.jpg)}body.perspectiveResources[data-theme=night].mobileOptimized div#background.isShore{background-image:url(../img_ltr/themes/night/background/bgResources_shore_mobile.jpg)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.perspectiveResources[data-theme=winter].mobileOptimized div#background{background-image:url(../img_ltr/themes/winter/background/bgResources_mobile.jpg)}body.perspectiveResources[data-theme=winter].mobileOptimized div#background.isShore{background-image:url(../img_ltr/themes/winter/background/bgResources_shore_mobile.jpg)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.perspectiveBuildings[data-theme=default].mobileOptimized div#background{background-image:url(../img_ltr/themes/default/background/bgBuildings_mobile.jpg)}body.perspectiveBuildings[data-theme=default].mobileOptimized div#background.isCity{background-image:url(../img_ltr/themes/default/background/bgBuildings_city_mobile.jpg)}body.perspectiveBuildings[data-theme=default].mobileOptimized div#background.isShore{background-image:url(../img_ltr/themes/default/background/bgBuildings_shore_mobile.jpg)}body.perspectiveBuildings[data-theme=default].mobileOptimized div#background.isCity.isShore{background-image:url(../img_ltr/themes/default/background/bgBuildings_shore_city_mobile.jpg)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.perspectiveBuildings[data-theme=night].mobileOptimized div#background{background-image:url(../img_ltr/themes/night/background/bgBuildings_mobile.jpg)}body.perspectiveBuildings[data-theme=night].mobileOptimized div#background.isCity{background-image:url(../img_ltr/themes/night/background/bgBuildings_city_mobile.jpg)}body.perspectiveBuildings[data-theme=night].mobileOptimized div#background.isShore{background-image:url(../img_ltr/themes/night/background/bgBuildings_shore_mobile.jpg)}body.perspectiveBuildings[data-theme=night].mobileOptimized div#background.isCity.isShore{background-image:url(../img_ltr/themes/night/background/bgBuildings_shore_city_mobile.jpg)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.perspectiveBuildings[data-theme=winter].mobileOptimized div#background{background-image:url(../img_ltr/themes/winter/background/bgBuildings_mobile.jpg)}body.perspectiveBuildings[data-theme=winter].mobileOptimized div#background.isCity{background-image:url(../img_ltr/themes/winter/background/bgBuildings_city_mobile.jpg)}body.perspectiveBuildings[data-theme=winter].mobileOptimized div#background.isShore{background-image:url(../img_ltr/themes/winter/background/bgBuildings_shore_mobile.jpg)}body.perspectiveBuildings[data-theme=winter].mobileOptimized div#background.isCity.isShore{background-image:url(../img_ltr/themes/winter/background/bgBuildings_shore_city_mobile.jpg)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center{grid-template-columns:0 600px 0;width:600px;margin:10px;padding:0 0 204px 0;min-height:auto;min-width:auto;height:100%}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center .sidebar{min-height:0;max-height:100%;width:100%;overflow:auto;margin:0;position:fixed;top:54px;bottom:100px;pointer-events:auto;box-sizing:border-box;z-index:400;left:0;right:0;padding-top:20px;background-color:rgba(0,0,0,0);transition-duration:250ms;height:calc(100% - 154px)}.mobileOptimized #center .sidebar .sidebarBoxWrapper{width:300px;position:absolute;transform:scale(1.4)}.mobileOptimized #center .sidebar#sidebarBeforeContent{transform-origin:left top;left:0}.mobileOptimized #center .sidebar#sidebarBeforeContent .sidebarBoxWrapper{transform-origin:left top;left:0}.mobileOptimized #center .sidebar#sidebarBeforeContent:not(.mobileOpened){transform:translateX(-100%)}.mobileOptimized #center .sidebar#sidebarAfterContent{transform-origin:right top;right:0}.mobileOptimized #center .sidebar#sidebarAfterContent .sidebarBoxWrapper{transform-origin:right top;right:0}.mobileOptimized #center .sidebar#sidebarAfterContent .sidebarBox{justify-content:end}.mobileOptimized #center .sidebar#sidebarAfterContent:not(.mobileOpened){transform:translateX(100%)}.mobileOptimized #center .sidebar.mobileOpened{transform:translateX(0);background-color:rgba(0,0,0,.6)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer{height:100%;overflow:auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer{height:calc(100% - 87px);overflow:auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .activate,.mobileOptimized .error_site,.mobileOptimized .login,.mobileOptimized .logout{min-height:100%}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content{min-height:100%}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized div#center a.contentTitleButton#contextualHelpButton{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized div#footer{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.mobileOptimized{-webkit-text-size-adjust:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #cmpboxrecall{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.village1.mobileOptimized #snowAnimation,body.village2.mobileOptimized #snowAnimation{z-index:39}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #servertime{width:295px;height:auto;top:auto;left:5px;position:relative;background-color:rgba(61,50,42,.8);border:2px solid #5e5046;border-radius:10px;padding:3px;font-size:12px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.activate .mobileCover{display:block;position:absolute;top:67px;right:10px;bottom:10px;left:10px;background-position:bottom;background-color:#f4efe4;background-image:url(../img_ltr/views/activation/activateBackground.png)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.activate .activateGameWorldAccount{background:0 0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.activate .mobileCover{display:block;position:absolute;top:67px;right:10px;bottom:10px;left:10px;background-position:bottom;background-color:#f4efe4;background-image:url(../img_ltr/views/activation/activateBackground.png)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.activate .activateWithGameLobbyAccount{background:0 0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #reactDialogWrapper .dialogWrapper{transition:transform 250ms ease-out}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #reactDialogWrapper.withSidebarBeforeContent .dialogWrapper{transform:translateX(420px)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #reactDialogWrapper.withSidebarAfterContent .dialogWrapper{transform:translateX(-420px)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroAdventure .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroAdventure .navigationSpacer{margin:-10px 0 10px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Inventory .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Inventory .navigationSpacer{margin:-5px 0 5px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.heroV2Inventory .loadingIndicatorWrapper{inset:auto 0 180px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Attributes .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Attributes .navigationSpacer{margin:-10px 0 10px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Appearance .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Appearance .navigationSpacer{margin:-10px 0 10px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Crafting .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.heroV2Crafting .navigationSpacer{margin:-15px 0 15px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.buildMarketTradeRoutes #stickyPin #stickyWrapper.floating{bottom:135px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .artefactsSpawnedAnnouncement .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .constructionPlansAnnouncement .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .truceAnnouncement .dialogContents,.mobileOptimized .dialogV2.dialogWrapper .worldEndedAnnouncement .dialogContents{transform:scale(.8333333333)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .basic.cityAnnouncementDialog .dialogContents{transform:scale(.8333333333)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogV2.dialogWrapper .basic.winterAnnouncementDialog .dialogContents{transform:scale(.8333333333)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.playerProfile .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.playerProfile .navigationSpacer{margin:-10px 0 10px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.buildRallyPointFarmList .villageWrapper .farmListWrapper .farmListHeader .dragAndDrop{opacity:0;transition-duration:150ms}.mobileOptimized #content.buildRallyPointFarmList .villageWrapper .farmListWrapper .farmListHeader .dragAndDrop:hover{opacity:1}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.buildRallyPointFarmList .villageWrapper .dragObject .farmListWrapper .farmListHeader .dragAndDrop{opacity:1}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #content.buildRallyPointFarmList #stickyPin #stickyWrapper.floating{bottom:135px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #combatSimulator #stickyPin #stickyWrapper.floating{bottom:135px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #combatSimulator .heroAttributes .equipment .equipContainer .dropdown.opened{top:50%;bottom:auto;right:25px;transform:translate(0,-50%)}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #combatSimulator .results .result .content.extended{left:0;transform:none;min-width:0;max-width:100%;overflow:auto;border:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.buildSimulators .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.buildSimulators .navigationSpacer{margin:-5px 0 5px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #contentOuterContainer .village1 .buildingList,.mobileOptimized #contentOuterContainer .village2 .buildingList{position:absolute;left:50%;transform:translateX(-50%);position:fixed;width:405px;padding:11px;box-shadow:0 0 5px rgba(0,0,0,.8);top:auto;bottom:105px;margin-bottom:15px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #contentOuterContainer .village1 .level.colorLayer,.mobileOptimized #contentOuterContainer .village2 .level.colorLayer{width:30px;height:30px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #contentOuterContainer .village1 .level.colorLayer .labelLayer,.mobileOptimized #contentOuterContainer .village2 .level.colorLayer .labelLayer{width:22px;height:22px;font-size:13px;line-height:14px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.village1.mobileOptimized a.contentTitleButton#knowledgeBaseButton,body.village2.mobileOptimized a.contentTitleButton#knowledgeBaseButton{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.village1.mobileOptimized #center #contentOuterContainer{z-index:38;overflow:visible;margin:0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized div.village1 #resourceFieldContainer{transform:scale(1.35);transform-origin:top center;left:401px;top:229px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized div.village1 .villageInfoWrapper{position:fixed;top:78px;bottom:120px;right:10px;pointer-events:none;padding:0}.mobileOptimized div.village1 .villageInfoWrapper .villageInfobox{padding:8px;box-shadow:0 0 5px rgba(0,0,0,.8)}.mobileOptimized div.village1 .villageInfoWrapper .villageInfobox.movements,.mobileOptimized div.village1 .villageInfoWrapper .villageInfobox.units{pointer-events:auto}.mobileOptimized div.village1 .villageInfoWrapper .villageInfobox.movements{width:230px;transform:scale(1.25);transform-origin:top right}.mobileOptimized div.village1 .villageInfoWrapper .villageInfobox.units{width:auto;overflow:auto;position:fixed;bottom:340px;max-height:calc(100% - 650px);right:10px;text-align:center}.mobileOptimized div.village1 .villageInfoWrapper .villageInfobox.production{display:none}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile{display:block;position:fixed;bottom:232px;right:19px;padding:10px;cursor:pointer;z-index:3;pointer-events:auto;border:1px solid #553420;border-radius:50%;background-image:linear-gradient(to bottom,#cbb198,#7b6050);box-shadow:inset 0 1px 0 0 #ddcbb7,inset 0 -1px 0 0 #664f3d,inset 1px 0 0 0 #bba693,inset -1px 0 0 0 #7d6651,0 3px 3px 0 rgba(0,0,0,.3);-webkit-tap-highlight-color:transparent}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile:before{content:"";position:absolute;top:6px;right:6px;bottom:6px;left:6px;border:1px solid #553420;border-radius:50%;box-shadow:0 -1px 0 0 #89735d,0 1px 0 0 #aa9789,-1px 0 0 0 #8e7360,1px 0 0 0 #8e7360,inset 0 0 3px 0 rgba(0,0,0,.5);background-color:#e5d4be;transition-duration:150ms}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile svg{width:45px;height:45px;top:0;transition-duration:150ms;position:relative;z-index:2}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile svg .icon{fill:#6a9d19}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile svg .outline{fill:#006900;stroke:#006900;stroke-width:2}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile.noTroops svg .icon{fill:#908172}.mobileOptimized div.village1 .villageInfoWrapper .showTroopsToggleMobile.noTroops svg .outline{fill:#51443d;stroke:#51443d}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile:checked+label{background-image:linear-gradient(to bottom,#dbc1a8,#b49581)}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile:checked+label svg{filter:brightness(1.1)}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile:not(:checked)~.units{display:none}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops{min-width:85px;z-index:2;position:relative;overflow:auto;display:inline-block;padding:8px;box-sizing:border-box}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops thead{display:none}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops tbody{display:inline-block}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops tbody tr td{width:auto;font-size:20px;line-height:20px;padding-left:0;padding-right:0}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops tbody tr td.ico img{transform:scale(1.25)}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops tbody tr td.num{padding-left:5px}.mobileOptimized div.village1 .villageInfoWrapper input#showTroopsToggleMobile~.units table#troops tbody tr td:last-of-type:not(.noTroops){display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){body.village2.mobileOptimized #center #contentOuterContainer{top:132px;z-index:38}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #contentOuterContainer .village2{margin-top:-11px}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .isCity #contentOuterContainer .village2 .buildingList,.mobileOptimized .isShore #contentOuterContainer .village2 .buildingList{top:auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialog.helpDialog{width:auto}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .contentV2.helpDialog .content{display:block}.mobileOptimized .contentV2.helpDialog .content .supportCharacter{display:none}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #loginScene .toast.noJavaScript{display:block}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized #center #contentOuterContainer .contentContainer #content.auctions .contentNavi.subNavi{transform:none;position:absolute;inset:67px 17px 0;margin:0}.mobileOptimized #center #contentOuterContainer .contentContainer #content.auctions .navigationSpacer{margin:0 0 0}}
+
+
+
+/* ========== Media Query Block ========== */
+
+@media screen and (max-width:620px) and (orientation:portrait){.mobileOptimized .dialogWrapper #videoFeature{transform:scale(.875);transform-origin:top left}}
+

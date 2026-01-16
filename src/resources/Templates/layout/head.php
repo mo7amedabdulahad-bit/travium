@@ -21,9 +21,8 @@ use Core\Helper\PreferencesHelper;
 
     <?php endif; ?>
     <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
-    <!-- Mobile Responsiveness -->
-    <link href="img/travian_mobile.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="js/mobile-scaling.js"></script>
+    <!-- Mobile Responsive Design -->
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=1" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
@@ -36,7 +35,6 @@ use Core\Helper\PreferencesHelper;
     <script type="text/javascript" src="js/default/d3/d3pie.min.js"></script>
     <script type="text/javascript" src="js/default/gsap/minified/TweenMax.min.js"></script>
     <script type="text/javascript" src="js/default/gsap/minified/plugins/MorphSVGPlugin.min.js"></script>
-    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url()?>js/mobile-sidebar-toggle.js"></script>
     <script type="text/javascript" src="js/Game/General/General.js"></script>
     <script type="text/javascript">
         <?php
