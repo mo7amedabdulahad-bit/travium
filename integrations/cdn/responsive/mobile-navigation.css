@@ -81,29 +81,56 @@
         margin: 0 auto 2px;
     }
 
-    #mobileBottomNav a.nav-resources .icon {
-        background-position: 0 0;
-        background-image: url(../../../img/a/layout/navigation2.png);
+    /* Use emoji icons for now - sprite path doesn't exist */
+    #mobileBottomNav a.nav-resources .icon::before {
+        content: '🌾';
+        font-size: 20px;
     }
 
-    #mobileBottomNav a.nav-buildings .icon {
-        background-position: -33px 0;
-        background-image: url(../../../img/a/layout/navigation2.png);
+    #mobileBottomNav a.nav-buildings .icon::before {
+        content: '🏛️';
+        font-size: 20px;
     }
 
-    #mobileBottomNav a.nav-map .icon {
-        background-position: -66px 0;
-        background-image: url(../../../img/a/layout/navigation2.png);
+    #mobileBottomNav a.nav-map .icon::before {
+        content: '🗺️';
+        font-size: 20px;
     }
 
-    #mobileBottomNav a.nav-reports .icon {
-        background-position: -132px 0;
-        background-image: url(../../../img/a/layout/navigation2.png);
+    #mobileBottomNav a.nav-reports .icon::before {
+        content: '📜';
+        font-size: 20px;
     }
 
-    #mobileBottomNav a.nav-messages .icon {
-        background-position: -165px 0;
-        background-image: url(../../../img/a/layout/navigation2.png);
+    #mobileBottomNav a.nav-messages .icon::before {
+        content: '✉️';
+        font-size: 20px;
+    }
+
+    /* CRITICAL: Fix viewport to prevent horizontal scrolling */
+    html,
+    body {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Make main containers fit viewport */
+    #background,
+    #bodyWrapper,
+    #center,
+    #contentOuterContainer {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Scale content to fit without scrolling */
+    #center {
+        transform: scale(0.92);
+        transform-origin: top center;
+        width: 108.7%;
+        /* Compensate for scale down */
+        margin: 0 auto;
     }
 
     /* Server Time Display - Top Left */

@@ -15,6 +15,38 @@
         -webkit-text-size-adjust: 100%;
         -ms-text-size-adjust: 100%;
         text-size-adjust: 100%;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+
+    /* CRITICAL: Prevent horizontal scrolling - fit everything */
+    html {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Make all major containers fit viewport */
+    #wrapper,
+    #background,
+    #bodyWrapper,
+    .contentContainer {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Fix tables that cause horizontal scroll */
+    table {
+        max-width: 100% !important;
+        table-layout: fixed !important;
+    }
+
+    /* Make village map fit */
+    #village_map,
+    .village {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        transform: scale(0.9);
+        transform-origin: top center;
     }
 
     /* Ensure minimum touch target size of 44x44px */
