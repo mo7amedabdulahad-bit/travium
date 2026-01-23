@@ -53,14 +53,8 @@ class WinnerCtrl
                 $order[] = '-';
             }
             $replace = str_replace("[DEFENDER]", $order[sizeof($order) - 1], $replace);
-            // Fix: Don't use vsprintf if string contains HTML/special chars that aren't format specifiers
-            $placeholderCount = substr_count($replace, '%s');
-            if ($placeholderCount > 0 && $placeholderCount <= count($order)) {
-                $content .= vsprintf($replace, $order);
-            } else {
-                // Fallback: just append the message without formatting
-                $content .= $replace;
-            }
+            // SAFE FIX: Use manual replacement instead of vsprintf to avoid format specifier errors
+            $content .= $this->safeFormat($replace, $order);
         } else {
             $replace = T("Global", "ServerFinishNoWinner");
             $db = DB::getInstance();
@@ -89,20 +83,30 @@ class WinnerCtrl
             }
             $replace = str_replace("[DEFENDER]", $order[sizeof($order) - 1], $replace);
             $order = array_map("trim", $order);
-            // Fix: Don't use vsprintf if string contains HTML/special chars that aren't format specifiers
-            // Count the number of %s placeholders in the string
-            $placeholderCount = substr_count($replace, '%s');
-            if ($placeholderCount > 0 && $placeholderCount <= count($order)) {
-                $content .= vsprintf($replace, $order);
-            } else {
-                // Fallback: just append the message without formatting
-                $content .= $replace;
-            }
+            // SAFE FIX: Use manual replacement instead of vsprintf to avoid format specifier errors
+            $content .= $this->safeFormat($replace, $order);
         }
         if (!$sysMsg) {
             $content .= '<p class="f16" align="center"><a href="dorf1.php?ok=1">» ' . T("inGame", "continue") . '</a></p>';
             $content .= '</div>';
         }
+    }
+
+    /**
+     * Safe string formatting that avoids vsprintf format specifier errors
+     * Manually replaces %s placeholders with values
+     */
+    private function safeFormat($template, $values)
+    {
+        $result = $template;
+        foreach ($values as $value) {
+            // Replace first occurrence of %s with the value
+            $pos = strpos($result, '%s');
+            if ($pos !== false) {
+                $result = substr_replace($result, $value, $pos, 2);
+            }
+        }
+        return $result;
     }
 
     private function getVillageLink($kid, $name)
