@@ -53,7 +53,14 @@ class WinnerCtrl
                 $order[] = '-';
             }
             $replace = str_replace("[DEFENDER]", $order[sizeof($order) - 1], $replace);
-            $content .= vsprintf($replace, $order);
+            // Fix: Don't use vsprintf if string contains HTML/special chars that aren't format specifiers
+            $placeholderCount = substr_count($replace, '%s');
+            if ($placeholderCount > 0 && $placeholderCount <= count($order)) {
+                $content .= vsprintf($replace, $order);
+            } else {
+                // Fallback: just append the message without formatting
+                $content .= $replace;
+            }
         } else {
             $replace = T("Global", "ServerFinishNoWinner");
             $db = DB::getInstance();
