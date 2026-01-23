@@ -57,6 +57,7 @@ class WinnerCtrl
         } else {
             $replace = T("Global", "ServerFinishNoWinner");
             $db = DB::getInstance();
+            $order = []; // Initialize array to prevent undefined variable
             $pop = $db->query("SELECT id, name FROM users WHERE id>1 AND hidden=0 ORDER BY total_pop DESC LIMIT 3");
             for ($i = 1; $i <= 3; ++$i) {
                 if (!($row = $pop->fetch_assoc())) {
@@ -81,7 +82,15 @@ class WinnerCtrl
             }
             $replace = str_replace("[DEFENDER]", $order[sizeof($order) - 1], $replace);
             $order = array_map("trim", $order);
-            $content .= vsprintf($replace, $order);
+            // Fix: Don't use vsprintf if string contains HTML/special chars that aren't format specifiers
+            // Count the number of %s placeholders in the string
+            $placeholderCount = substr_count($replace, '%s');
+            if ($placeholderCount > 0 && $placeholderCount <= count($order)) {
+                $content .= vsprintf($replace, $order);
+            } else {
+                // Fallback: just append the message without formatting
+                $content .= $replace;
+            }
         }
         if (!$sysMsg) {
             $content .= '<p class="f16" align="center"><a href="dorf1.php?ok=1">» ' . T("inGame", "continue") . '</a></p>';
