@@ -25,6 +25,8 @@ use Core\Helper\PreferencesHelper;
     <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=1" rel="stylesheet" type="text/css"/>
     <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile-navigation.css?v=1" rel="stylesheet" type="text/css"/>
     <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile-sidebars.css?v=1" rel="stylesheet" type="text/css"/>
+    <!-- Mobile Centering Fix - Centers all pages on mobile viewport -->
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile-centering.css?v=1" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';

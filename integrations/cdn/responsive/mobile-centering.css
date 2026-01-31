@@ -1,0 +1,258 @@
+/* ==========================================================================
+   MOBILE CENTERING FIX
+   Centers all game pages (dorf1, dorf2, map, etc.) on mobile viewport
+   ========================================================================== */
+
+@media screen and (max-width: 620px) {
+
+    /* ============ CENTER ALL CONTENT ============ */
+
+    /* Center main container */
+    #center {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+
+    /* Center content area */
+    #contentOuterContainer {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    .contentContainer {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    #content {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* ============ CENTER VILLAGE VIEWS ============ */
+
+    /* Center dorf1 (Resource Fields) */
+    #resourceFieldContainer {
+        margin: 0 auto !important;
+        text-align: center !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    #resourceFieldContainer map,
+    #resourceFieldContainer img.resourceMap {
+        margin: 0 auto !important;
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Center dorf2 (Buildings/Village) */
+    #village_map {
+        margin: 0 auto !important;
+        text-align: center !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    #village_map map,
+    #village_map img {
+        margin: 0 auto !important;
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Center building lists */
+    .buildingList,
+    .resourceFieldList {
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* ============ CENTER MAP VIEW ============ */
+
+    #mapContainer,
+    #mapWrapper {
+        margin: 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    #mapContainer #map,
+    #mapContainer canvas {
+        margin: 0 auto !important;
+        display: block !important;
+    }
+
+    /* ============ CENTER TABLES & LISTS ============ */
+
+    /* Center all tables */
+    table {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 100% !important;
+    }
+
+    /* Center lists */
+    ul,
+    ol {
+        text-align: left !important;
+        /* Content left, but container centered */
+        max-width: 100% !important;
+    }
+
+    /* ============ CENTER DIALOGS & MODALS ============ */
+
+    .dialog,
+    .popup_window,
+    .dialogContent {
+        margin: 0 auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        max-width: 95vw !important;
+    }
+
+    /* ============ CENTER FORMS ============ */
+
+    form {
+        margin: 0 auto !important;
+        max-width: 100% !important;
+    }
+
+    .formRow,
+    .inputRow {
+        margin: 0 auto !important;
+        max-width: 100% !important;
+    }
+
+    /* ============ FIX HORIZONTAL OVERFLOW ============ */
+
+    /* Ensure NOTHING causes horizontal scroll */
+    * {
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Exception: allow inline elements to be wider */
+    span,
+    a,
+    button,
+    input,
+    select,
+    textarea {
+        max-width: none !important;
+    }
+
+    /* ============ CENTER SPECIFIC PAGES ============ */
+
+    /* Reports page */
+    #reports,
+    .reportsList {
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    /* Messages page */
+    #messages,
+    .messagesList {
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    /* Alliance page */
+    #alliance,
+    .allianceContent {
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    /* Statistics page */
+    #statistics,
+    .statisticsContent {
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    /* Profile/Player page */
+    #profile,
+    .profileContent {
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    /* ============ RESPONSIVE IMAGES ============ */
+
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Exception: Keep sprite/icon sizes */
+    .icon,
+    .sprite,
+    [class*="unit_"],
+    [class*="building_"] {
+        max-width: none !important;
+    }
+
+    /* ============ FIX BACKGROUND CONTAINER ============ */
+
+    #background {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    #bodyWrapper {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+}
+
+/* ==========================================================================
+   VERY SMALL SCREENS - Extra Centering
+   ========================================================================== */
+
+@media screen and (max-width: 375px) {
+
+    /* Even more aggressive centering */
+    #content {
+        padding: 5px !important;
+    }
+
+    #village_map,
+    #resourceFieldContainer {
+        transform: scale(0.95) !important;
+        transform-origin: center !important;
+    }
+}
