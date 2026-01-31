@@ -116,6 +116,4 @@ use Core\Helper\PreferencesHelper;
     </noscript>
     <!-- End of Statcounter Code -->
     <!-- Mobile Navigation & Sidebars -->
-    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-sidebars.js?v=1"></script>
-    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-navigation.js?v=1"></script>
 </head>
