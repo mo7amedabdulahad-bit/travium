@@ -70,44 +70,16 @@
         font-size: 11px !important;
     }
 
-    /* ============ HIDE SIDEBARS OFF-SCREEN ============ */
+    /* ============ HIDE SIDEBARS COMPLETELY ============ */
 
-    .mobileOptimized #sidebarBeforeContent {
-        position: fixed !important;
-        left: -300px !important;
-        top: 50px !important;
-        bottom: 70px !important;
-        width: 280px !important;
-        background: #f4e4bc !important;
-        z-index: 998 !important;
-        overflow-y: auto !important;
-        transition: left 0.3s ease !important;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3) !important;
-    }
-
+    .mobileOptimized .sidebar,
+    .mobileOptimized #sidebarBeforeContent,
     .mobileOptimized #sidebarAfterContent {
-        position: fixed !important;
-        right: -300px !important;
-        top: 50px !important;
-        bottom: 70px !important;
-        width: 280px !important;
-        background: #f4e4bc !important;
-        z-index: 998 !important;
-        overflow-y: auto !important;
-        transition: right 0.3s ease !important;
-        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3) !important;
+        display: none !important;
+        /* Completely hide on mobile */
     }
 
-    /* Show sidebars when active (will add JavaScript for this) */
-    .mobileOptimized #sidebarBeforeContent.active {
-        left: 0 !important;
-    }
-
-    .mobileOptimized #sidebarAfterContent.active {
-        right: 0 !important;
-    }
-
-    /* ============ MAIN CONTENT CENTERED ============ */
+    /* ============ MAIN CONTENT FULL WIDTH ============ */
 
     .mobileOptimized #content {
         margin: 60px 0 70px 0 !important;
@@ -115,6 +87,14 @@
         width: 100% !important;
         max-width: 100% !important;
         padding: 10px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .mobileOptimized #contentContainer {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
     }
 
     /* ============ VILLAGE MAP ============ */
@@ -179,12 +159,15 @@
         cursor: pointer !important;
     }
 
+    /* Hide mobile menu by default */
     .mobileOptimized #mobileMenu {
-        display: block !important;
-        transform: translateX(0) !important;
+        display: none !important;
+        /* Force hide */
     }
 
+    /* Only show when checkbox is checked */
     .mobileOptimized #mobileMenuState:checked~#mobileMenu {
+        display: block !important;
         transform: translateX(0) !important;
     }
 }
