@@ -3,14 +3,9 @@
 use Core\Config;
 use Core\Helper\TimezoneHelper;
 
-function isMobileDevice() {
-    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    return preg_match('/(android|iphone|ipad|mobile|tablet)/i', $userAgent);
-}
-
 ?>
 <?php require __DIR__ . "/head.php"; ?>
-<body class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1<?= isMobileDevice() ? ' mobileOptimized' : ''; ?>">
+<body class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1">
 <div id="reactDialogWrapper"></div>
 <div id="background">
     <?php
