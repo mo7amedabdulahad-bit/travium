@@ -11,7 +11,7 @@ use Core\Helper\PreferencesHelper;
     <meta http-equiv="imagetoolbar" content="no"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="content-language" content="<?=get_locale(); ?>"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width"/>
     <link href="<?=get_gpack_link_and_hash("compact.css"); ?>"
           rel="stylesheet" type="text/css"/>
     <link href="<?=get_gpack_link_and_hash("lang.css"); ?>"
@@ -21,6 +21,8 @@ use Core\Helper\PreferencesHelper;
 
     <?php endif; ?>
     <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
+    <!-- Mobile Responsive Design - Official Travian Method -->
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
