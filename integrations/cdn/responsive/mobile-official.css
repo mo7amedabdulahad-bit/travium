@@ -1,0 +1,340 @@
+/* ==========================================================================
+   OFFICIAL TRAVIAN MOBILE LAYOUT
+   Based on actual Travian Legends mobile implementation
+   ========================================================================== */
+
+@media screen and (max-width: 620px) {
+
+    /* ============ MOBILE OPTIMIZED BODY ============ */
+
+    body.mobileOptimized {
+        padding-bottom: 120px;
+        /* Space for fixed bottom bar */
+    }
+
+    /* ============ TOP BAR (Fixed at Bottom) ============ */
+
+    .mobileOptimized #topBar {
+        position: fixed;
+        bottom: -8px;
+        z-index: 500;
+        width: 100%;
+        min-width: auto;
+        padding: 0;
+        display: block;
+        grid-template-columns: none;
+        background: linear-gradient(to bottom, #664e40 0%, #52392b 100%);
+        border-top: 2px solid #caa46d;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Hide logo on mobile */
+    .mobileOptimized #topBar #logo {
+        display: none;
+    }
+
+    /* ============ HEADER CONTAINER ============ */
+
+    .mobileOptimized #topBar #header {
+        width: 100%;
+        background: transparent;
+        position: relative;
+    }
+
+    /* ============ MOBILE MENU STATE (Checkbox Toggle) ============ */
+
+    #mobileMenuState {
+        display: none;
+        /* Hidden checkbox for menu toggle */
+    }
+
+    /* ============ NAVIGATION (Bottom Icons) ============ */
+
+    .mobileOptimized #navigation {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 60px;
+        background: transparent;
+        padding: 0 5px;
+        position: relative;
+        width: 100%;
+        margin: 0;
+    }
+
+    .mobileOptimized #navigation a {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-decoration: none;
+        color: #f4e4bc;
+        font-size: 9px;
+        position: relative;
+        background-size: 24px 24px;
+        background-position: center 8px;
+        background-repeat: no-repeat;
+        padding-top: 32px;
+    }
+
+    .mobileOptimized #navigation a.active,
+    .mobileOptimized #navigation a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ============ STOCK BAR (Resources) ============ */
+
+    .mobileOptimized #stockBar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        padding: 5px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        margin: 5px;
+    }
+
+    .mobileOptimized #stockBar .warehouse,
+    .mobileOptimized #stockBar .granary {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .mobileOptimized #stockBar .capacity {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: #f4e4bc;
+        font-weight: bold;
+    }
+
+    .mobileOptimized #stockBar .stockBarButton {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+        text-decoration: none;
+        color: #f4e4bc;
+        font-size: 11px;
+    }
+
+    .mobileOptimized #stockBar .stockBarButton i {
+        width: 16px;
+        height: 16px;
+        background-size: contain;
+    }
+
+    .mobileOptimized #stockBar .stockBarButton .value {
+        flex: 1;
+        text-align: right;
+    }
+
+    .mobileOptimized #stockBar .barBox {
+        height: 3px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 2px;
+    }
+
+    .mobileOptimized #stockBar .bar {
+        height: 100%;
+        background: linear-gradient(to right, #4caf50, #8bc34a);
+        transition: width 0.3s ease;
+    }
+
+    .mobileOptimized #stockBar .bar.stockFull {
+        background: linear-gradient(to right, #ff9800, #f44336);
+    }
+
+    /* ============ CURRENCY (Gold/Silver) ============ */
+
+    .mobileOptimized .currency {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        margin: 5px;
+    }
+
+    .mobileOptimized .currency svg {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .mobileOptimized .currency .value {
+        font-size: 12px;
+        font-weight: bold;
+        color: #ffd700;
+    }
+
+    /* ============ MOBILE MENU (Hamburger) ============ */
+
+    .mobileOptimized .mobileMenuButton {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .mobileOptimized .mobileMenuButton::before {
+        content: "☰";
+        font-size: 20px;
+        color: #f4e4bc;
+    }
+
+    /* Mobile Menu Panel */
+    .mobileOptimized #mobileMenu {
+        position: fixed;
+        top: 0;
+        right: -280px;
+        width: 280px;
+        height: 100vh;
+        background: #fcfdfc;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        z-index: 999;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobileOptimized #mobileMenuState:checked~#mobileMenu {
+        right: 0;
+    }
+
+    .mobileOptimized #mobileMenu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mobileOptimized #mobileMenu li {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .mobileOptimized #mobileMenu a {
+        display: block;
+        padding: 15px 20px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .mobileOptimized #mobileMenu a:hover {
+        background: #f0f0f0;
+    }
+
+    /* ============ HERO BAR ============ */
+
+    .mobileOptimized #topBarHeroWrapper {
+        position: relative;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 5px;
+        margin: 5px;
+        border-radius: 4px;
+    }
+
+    .mobileOptimized #topBarHero {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mobileOptimized #heroImageButton {
+        width: 50px;
+        height: 50px;
+    }
+
+    .mobileOptimized #topBarHero .heroStatus {
+        flex: 1;
+    }
+
+    /* ============ OUT OF GAME BUTTONS ============ */
+
+    .mobileOptimized #outOfGame {
+        display: flex;
+        justify-content: space-around;
+        padding: 5px;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .mobileOptimized #outOfGame a {
+        padding: 8px;
+    }
+
+    /* ============ CENTER CONTENT ============ */
+
+    .mobileOptimized #center {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    /* ============ SIDEBARS (Off-canvas) ============ */
+
+    .mobileOptimized #sidebarBeforeContent,
+    .mobileOptimized #sidebarAfterContent {
+        position: fixed;
+        top: 0;
+        bottom: 120px;
+        /* Above bottom nav */
+        width: 280px;
+        max-width: 85vw;
+        background: #fcfdfc;
+        transition: transform 0.3s ease-out;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 998;
+        border: 2px solid #34220d;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .mobileOptimized #sidebarBeforeContent {
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    .mobileOptimized #sidebarAfterContent {
+        right: 0;
+        transform: translateX(100%);
+    }
+
+    .mobileOptimized #sidebarAfterContent.mobileOpened {
+        transform: translateX(0);
+    }
+
+    /* ============ VILLAGE VIEW CENTERING ============ */
+
+    .mobileOptimized #villageContent {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    /* ============ RESPONSIVE ADJUSTMENTS ============ */
+
+    @media screen and (max-width: 375px) {
+        .mobileOptimized #navigation a {
+            font-size: 8px;
+            background-size: 20px 20px;
+            padding-top: 28px;
+        }
+
+        .mobileOptimized #stockBar {
+            font-size: 10px;
+        }
+    }
+}
