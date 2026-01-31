@@ -7,6 +7,18 @@
 
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
+    /* ============ BODY MOBILE OPTIMIZATIONS ============ */
+
+    body.mobileOptimized {
+        -webkit-text-size-adjust: none !important;
+    }
+
+    /* ============ TOAST NOTIFICATIONS ============ */
+
+    .mobileOptimized #toastStack {
+        align-content: start !important;
+    }
+
     /* ============ NAVIGATION AT BOTTOM (NOT TOP!) ============ */
 
     .mobileOptimized #navigation {
