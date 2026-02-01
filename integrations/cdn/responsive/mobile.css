@@ -144,7 +144,6 @@
     .mobileOptimized #navigation button,
     .mobileOptimized #navigation .village,
     .mobileOptimized #navigation .map,
-    .mobileOptimized #navigation .statistics,
     .mobileOptimized #navigation .reports,
     .mobileOptimized #navigation .messages,
     .mobileOptimized #navigation .dailyQuests {
@@ -172,6 +171,22 @@
         background-size: contain !important;
     }
 
+    /* HIDE statistics button - replaced by mobile menu button */
+    .mobileOptimized #navigation .statistics {
+        display: none !important;
+    }
+
+    /* Show mobile menu button IN NAVIGATION (replaces statistics) */
+    .mobileOptimized #navigation .mobileMenuButton {
+        display: flex !important;
+        position: relative !important;
+        width: 55px !important;
+        height: 55px !important;
+        top: auto !important;
+        right: auto !important;
+        z-index: auto !important;
+    }
+
     /* Show mobile shop button */
     .mobileOptimized #navigation .mobileShopButton {
         display: block !important;
@@ -179,21 +194,16 @@
         height: 55px !important;
     }
 
-    /* Don't hide any buttons - all should be visible */
-    .mobileOptimized #navigation .statistics,
+    /* Keep dailyQuests visible */
     .mobileOptimized #navigation .dailyQuests {
         display: block !important;
     }
 
-    /* ============ 6. MOBILE MENU BUTTON ============ */
-    .mobileOptimized .mobileMenuButton {
-        display: flex !important;
-        position: fixed !important;
-        top: 10px !important;
-        right: 10px !important;
-        z-index: 1001 !important;
-        width: 50px !important;
-        height: 50px !important;
+    /* ============ 6. HIDE SIDEBARS ON MOBILE ============ */
+
+    .mobileOptimized #sidebarBeforeContent,
+    .mobileOptimized #sidebarAfterContent {
+        display: none !important;
     }
 
     /* ============ 7. BACKGROUND IMAGES ============ */
@@ -212,29 +222,7 @@
         background-position: center !important;
     }
 
-    /* ============ 8. SIDEBARS - OFF-SCREEN WITH TRANSFORM ============ */
-
-    /* Left sidebar */
-    .mobileOptimized #sidebarBeforeContent {
-        transform: translateX(-100%) !important;
-        transition: transform 0.3s ease !important;
-    }
-
-    .mobileOptimized.withSidebarBeforeContent #sidebarBeforeContent {
-        transform: translateX(0) !important;
-    }
-
-    /* Right sidebar */
-    .mobileOptimized #sidebarAfterContent {
-        transform: translateX(100%) !important;
-        transition: transform 0.3s ease !important;
-    }
-
-    .mobileOptimized.withSidebarAfterContent #sidebarAfterContent {
-        transform: translateX(0) !important;
-    }
-
-    /* ============ 9. CONTENT ADJUSTMENTS ============ */
+    /* ============ 8. CONTENT ADJUSTMENTS ============ */
 
     /* Add padding for fixed StockBar at top */
     .mobileOptimized #contentOuterContainer {
