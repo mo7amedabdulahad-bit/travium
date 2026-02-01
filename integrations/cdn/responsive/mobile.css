@@ -207,9 +207,15 @@
         display: block !important;
     }
 
-    /* ============ 6. HIDE TOP BAR ON MOBILE (not sidebars!) ============ */
+    /* ============ 6. HIDE LOGO ON MOBILE (Travium-specific) ============ */
 
-    .mobileOptimized #topBar {
+    /* Hide the logo (Travium doesn't have #topBar, it has #logo instead) */
+    .mobileOptimized #logo {
+        display: none !important;
+    }
+
+    /* Also hide empty headerBar if it exists */
+    .mobileOptimized #headerBar {
         display: none !important;
     }
 
