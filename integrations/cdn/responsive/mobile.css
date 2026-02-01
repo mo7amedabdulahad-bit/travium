@@ -1,14 +1,11 @@
 /* ==========================================================================
-   MOBILE OPTIMIZATION - EXACT Official Travian Implementation
-   Data Source: detailed-mobile-1769936233287.json
+   MOBILE OPTIMIZATION - Working Implementation
    
-   IMPLEMENTATION:
-   1. Logo: display none (hidden on mobile)
-   2. StockBar: position fixed + scale(1.5) transform
-   3. Navigation: position absolute + matrix transform (at bottom)
-   4. Specific buttons hidden (statistics, quests)
-   5. Shop button shown on mobile
-   6. Grid layout maintained from desktop
+   REQUIREMENTS:
+   1. Navigation bar: AT BOTTOM, ALL buttons visible horizontally
+   2. Resources: AT TOP, ALL visible horizontally
+   3. Logo: Hidden on mobile
+   4. Everything fits in one screen width
    ========================================================================== */
 
 /* ============ DEFAULT STYLES (DESKTOP) ============ */
@@ -53,84 +50,120 @@
         width: 100% !important;
     }
 
-    /* ============ 3. STOCKBAR - FIXED TOP + SCALE(1.5) ============ */
+    /* ============ 3. RESOURCES (STOCKBAR) - AT TOP, FULL WIDTH ============ */
     .mobileOptimized #stockBar {
-        /* Position */
+        /* Position - FIXED AT TOP */
         position: fixed !important;
-        top: 0px !important;
-        left: 0px !important;
-        right: 258px !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
         bottom: auto !important;
 
-        /* Size */
-        width: 362px !important;
-        height: 35.3333px !important;
-        max-width: none !important;
+        /* Size - Full width to fit all resources */
+        width: 100% !important;
+        max-width: 620px !important;
+        height: auto !important;
+        min-height: 50px !important;
 
-        /* Transform - scale 1.5× */
-        transform: matrix(1.5, 0, 0, 1.5, 0, 0) !important;
-        transform-origin: 0px 0px !important;
-
-        /* Display */
+        /* Display - Grid to fit resources horizontally */
         display: grid !important;
-        z-index: 38 !important;
-        padding: 3px !important;
-        margin: 0px !important;
+        grid-auto-flow: column !important;
+        grid-auto-columns: 1fr !important;
+        align-items: center !important;
+
+        /* Spacing */
+        padding: 8px 5px !important;
+        margin: 0 !important;
+        gap: 3px !important;
+
+        /* Styling */
+        z-index: 1000 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* ============ 4. NAVIGATION - ABSOLUTE + TRANSFORM (AT BOTTOM) ============ */
+    /* Scale resources if needed */
+    .mobileOptimized #stockBar * {
+        font-size: 11px !important;
+    }
+
+    /* ============ 4. NAVIGATION - AT BOTTOM, ALL BUTTONS VISIBLE ============ */
     .mobileOptimized #navigation {
-        /* Position - stays absolute! */
-        position: absolute !important;
-        top: 14px !important;
-        left: 310px !important;
-        right: -152px !important;
-        bottom: 40px !important;
+        /* Position - FIXED AT BOTTOM */
+        position: fixed !important;
+        bottom: 0 !important;
+        top: auto !important;
+        left: 0 !important;
+        right: 0 !important;
 
-        /* Size - same as desktop */
-        width: 462px !important;
-        height: 66px !important;
-        max-width: 100% !important;
+        /* Size - Full width */
+        width: 100% !important;
+        max-width: 620px !important;
+        height: auto !important;
+        min-height: 80px !important;
 
-        /* Transform - scale 1.3× + shift left 300px */
-        transform: matrix(1.3, 0, 0, 1.3, -300.3, 0) !important;
-        transform-origin: 0px 33px !important;
+        /* NO TRANSFORM - Direct positioning */
+        transform: none !important;
 
-        /* Grid layout - same as desktop */
+        /* Display - Grid to fit all buttons horizontally */
         display: grid !important;
-        grid-template-columns: 66px 71px 73px 63px 63px 63px 63px !important;
-        grid-template-rows: 66px !important;
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)) !important;
+        grid-auto-flow: column !important;
+        align-items: center !important;
+        justify-items: center !important;
 
-        /* Other */
-        z-index: 1 !important;
-        padding: 0px !important;
-        margin: 0px !important;
-        gap: normal !important;
-        background-color: transparent !important;
+        /* Spacing */
+        padding: 10px 5px !important;
+        margin: 0 !important;
+        gap: 5px !important;
+
+        /* Styling */
+        z-index: 1000 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* ============ 5. NAVIGATION BUTTONS - HIDE SPECIFIC ONES ============ */
+    /* ============ 5. NAVIGATION BUTTONS - ALL VISIBLE ============ */
 
-    /* Hide statistics button (#3) on mobile */
-    .mobileOptimized #navigation .statistics {
-        display: none !important;
+    .mobileOptimized #navigation a,
+    .mobileOptimized #navigation button,
+    .mobileOptimized #navigation [class*="tab"] {
+        /* Force visible */
+        display: block !important;
+        visibility: visible !important;
+
+        /* Size - Touch friendly */
+        width: 70px !important;
+        height: 70px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+
+        /* Spacing */
+        margin: 0 !important;
+        padding: 0 !important;
+
+        /* Shape */
+        border-radius: 50% !important;
     }
 
-    /* Hide daily quests button (#6) on mobile */
-    .mobileOptimized #navigation .dailyQuests {
-        display: none !important;
-    }
-
-    /* Show mobile shop button (#7) on mobile */
+    /* Show mobile shop button */
     .mobileOptimized #navigation .mobileShopButton {
         display: block !important;
-        position: relative !important;
+    }
+
+    /* Don't hide any buttons - all should be visible */
+    .mobileOptimized #navigation .statistics,
+    .mobileOptimized #navigation .dailyQuests {
+        display: block !important;
     }
 
     /* ============ 6. MOBILE MENU BUTTON ============ */
     .mobileOptimized .mobileMenuButton {
         display: flex !important;
-        position: relative !important;
+        position: fixed !important;
+        top: 10px !important;
+        right: 10px !important;
+        z-index: 1001 !important;
     }
 
     /* ============ 7. BACKGROUND IMAGES ============ */
@@ -173,7 +206,7 @@
 
     /* ============ 9. CONTENT ADJUSTMENTS ============ */
 
-    /* Add padding for fixed StockBar */
+    /* Add padding for fixed StockBar at top */
     .mobileOptimized #contentOuterContainer {
         padding-top: 60px !important;
     }
