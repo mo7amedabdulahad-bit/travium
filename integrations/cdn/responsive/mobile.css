@@ -219,6 +219,12 @@
         display: none !important;
     }
 
+    /* Hide entire #header container (navigation already escaped with position:fixed) */
+    .mobileOptimized #header {
+        display: none !important;
+    }
+
+
     /* ============ 7. BACKGROUND IMAGES ============ */
 
     /* dorf1 - Resources view */
