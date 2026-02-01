@@ -1,23 +1,25 @@
 /* ==========================================================================
-   MOBILE OPTIMIZATION - Based on Official HTML Structure
+   TRAVIUM MOBILE OPTIMIZATION - Based on Screenshot Reference
    
-   STRUCTURE (from official):
-   #topBar
-     #logo
-     #header (contains navigation)
-       #navigation (buttons)
-     .currency
-     #stockBar (resources - OUTSIDE #header)
+   TARGET LAYOUT (from screenshot):
+   - Top: Resources bar (wood, clay, iron, crop, gold, silver)
+   - Content: Centered, responsive village/building view
+   - Bottom: 7 navigation buttons + no mobile menu visible
+   - Sidebars: Swipeable from left/right edges
    
-   MOBILE REQUIREMENTS:
-   1. #stockBar: Fixed at TOP
-   2. #navigation: Fixed at BOTTOM (inside #header but positioned independently)
-   3. All buttons fit horizontally
+   Navigation buttons (7):
+   1. Trophy (rewards)
+   2. Building (village view)
+   3. Map
+   4. Swords (reports)
+   5. Scroll (messages)
+   6. List (daily quests)
+   7. Gold coin (Plus/shop button)
    ========================================================================== */
 
 /* ============ DEFAULT STYLES (DESKTOP) ============ */
 
-/* Mobile menu - hidden on desktop */
+/* Mobile elements hidden on desktop */
 #mobileMenuState {
     display: none;
 }
@@ -30,65 +32,65 @@
     display: none !important;
 }
 
-/* Mobile shop button - hidden on desktop */
 #navigation .mobileShopButton {
     display: none !important;
 }
 
-/* ============ MOBILE BREAKPOINT: 620px ============ */
+/* Sidebar toggles hidden on desktop */
+#leftSidebarToggle,
+#rightSidebarToggle {
+    display: none;
+}
+
+/* ============ MOBILE BREAKPOINT: 620px PORTRAIT ============ */
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
-    /* ============ 1. LOGO - HIDDEN ============ */
-    .mobileOptimized #logo,
-    .mobileOptimized .logo {
-        display: none !important;
-    }
-
-    /* ============ 2. BODY - PREVENT HORIZONTAL SCROLL ============ */
+    /* ============ 1. BODY & HTML - PREVENT SCROLL ============ */
     body.mobileOptimized,
     html {
         overflow-x: hidden !important;
         max-width: 100vw !important;
+        width: 100% !important;
     }
 
     body.mobileOptimized {
         -webkit-text-size-adjust: 100% !important;
-        width: 100% !important;
+        font-size: 14px !important;
     }
 
-    /* ============ 3. STOCKBAR (RESOURCES) - FIXED AT TOP ============ */
+    /* ============ 2. HIDE HEADER (LOGO + CONTAINER) ============ */
+    .mobileOptimized #logo,
+    .mobileOptimized #headerBar,
+    .mobileOptimized #header {
+        display: none !important;
+    }
+
+    /* ============ 3. STOCKBAR (RESOURCES) - FIXED TOP ============ */
     .mobileOptimized #stockBar {
-        /* Position - FIXED AT TOP */
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        bottom: auto !important;
 
-        /* Size - Full width to fit all resources */
         width: 100% !important;
         max-width: 620px !important;
         height: auto !important;
         min-height: 50px !important;
 
-        /* Display - Flex to fit resources horizontally */
         display: flex !important;
         flex-wrap: nowrap !important;
         justify-content: space-between !important;
         align-items: center !important;
 
-        /* Spacing */
         padding: 5px 3px !important;
         margin: 0 !important;
         gap: 2px !important;
 
-        /* Styling */
         z-index: 1000 !important;
-        background: rgba(0, 0, 0, 0.5) !important;
+        background: rgba(0, 0, 0, 0.7) !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Scale stockBar children to fit */
     .mobileOptimized #stockBar .warehouse,
     .mobileOptimized #stockBar .granary {
         display: flex !important;
@@ -101,155 +103,242 @@
     .mobileOptimized #stockBar .stockBarButton {
         min-width: auto !important;
         padding: 2px !important;
+        font-size: 10px !important;
     }
 
-    /* ============ 4. NAVIGATION - FIXED AT BOTTOM ============ */
+    .mobileOptimized #stockBar i {
+        transform: scale(0.9) !important;
+    }
+
+    /* ============ 4. NAVIGATION - FIXED BOTTOM (7 BUTTONS) ============ */
     .mobileOptimized #navigation {
-        /* Position - FIXED AT BOTTOM (breaks out of #header) */
         position: fixed !important;
         bottom: 0 !important;
-        top: auto !important;
         left: 0 !important;
         right: 0 !important;
 
-        /* Size - Full width, compact height */
         width: 100% !important;
         max-width: 620px !important;
         height: auto !important;
-        min-height: 70px !important;
+        min-height: 60px !important;
 
-        /* NO TRANSFORM - Direct positioning */
-        transform: none !important;
-
-        /* Display - Flexbox to fit all buttons in one row */
         display: flex !important;
         flex-wrap: nowrap !important;
         justify-content: space-around !important;
         align-items: center !important;
 
-        /* Spacing - Compact */
-        padding: 8px 3px !important;
+        padding: 5px 2px !important;
         margin: 0 !important;
         gap: 2px !important;
 
-        /* Styling */
         z-index: 1000 !important;
-        background: rgba(0, 0, 0, 0.5) !important;
+        background: rgba(0, 0, 0, 0.8) !important;
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
+
+        transform: none !important;
+        list-style: none !important;
     }
 
-    /* ============ 5. NAVIGATION BUTTONS - COMPACT SIZE ============ */
-
-    .mobileOptimized #navigation a,
-    .mobileOptimized #navigation button,
-    .mobileOptimized #navigation .village,
-    .mobileOptimized #navigation .map,
-    .mobileOptimized #navigation .reports,
-    .mobileOptimized #navigation .messages,
-    .mobileOptimized #navigation .dailyQuests {
-        /* Force visible */
-        display: block !important;
-        visibility: visible !important;
-        flex-shrink: 0 !important;
-
-        /* Size - COMPACT to fit all 8 buttons */
-        width: 55px !important;
+    /* Navigation LI items */
+    .mobileOptimized #navigation li {
+        display: inline-flex !important;
+        width: 14% !important;
+        /* 7 buttons × 14% = 98% */
+        max-width: 60px !important;
         height: 55px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Navigation button styling */
+    .mobileOptimized #navigation li a,
+    .mobileOptimized #navigation a {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
         min-width: 44px !important;
         min-height: 44px !important;
-        max-width: 55px !important;
-        max-height: 55px !important;
 
-        /* Spacing - Minimal */
         margin: 0 !important;
         padding: 0 !important;
 
-        /* Shape */
         border-radius: 50% !important;
-
-        /* Ensure background image fits */
-        background-size: contain !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
     }
 
-    /* HIDE statistics button - replaced by mobile menu button */
+    /* Gold coin button (Plus button) - Last nav item */
+    .mobileOptimized #navigation li:last-child a {
+        background-image: url('/img/gold-coin.png') !important;
+        background-size: 80% !important;
+    }
+
+    /* Hide statistics button (if exists as #n4) */
+    .mobileOptimized #navigation #n4,
     .mobileOptimized #navigation .statistics {
         display: none !important;
     }
 
-    /* Show mobile menu button IN NAVIGATION (replaces statistics) */
-    .mobileOptimized #navigation .mobileMenuButton,
+    /* Mobile menu button - NOT VISIBLE per screenshot */
     .mobileOptimized .mobileMenuButton {
-        display: flex !important;
-        position: relative !important;
-        width: 55px !important;
-        height: 55px !important;
-        top: auto !important;
-        right: auto !important;
-        left: auto !important;
-        bottom: auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background-size: contain !important;
-        border-radius: 50% !important;
-        z-index: auto !important;
-        flex-shrink: 0 !important;
+        display: none !important;
     }
 
-    /* Show mobile shop button */
-    .mobileOptimized #navigation .mobileShopButton {
+    /* ============ 5. SWIPEABLE SIDEBARS ============ */
+
+    /* Left sidebar - swipe from left */
+    .mobileOptimized #sidebarBeforeContent {
+        position: fixed !important;
+        top: 55px !important;
+        /* Below stockBar */
+        bottom: 65px !important;
+        /* Above navigation */
+        left: -100% !important;
+        /* Hidden by default */
+
+        width: 80% !important;
+        max-width: 300px !important;
+
+        transition: left 0.3s ease-in-out !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        background: rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3) !important;
+        z-index: 500 !important;
+    }
+
+    /* Show left sidebar when toggle checked */
+    .mobileOptimized #leftSidebarToggle:checked~#sidebarBeforeContent {
+        left: 0 !important;
+    }
+
+    /* Right sidebar (boxes-contents) - swipe from right */
+    .mobileOptimized .boxes-contents,
+    .mobileOptimized #sidebarAfterContent {
+        position: fixed !important;
+        top: 55px !important;
+        bottom: 65px !important;
+        right: -100% !important;
+        /* Hidden by default */
+
+        width: 80% !important;
+        max-width: 300px !important;
+
+        transition: right 0.3s ease-in-out !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        background: rgba(255, 255, 255, 0.95) !important;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3) !important;
+        z-index: 500 !important;
+    }
+
+    /* Show right sidebar when toggle checked */
+    .mobileOptimized #rightSidebarToggle:checked~.boxes-contents,
+    .mobileOptimized #rightSidebarToggle:checked~#sidebarAfterContent {
+        right: 0 !important;
+    }
+
+    /* Overlay/backdrop when sidebar open */
+    .mobileOptimized #leftSidebarToggle:checked~.sidebar-overlay,
+    .mobileOptimized #rightSidebarToggle:checked~.sidebar-overlay {
         display: block !important;
-        width: 55px !important;
-        height: 55px !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 499 !important;
     }
 
-    /* Keep dailyQuests visible */
-    .mobileOptimized #navigation .dailyQuests {
-        display: block !important;
+    /* ============ 6. CENTERED CONTENT ============ */
+    .mobileOptimized #contentOuterContainer {
+        margin: 0 auto !important;
+        padding: 60px 5px 70px !important;
+        /* Top: stockBar, Bottom: nav */
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
     }
 
-    /* ============ 6. HIDE LOGO ON MOBILE (Travium-specific) ============ */
-
-    /* Hide the logo (Travium doesn't have #topBar, it has #logo instead) */
-    .mobileOptimized #logo {
-        display: none !important;
+    .mobileOptimized #contentInnerContainer {
+        width: 100% !important;
+        max-width: 620px !important;
+        margin: 0 auto !important;
+        padding: 10px !important;
     }
 
-    /* Also hide empty headerBar if it exists */
-    .mobileOptimized #headerBar {
-        display: none !important;
+    /* Make content responsive */
+    .mobileOptimized table,
+    .mobileOptimized .contentBox,
+    .mobileOptimized .innerBox {
+        max-width: 100% !important;
+        overflow-x: auto !important;
     }
-
-    /* Hide entire #header container (navigation already escaped with position:fixed) */
-    .mobileOptimized #header {
-        display: none !important;
-    }
-
 
     /* ============ 7. BACKGROUND IMAGES ============ */
-
-    /* dorf1 - Resources view */
     body.village1.mobileOptimized #background {
         background-image: url('https://cdn.legends.travian.com/gpack/326.6/img_ltr/themes/winter/background/bgResources_mobile.jpg') !important;
         background-size: cover !important;
         background-position: center !important;
     }
 
-    /* dorf2 - Buildings view */
     body.village2.mobileOptimized #background {
         background-image: url('https://cdn.legends.travian.com/gpack/326.6/img_ltr/themes/winter/background/bgBuildings_narrow.jpg') !important;
         background-size: cover !important;
         background-position: center !important;
     }
 
-    /* ============ 8. CONTENT ADJUSTMENTS ============ */
+    /* ============ 8. COMPACT LAYOUT ============ */
 
-    /* Add padding for fixed StockBar at top */
-    .mobileOptimized #contentOuterContainer {
-        padding-top: 60px !important;
+    /* Typography */
+    .mobileOptimized h1 {
+        font-size: 1.5em !important;
     }
 
-    /* Add padding for fixed navigation at bottom */
-    .mobileOptimized #contentInnerContainer {
-        padding-bottom: 90px !important;
+    .mobileOptimized h2 {
+        font-size: 1.3em !important;
+    }
+
+    .mobileOptimized h3 {
+        font-size: 1.1em !important;
+    }
+
+    .mobileOptimized p {
+        font-size: 1em !important;
+    }
+
+    /* Spacing */
+    .mobileOptimized .contentBox {
+        padding: 8px !important;
+        margin: 5px 0 !important;
+    }
+
+    /* Buttons - touch-friendly */
+    .mobileOptimized button,
+    .mobileOptimized a.button,
+    .mobileOptimized input[type="submit"],
+    .mobileOptimized input[type="button"] {
+        min-height: 44px !important;
+        padding: 10px 15px !important;
+        font-size: 14px !important;
+    }
+
+    /* Tables */
+    .mobileOptimized table {
+        font-size: 12px !important;
+    }
+
+    .mobileOptimized td,
+    .mobileOptimized th {
+        padding: 5px !important;
+    }
+
+    /* Images responsive */
+    .mobileOptimized img {
+        max-width: 100% !important;
+        height: auto !important;
     }
 }

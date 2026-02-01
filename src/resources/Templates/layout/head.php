@@ -21,9 +21,10 @@ use Core\Helper\PreferencesHelper;
 
     <?php endif; ?>
     <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
-    <!-- Mobile Responsive Design - Hide TopBar + Analyzer -->
-    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=phase1-header-hide" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-touch.js?v=hide-topbar"></script>
+    <!-- Mobile Responsive Design - Complete Implementation -->
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=complete-v1" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-touch.js?v=complete-v1"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-swipe.js?v=complete-v1"></script>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
