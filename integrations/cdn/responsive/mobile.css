@@ -177,14 +177,22 @@
     }
 
     /* Show mobile menu button IN NAVIGATION (replaces statistics) */
-    .mobileOptimized #navigation .mobileMenuButton {
+    .mobileOptimized #navigation .mobileMenuButton,
+    .mobileOptimized .mobileMenuButton {
         display: flex !important;
         position: relative !important;
         width: 55px !important;
         height: 55px !important;
         top: auto !important;
         right: auto !important;
+        left: auto !important;
+        bottom: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-size: contain !important;
+        border-radius: 50% !important;
         z-index: auto !important;
+        flex-shrink: 0 !important;
     }
 
     /* Show mobile shop button */
@@ -199,10 +207,9 @@
         display: block !important;
     }
 
-    /* ============ 6. HIDE SIDEBARS ON MOBILE ============ */
+    /* ============ 6. HIDE TOP BAR ON MOBILE (not sidebars!) ============ */
 
-    .mobileOptimized #sidebarBeforeContent,
-    .mobileOptimized #sidebarAfterContent {
+    .mobileOptimized #topBar {
         display: none !important;
     }
 
