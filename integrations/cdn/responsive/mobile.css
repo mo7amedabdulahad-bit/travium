@@ -58,12 +58,13 @@
         font-size: 14px !important;
     }
 
-    /* ============ 2. HIDE HEADER (LOGO + CONTAINER) ============ */
+    /* ============ 2. HIDE LOGO & HEADERBAR (NOT ENTIRE HEADER) ============ */
     .mobileOptimized #logo,
-    .mobileOptimized #headerBar,
-    .mobileOptimized #header {
+    .mobileOptimized #headerBar {
         display: none !important;
     }
+
+    /* DO NOT HIDE #header - navigation is inside it! */
 
     /* ============ 3. STOCKBAR (RESOURCES) - FIXED TOP ============ */
     .mobileOptimized #stockBar {
@@ -253,29 +254,28 @@
         z-index: 499 !important;
     }
 
-    /* ============ 6. CENTERED CONTENT ============ */
-    .mobileOptimized #contentOuterContainer {
-        margin: 0 auto !important;
-        padding: 60px 5px 70px !important;
-        /* Top: stockBar, Bottom: nav */
-        max-width: 100% !important;
-        width: 100% !important;
-        overflow-x: hidden !important;
-    }
-
-    .mobileOptimized #contentInnerContainer {
-        width: 100% !important;
-        max-width: 620px !important;
-        margin: 0 auto !important;
-        padding: 10px !important;
-    }
-
-    /* Make content responsive */
-    .mobileOptimized table,
+    /* ============ 6. MAKE CONTENT FIT ON MOBILE ============ */
+    .mobileOptimized #contentOuterContainer,
+    .mobileOptimized #contentInnerContainer,
     .mobileOptimized .contentBox,
     .mobileOptimized .innerBox {
         max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Padding for fixed stockBar and navigation */
+    .mobileOptimized body {
+        padding-top: 60px !important;
+        padding-bottom: 70px !important;
+    }
+
+    /* Make tables scroll horizontally if too wide */
+    .mobileOptimized table {
+        max-width: 100% !important;
         overflow-x: auto !important;
+        display: block !important;
     }
 
     /* ============ 7. BACKGROUND IMAGES ============ */
