@@ -1,11 +1,18 @@
 /* ==========================================================================
-   MOBILE OPTIMIZATION - Working Implementation
+   MOBILE OPTIMIZATION - Based on Official HTML Structure
    
-   REQUIREMENTS:
-   1. Header: AT TOP (logo, resources, etc.)
-   2. Navigation bar: AT BOTTOM, ALL buttons visible horizontally
-   3. Resources: AT TOP in header
-   4. Everything fits in one screen width
+   STRUCTURE (from official):
+   #topBar
+     #logo
+     #header (contains navigation)
+       #navigation (buttons)
+     .currency
+     #stockBar (resources - OUTSIDE #header)
+   
+   MOBILE REQUIREMENTS:
+   1. #stockBar: Fixed at TOP
+   2. #navigation: Fixed at BOTTOM (inside #header but positioned independently)
+   3. All buttons fit horizontally
    ========================================================================== */
 
 /* ============ DEFAULT STYLES (DESKTOP) ============ */
@@ -32,9 +39,8 @@
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
     /* ============ 1. LOGO - HIDDEN ============ */
-    .mobileOptimized .logo,
     .mobileOptimized #logo,
-    .mobileOptimized .logoHeader {
+    .mobileOptimized .logo {
         display: none !important;
     }
 
@@ -50,15 +56,7 @@
         width: 100% !important;
     }
 
-    /* ============ 2.5. HEADER - KEEP AT TOP ============ */
-    .mobileOptimized #header,
-    .mobileOptimized .header,
-    .mobileOptimized [class*="header"] {
-        position: relative !important;
-        /* Ensure header stays at top, not affected by navigation positioning */
-    }
-
-    /* ============ 3. RESOURCES (STOCKBAR) - AT TOP, FULL WIDTH ============ */
+    /* ============ 3. STOCKBAR (RESOURCES) - FIXED AT TOP ============ */
     .mobileOptimized #stockBar {
         /* Position - FIXED AT TOP */
         position: fixed !important;
@@ -73,16 +71,16 @@
         height: auto !important;
         min-height: 50px !important;
 
-        /* Display - Grid to fit resources horizontally */
-        display: grid !important;
-        grid-auto-flow: column !important;
-        grid-auto-columns: 1fr !important;
+        /* Display - Flex to fit resources horizontally */
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
         align-items: center !important;
 
         /* Spacing */
-        padding: 8px 5px !important;
+        padding: 5px 3px !important;
         margin: 0 !important;
-        gap: 3px !important;
+        gap: 2px !important;
 
         /* Styling */
         z-index: 1000 !important;
@@ -90,14 +88,24 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Scale resources if needed */
-    .mobileOptimized #stockBar * {
-        font-size: 11px !important;
+    /* Scale stockBar children to fit */
+    .mobileOptimized #stockBar .warehouse,
+    .mobileOptimized #stockBar .granary {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 2px !important;
+        font-size: 10px !important;
     }
 
-    /* ============ 4. NAVIGATION - AT BOTTOM, COMPACT BUTTONS ============ */
+    .mobileOptimized #stockBar .stockBarButton {
+        min-width: auto !important;
+        padding: 2px !important;
+    }
+
+    /* ============ 4. NAVIGATION - FIXED AT BOTTOM ============ */
     .mobileOptimized #navigation {
-        /* Position - FIXED AT BOTTOM */
+        /* Position - FIXED AT BOTTOM (breaks out of #header) */
         position: fixed !important;
         bottom: 0 !important;
         top: auto !important;
@@ -134,19 +142,24 @@
 
     .mobileOptimized #navigation a,
     .mobileOptimized #navigation button,
-    .mobileOptimized #navigation [class*="tab"] {
+    .mobileOptimized #navigation .village,
+    .mobileOptimized #navigation .map,
+    .mobileOptimized #navigation .statistics,
+    .mobileOptimized #navigation .reports,
+    .mobileOptimized #navigation .messages,
+    .mobileOptimized #navigation .dailyQuests {
         /* Force visible */
         display: block !important;
         visibility: visible !important;
         flex-shrink: 0 !important;
 
         /* Size - COMPACT to fit all 8 buttons */
-        width: 60px !important;
-        height: 60px !important;
+        width: 55px !important;
+        height: 55px !important;
         min-width: 44px !important;
         min-height: 44px !important;
-        max-width: 60px !important;
-        max-height: 60px !important;
+        max-width: 55px !important;
+        max-height: 55px !important;
 
         /* Spacing - Minimal */
         margin: 0 !important;
@@ -162,6 +175,8 @@
     /* Show mobile shop button */
     .mobileOptimized #navigation .mobileShopButton {
         display: block !important;
+        width: 55px !important;
+        height: 55px !important;
     }
 
     /* Don't hide any buttons - all should be visible */
