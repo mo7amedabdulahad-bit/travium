@@ -183,12 +183,3 @@
         padding-bottom: 100px !important;
     }
 }
-
-/* ============ LANDSCAPE MODE (Optional) ============ */
-@media screen and (max-width: 900px) and (orientation: landscape) {
-
-    /* Landscape-specific adjustments if needed */
-    .mobileOptimized #navigation {
-        /* Could use different layout for landscape */
-    }
-}
