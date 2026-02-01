@@ -1,60 +1,139 @@
 /* ==========================================================================
-   MOBILE OPTIMIZATION - Based on Visual Recording Analysis
-   File: travian-visual-recording-1769933002370.json
+   MOBILE OPTIMIZATION - EXACT Official Travian Implementation
+   Data Source: detailed-mobile-1769936233287.json
    
-   FIXES IMPLEMENTED:
-   1. Hide logo on mobile (was covering resources)
-   2. Navigation at bottom with flexbox (NO transform)
-   3. All navigation buttons visible (7-8 buttons)
-   4. Mobile menu button hidden on desktop
-   5. Background images change for dorf1/dorf2
-   6. Proper touch targets (75x75px minimum)
+   IMPLEMENTATION:
+   1. Logo: display none (hidden on mobile)
+   2. StockBar: position fixed + scale(1.5) transform
+   3. Navigation: position absolute + matrix transform (at bottom)
+   4. Specific buttons hidden (statistics, quests)
+   5. Shop button shown on mobile
+   6. Grid layout maintained from desktop
    ========================================================================== */
 
 /* ============ DEFAULT STYLES (DESKTOP) ============ */
 
-/* Mobile menu elements - HIDDEN ON DESKTOP */
+/* Mobile menu - hidden on desktop */
 #mobileMenuState {
     display: none;
-    /* Checkbox always hidden */
 }
 
 .mobileMenuButton {
     display: none !important;
-    /* MUST be hidden on desktop */
 }
 
 #mobileMenu {
     display: none !important;
-    /* MUST be hidden on desktop */
+}
+
+/* Mobile shop button - hidden on desktop */
+#navigation .mobileShopButton {
+    display: none !important;
 }
 
 /* ============ MOBILE BREAKPOINT: 620px ============ */
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
-    /* ============ 1. HIDE LOGO - Covers Resources ============ */
+    /* ============ 1. LOGO - HIDDEN ============ */
     .mobileOptimized .logo,
     .mobileOptimized #logo,
-    .mobileOptimized .logoHeader,
-    .mobileOptimized [class*="logo"] {
+    .mobileOptimized .logoHeader {
         display: none !important;
-        visibility: hidden !important;
     }
 
     /* ============ 2. BODY - PREVENT HORIZONTAL SCROLL ============ */
-    body.mobileOptimized {
-        -webkit-text-size-adjust: 100% !important;
-        overflow-x: hidden !important;
-        width: 100% !important;
-        max-width: 100vw !important;
-    }
-
+    body.mobileOptimized,
     html {
         overflow-x: hidden !important;
         max-width: 100vw !important;
     }
 
-    /* ============ 3. BACKGROUND IMAGES - Change for Mobile ============ */
+    body.mobileOptimized {
+        -webkit-text-size-adjust: 100% !important;
+        width: 100% !important;
+    }
+
+    /* ============ 3. STOCKBAR - FIXED TOP + SCALE(1.5) ============ */
+    .mobileOptimized #stockBar {
+        /* Position */
+        position: fixed !important;
+        top: 0px !important;
+        left: 0px !important;
+        right: 258px !important;
+        bottom: auto !important;
+
+        /* Size */
+        width: 362px !important;
+        height: 35.3333px !important;
+        max-width: none !important;
+
+        /* Transform - scale 1.5× */
+        transform: matrix(1.5, 0, 0, 1.5, 0, 0) !important;
+        transform-origin: 0px 0px !important;
+
+        /* Display */
+        display: grid !important;
+        z-index: 38 !important;
+        padding: 3px !important;
+        margin: 0px !important;
+    }
+
+    /* ============ 4. NAVIGATION - ABSOLUTE + TRANSFORM (AT BOTTOM) ============ */
+    .mobileOptimized #navigation {
+        /* Position - stays absolute! */
+        position: absolute !important;
+        top: 14px !important;
+        left: 310px !important;
+        right: -152px !important;
+        bottom: 40px !important;
+
+        /* Size - same as desktop */
+        width: 462px !important;
+        height: 66px !important;
+        max-width: 100% !important;
+
+        /* Transform - scale 1.3× + shift left 300px */
+        transform: matrix(1.3, 0, 0, 1.3, -300.3, 0) !important;
+        transform-origin: 0px 33px !important;
+
+        /* Grid layout - same as desktop */
+        display: grid !important;
+        grid-template-columns: 66px 71px 73px 63px 63px 63px 63px !important;
+        grid-template-rows: 66px !important;
+
+        /* Other */
+        z-index: 1 !important;
+        padding: 0px !important;
+        margin: 0px !important;
+        gap: normal !important;
+        background-color: transparent !important;
+    }
+
+    /* ============ 5. NAVIGATION BUTTONS - HIDE SPECIFIC ONES ============ */
+
+    /* Hide statistics button (#3) on mobile */
+    .mobileOptimized #navigation .statistics {
+        display: none !important;
+    }
+
+    /* Hide daily quests button (#6) on mobile */
+    .mobileOptimized #navigation .dailyQuests {
+        display: none !important;
+    }
+
+    /* Show mobile shop button (#7) on mobile */
+    .mobileOptimized #navigation .mobileShopButton {
+        display: block !important;
+        position: relative !important;
+    }
+
+    /* ============ 6. MOBILE MENU BUTTON ============ */
+    .mobileOptimized .mobileMenuButton {
+        display: flex !important;
+        position: relative !important;
+    }
+
+    /* ============ 7. BACKGROUND IMAGES ============ */
 
     /* dorf1 - Resources view */
     body.village1.mobileOptimized #background {
@@ -70,283 +149,46 @@
         background-position: center !important;
     }
 
-    /* ============ 4. NAVIGATION - FIXED BOTTOM, FLEXBOX LAYOUT ============ */
-    /* NO TRANSFORM! Just flexbox for proper button layout */
+    /* ============ 8. SIDEBARS - OFF-SCREEN WITH TRANSFORM ============ */
 
-    .mobileOptimized #navigation {
-        position: fixed !important;
-        bottom: 0 !important;
-        top: auto !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        max-width: 620px !important;
-        height: auto !important;
-        min-height: 95px !important;
-
-        /* NO TRANSFORM - causes buttons to be cut off */
-        transform: none !important;
-
-        /* Flexbox layout for buttons */
-        display: flex !important;
-        flex-wrap: wrap !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        gap: 5px !important;
-
-        padding: 10px 5px !important;
-        margin: 0 !important;
-        background: rgba(0, 0, 0, 0.3) !important;
-        z-index: 100 !important;
-    }
-
-    /* ============ 5. NAVIGATION BUTTONS - ALL VISIBLE ============ */
-
-    .mobileOptimized #navigation a,
-    .mobileOptimized #navigation button,
-    .mobileOptimized #navigation .navigationTab,
-    .mobileOptimized #navigation [class*="tab"] {
-        display: block !important;
-        /* Force all buttons visible */
-        visibility: visible !important;
-
-        /* Touch-friendly size */
-        width: 75px !important;
-        height: 75px !important;
-        min-width: 44px !important;
-        /* Minimum touch target */
-        min-height: 44px !important;
-
-        margin: 2px !important;
-        padding: 0 !important;
-        flex-shrink: 0 !important;
-
-        /* Ensure backgrounds show */
-        background-size: contain !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-    }
-
-    /* First two buttons (dorf1/dorf2) slightly larger */
-    .mobileOptimized #navigation a:nth-child(1),
-    .mobileOptimized #navigation a:nth-child(2) {
-        width: 85px !important;
-        height: 85px !important;
-    }
-
-    /* ============ 6. RESOURCES (STOCK BAR) - FIXED AT TOP ============ */
-
-    .mobileOptimized #stockBar {
-        position: fixed !important;
-        top: 0 !important;
-        bottom: auto !important;
-        left: 0 !important;
-        right: 258px !important;
-        width: 362px !important;
-        height: 35.3333px !important;
-
-        /* Official Travian uses scale(1.5) for resources */
-        transform: scale(1.5) !important;
-        transform-origin: top left !important;
-
-        z-index: 38 !important;
-        padding: 5px !important;
-        margin: 0 !important;
-        background: rgba(0, 0, 0, 0.3) !important;
-    }
-
-    /* ============ 7. SIDEBARS - OFF-SCREEN WITH TRANSFORM ============ */
-
+    /* Left sidebar */
     .mobileOptimized #sidebarBeforeContent {
-        position: fixed !important;
-        top: 54px !important;
-        bottom: 100px !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 620px !important;
-        max-width: 100vw !important;
-        height: auto !important;
-        transform: translateX(-620px) !important;
-        z-index: 400 !important;
-        margin: 0 !important;
-        padding: 20px 0 0 !important;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        background: #fff !important;
-        overflow-y: auto !important;
-    }
-
-    .mobileOptimized #sidebarBeforeContent.mobileOpened {
-        transform: translateX(0) !important;
-    }
-
-    .mobileOptimized #sidebarAfterContent {
-        position: fixed !important;
-        top: 54px !important;
-        bottom: 100px !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 620px !important;
-        max-width: 100vw !important;
-        height: auto !important;
-        transform: translateX(620px) !important;
-        z-index: 400 !important;
-        margin: 0 !important;
-        padding: 20px 0 0 !important;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        background: #fff !important;
-        overflow-y: auto !important;
-    }
-
-    .mobileOptimized #sidebarAfterContent.mobileOpened {
-        transform: translateX(0) !important;
-    }
-
-    /* ============ 8. SIDEBAR BACKDROP ============ */
-
-    .mobileOptimized #reactDialogWrapper.withSidebarBeforeContent::before,
-    .mobileOptimized #reactDialogWrapper.withSidebarAfterContent::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 350;
-        animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    /* ============ 9. MOBILE MENU BUTTON - SHOW ONLY ON MOBILE ============ */
-
-    .mobileOptimized .mobileMenuButton {
-        display: flex !important;
-        /* Only visible on mobile */
-        position: fixed !important;
-        bottom: 110px !important;
-        right: 10px !important;
-        width: 75px !important;
-        height: 75px !important;
-        z-index: 150 !important;
-        background: rgba(0, 0, 0, 0.7) !important;
-        border-radius: 50% !important;
-        cursor: pointer !important;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 5px !important;
-    }
-
-    .mobileOptimized .mobileMenuButton span {
-        display: block;
-        width: 30px;
-        height: 3px;
-        background: #fff;
-        transition: all 0.3s;
-        border-radius: 2px;
-    }
-
-    /* ============ 10. MOBILE MENU ============ */
-
-    .mobileOptimized #mobileMenu {
-        display: block !important;
-        position: fixed !important;
-        bottom: 110px !important;
-        right: 0 !important;
-        width: 244.719px !important;
-        max-width: 80vw !important;
-        height: auto !important;
-        max-height: 70vh !important;
-        padding: 30px 25px 10px !important;
-        margin: 0 !important;
-        background: #fff !important;
-        transform: rotateX(-90deg) !important;
-        transform-origin: bottom !important;
+        transform: translateX(-100%) !important;
         transition: transform 0.3s ease !important;
-        z-index: 500 !important;
-        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3) !important;
-        overflow-y: auto !important;
     }
 
-    .mobileOptimized #mobileMenuState:checked~#mobileMenu {
-        transform: rotateX(0deg) !important;
+    .mobileOptimized.withSidebarBeforeContent #sidebarBeforeContent {
+        transform: translateX(0) !important;
     }
 
-    #mobileMenu ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    /* Right sidebar */
+    .mobileOptimized #sidebarAfterContent {
+        transform: translateX(100%) !important;
+        transition: transform 0.3s ease !important;
     }
 
-    #mobileMenu ul li {
-        margin: 15px 0;
+    .mobileOptimized.withSidebarAfterContent #sidebarAfterContent {
+        transform: translateX(0) !important;
     }
 
-    #mobileMenu ul li a {
-        display: block;
-        padding: 10px 15px;
-        color: #333;
-        text-decoration: none;
-        border-radius: 5px;
-        transition: background 0.2s;
+    /* ============ 9. CONTENT ADJUSTMENTS ============ */
+
+    /* Add padding for fixed StockBar */
+    .mobileOptimized #contentOuterContainer {
+        padding-top: 60px !important;
     }
 
-    #mobileMenu ul li a:hover {
-        background: #f0f0f0;
-    }
-
-    /* ============ 11. CONTENT ADJUSTMENTS ============ */
-
-    .mobileOptimized #content {
-        width: 100% !important;
-        max-width: 620px !important;
-        margin: 0 auto !important;
-        padding-top: 54px !important;
-        /* Space for stockBar */
+    /* Add padding for fixed navigation at bottom */
+    .mobileOptimized #contentInnerContainer {
         padding-bottom: 100px !important;
-        /* Space for navigation */
-    }
-
-    /* ============ 12. HEADER ============ */
-
-    .mobileOptimized #header {
-        width: 620px !important;
-        max-width: 100vw !important;
-        height: 120px !important;
-    }
-
-    /* ============ 13. PREVENT CONTENT OVERFLOW ============ */
-
-    .mobileOptimized #background {
-        overflow-x: hidden !important;
-        max-width: 100vw !important;
-    }
-
-    /* ============ 14. TOAST NOTIFICATIONS ============ */
-
-    .mobileOptimized #toastStack {
-        width: 100% !important;
-        max-width: 620px !important;
-        padding: 10px !important;
     }
 }
 
 /* ============ LANDSCAPE MODE (Optional) ============ */
-@media screen and (max-width: 620px) and (orientation: landscape) {
+@media screen and (max-width: 900px) and (orientation: landscape) {
 
-    /* Adjust if needed for landscape mobile */
+    /* Landscape-specific adjustments if needed */
     .mobileOptimized #navigation {
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
+        /* Could use different layout for landscape */
     }
 }

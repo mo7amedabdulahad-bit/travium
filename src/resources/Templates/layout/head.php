@@ -21,9 +21,9 @@ use Core\Helper\PreferencesHelper;
 
     <?php endif; ?>
     <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
-    <!-- Mobile Responsive Design - StockBar Scale Fix -->
-    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=stockbar-scale" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-touch.js?v=stockbar-scale"></script>
+    <!-- Mobile Responsive Design - Exact Official Travian -->
+    <link href="<?=get_gpack_cdn_base_url();?>responsive/mobile.css?v=exact-official" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="<?=get_gpack_cdn_base_url();?>responsive/mobile-touch.js?v=exact-official"></script>
 
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
