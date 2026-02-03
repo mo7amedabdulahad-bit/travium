@@ -1,6 +1,8 @@
 /**
  * Travium Mobile Navigation & Sidebar Handler
  * Official Travian Mobile UI Replication
+ * 
+ * MOVES existing desktop elements to mobile positions
  */
 
 (function () {
@@ -16,85 +18,101 @@
     // ============ GLOBAL STATE ============
     let activeSidebar = null;
 
-    // ============ NAVIGATION HANDLER ============
+    // ============ NAVIGATION - MOVE EXISTING ICONS ============
 
     function initNavigation() {
-        const nav = document.getElementById('mobileNavigation');
-        if (!nav) {
+        const mobileNav = document.getElementById('mobileNavigation');
+        const desktopNav = document.getElementById('navigation');
+
+        if (!mobileNav) {
             console.warn('Mobile navigation not found');
             return;
         }
 
-        // Get current page
-        const currentPath = window.location.pathname;
-        const currentPage = currentPath.split('/').pop().replace('.php', '');
+        // Map page names to desktop navigation selectors
+        const navMap = {
+            'dorf1': 'li.villageResources a, #n1 a',
+            'dorf2': 'li.villageBuildings a, #n2 a',
+            'karte': 'li.map a, #n3 a',
+            'reports': 'li.reports a, #n5 a',
+            'messages': 'li.messages a, #n6 a'
+        };
 
-        // Navigation button click handlers
-        const buttons = nav.querySelectorAll('.mobile-nav-btn');
-        buttons.forEach(btn => {
+        // Get mobile buttons
+        const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
+
+        mobileButtons.forEach(btn => {
             const page = btn.dataset.page;
 
-            // Highlight active button
-            if (currentPage.includes(page) ||
-                (page === 'dorf1' && currentPath.includes('dorf1')) ||
-                (page === 'dorf2' && currentPath.includes('dorf2'))) {
-                btn.classList.add('active');
-            }
+            // Find corresponding desktop button
+            if (navMap[page] && desktopNav) {
+                const desktopBtn = desktopNav.querySelector(navMap[page]);
 
-            // Click handler
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
+                if (desktopBtn) {
+                    // Copy background image from desktop button
+                    const style = window.getComputedStyle(desktopBtn);
+                    const bgImage = style.backgroundImage;
 
-                switch (page) {
-                    case 'dorf1':
-                        window.location.href = 'dorf1.php';
-                        break;
-                    case 'dorf2':
-                        window.location.href = 'dorf2.php';
-                        break;
-                    case 'karte':
-                        window.location.href = 'karte.php';
-                        break;
-                    case 'reports':
-                        window.location.href = 'reports.php';
-                        break;
-                    case 'messages':
-                        window.location.href = 'messages.php';
-                        break;
-                    case 'dailyQuests':
-                        window.location.href = 'daily_quests.php';
-                        break;
-                    case 'plus':
-                        window.location.href = 'payment.php';
-                        break;
-                    default:
-                        console.warn('Unknown page:', page);
+                    if (bgImage && bgImage !== 'none') {
+                        btn.style.backgroundImage = bgImage;
+                        btn.style.backgroundSize = '70%';
+                        btn.style.backgroundPosition = 'center';
+                        btn.style.backgroundRepeat = 'no-repeat';
+                    }
+
+                    // Get href for navigation
+                    const href = desktopBtn.getAttribute('href');
+
+                    // Add click handler
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (href) {
+                            window.location.href = href;
+                        }
+                    });
+
+                    // Highlight if active
+                    if (desktopBtn.classList.contains('active')) {
+                        btn.classList.add('active');
+                    }
                 }
-            });
+            }
+            // Special buttons
+            else if (page === 'dailyQuests') {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.location.href = 'daily_quests.php';
+                });
+            }
+            else if (page === 'plus') {
+                // Gold button - keep the gold background
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.location.href = 'payment.php';
+                });
+            }
         });
 
-        console.log('✅ Navigation initialized');
+        console.log('✅ Navigation buttons initialized');
     }
 
-    // ============ SIDEBAR HANDLER ============
+    // ============ SIDEBAR FUNCTIONS ============
 
     function openSidebar(side) {
-        closeSidebar(); // Close any open sidebar first
+        closeSidebar();
 
         const sidebarId = side === 'left' ? 'mobileSidebarLeft' : 'mobileSidebarRight';
         const sidebar = document.getElementById(sidebarId);
         const backdrop = document.getElementById('mobileSidebarBackdrop');
 
-        if (!sidebar || !backdrop) {
-            console.warn('Sidebar or backdrop not found');
-            return;
-        }
+        if (!sidebar || !backdrop) return;
 
         sidebar.classList.add('open');
         backdrop.classList.add('active');
+        backdrop.style.display = 'block';
         activeSidebar = side;
 
-        // Prevent body scroll
         document.body.style.overflow = 'hidden';
 
         console.log('✅ Opened', side, 'sidebar');
@@ -107,134 +125,108 @@
         const sidebar = document.getElementById(sidebarId);
         const backdrop = document.getElementById('mobileSidebarBackdrop');
 
-        if (sidebar) {
-            sidebar.classList.remove('open');
-        }
-
+        if (sidebar) sidebar.classList.remove('open');
         if (backdrop) {
             backdrop.classList.remove('active');
+            backdrop.style.display = 'none';
         }
 
-        // Restore body scroll
         document.body.style.overflow = '';
-
         activeSidebar = null;
 
         console.log('✅ Closed sidebar');
     }
 
-    // Make closeSidebar globally accessible
+    // Export to window
     window.closeMobileSidebar = closeSidebar;
     window.openMobileSidebar = openSidebar;
 
-    // Backdrop click closes sidebar
-    const backdrop = document.getElementById('mobileSidebarBackdrop');
-    if (backdrop) {
-        backdrop.addEventListener('click', closeSidebar);
+    // ============ SIDEBAR CONTENT - MOVE EXISTING ============
+
+    function moveSidebarContent() {
+        const leftSidebar = document.getElementById('mobileSidebarLeft');
+        const sidebarBefore = document.getElementById('sidebarBeforeContent');
+
+        if (leftSidebar && sidebarBefore) {
+            // MOVE it (not clone) to hide from main screen
+            leftSidebar.appendChild(sidebarBefore);
+            console.log('✅ Moved left sidebar content');
+        }
+
+        // Backdrop listener
+        const backdrop = document.getElementById('mobileSidebarBackdrop');
+        if (backdrop) {
+            backdrop.addEventListener('click', closeSidebar);
+        }
+
+        // Close button listeners
+        const closeButtons = document.querySelectorAll('.mobile-sidebar-close');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', closeSidebar);
+        });
     }
 
-    // Close button in sidebar
-    const closeButtons = document.querySelectorAll('.mobile-sidebar-close');
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', closeSidebar);
-    });
-
-    // ============ HERO AVATAR HANDLER ============
+    // ============ HERO AVATAR - TAP TO OPEN SIDEBAR ============
 
     function initHeroAvatar() {
-        const heroAvatar = document.getElementById('mobileHeroAvatar');
-        if (!heroAvatar) return;
+        const mobileHero = document.getElementById('mobileHeroAvatar');
+        if (!mobileHero) return;
 
-        // Click hero avatar to open left sidebar
-        heroAvatar.addEventListener('click', function () {
+        // Click to open left sidebar
+        mobileHero.addEventListener('click', function () {
             openSidebar('left');
         });
 
-        // Try to populate hero info from existing elements
-        const heroImg = document.querySelector('.heroImage, .playerImage');
+        // Try to find existing hero image
+        const heroImg = document.querySelector('.heroImageBg img, .heroImage img, #playerBox img');
+
         if (heroImg) {
-            const clonedImg = heroImg.cloneNode(true);
-            heroAvatar.appendChild(clonedImg);
+            const clone = heroImg.cloneNode(true);
+            clone.style.width = '100%';
+            clone.style.height = '100%';
+            clone.style.objectFit = 'cover';
+            mobileHero.appendChild(clone);
         } else {
             // Placeholder
-            heroAvatar.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;">⚔️</div>';
+            mobileHero.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;background:rgba(0,0,0,0.3);border-radius:50%;">⚔️</div>';
         }
 
         console.log('✅ Hero avatar initialized');
     }
 
-    // ============ RESOURCES BAR INITIALIZATION ============
-
-    function initResourcesBar() {
-        const stockBar = document.getElementById('stockBar');
-        if (!stockBar) {
-            console.warn('StockBar not found');
-            return;
-        }
-
-        // StockBar is already in the correct position via CSS
-        // Just ensure it's visible
-        stockBar.style.display = 'flex';
-
-        console.log('✅ Resources bar initialized');
-    }
-
-    // ============ SIDEBAR CONTENT INITIALIZATION ============
-
-    function initSidebarContent() {
-        // Left sidebar: Move existing sidebar content
-        const leftSidebar = document.getElementById('mobileSidebarLeft');
-        const sidebarBeforeContent = document.getElementById('sidebarBeforeContent');
-
-        if (leftSidebar && sidebarBeforeContent) {
-            // Clone the content to avoid breaking desktop view
-            const clonedContent = sidebarBeforeContent.cloneNode(true);
-            leftSidebar.appendChild(clonedContent);
-            console.log('✅ Left sidebar content populated');
-        }
-
-        // Right sidebar is already populated in HTML with options menu
-        console.log('✅ Right sidebar ready');
-    }
-
-    // ============ SWIPE GESTURE DETECTION (Optional) ============
+    // ============ SWIPE GESTURES ============
 
     let touchStartX = 0;
     let touchStartY = 0;
     let touchEndX = 0;
     let touchEndY = 0;
 
-    const SWIPE_THRESHOLD = 100; // Min distance for swipe
-    const EDGE_THRESHOLD = 50;   // Distance from edge to trigger
-    const VERTICAL_TOLERANCE = 80; // Max vertical movement
+    const SWIPE_THRESHOLD = 80;
+    const EDGE_THRESHOLD = 50;
+    const VERTICAL_TOLERANCE = 100;
 
-    function handleSwipeGesture() {
-        const swipeDistanceX = touchEndX - touchStartX;
-        const swipeDistanceY = Math.abs(touchEndY - touchStartY);
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = Math.abs(touchEndY - touchStartY);
         const screenWidth = window.innerWidth;
 
-        // Ignore vertical swipes
-        if (swipeDistanceY > VERTICAL_TOLERANCE) {
-            return;
-        }
+        // Ignore if too much vertical movement
+        if (deltaY > VERTICAL_TOLERANCE) return;
 
-        // Swipe RIGHT from left edge → Open left sidebar
-        if (swipeDistanceX > SWIPE_THRESHOLD && touchStartX < EDGE_THRESHOLD) {
+        // Swipe RIGHT from left edge → open left sidebar
+        if (deltaX > SWIPE_THRESHOLD && touchStartX < EDGE_THRESHOLD) {
             openSidebar('left');
         }
-
-        // Swipe LEFT from right edge → Open right sidebar
-        else if (swipeDistanceX < -SWIPE_THRESHOLD && touchStartX > (screenWidth - EDGE_THRESHOLD)) {
+        // Swipe LEFT from right edge → open right sidebar
+        else if (deltaX < -SWIPE_THRESHOLD && touchStartX > (screenWidth - EDGE_THRESHOLD)) {
             openSidebar('right');
         }
-
-        // Swipe LEFT → Close left sidebar if open
-        else if (swipeDistanceX < -SWIPE_THRESHOLD && activeSidebar === 'left') {
+        // Swipe LEFT to close left sidebar
+        else if (deltaX < -SWIPE_THRESHOLD && activeSidebar === 'left') {
             closeSidebar();
         }
-
-        // Swipe RIGHT → Close right sidebar if open
-        else if (swipeDistanceX > SWIPE_THRESHOLD && activeSidebar === 'right') {
+        // Swipe RIGHT to close right sidebar
+        else if (deltaX > SWIPE_THRESHOLD && activeSidebar === 'right') {
             closeSidebar();
         }
     }
@@ -247,23 +239,25 @@
     document.addEventListener('touchend', function (e) {
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
-        handleSwipeGesture();
+        handleSwipe();
     }, { passive: true });
 
-    // ============ INITIALIZATION ============
+    // ============ MAIN INITIALIZATION ============
 
     function init() {
-        console.log('📱 Initializing Mobile UI Components...');
+        console.log('📱 Starting Mobile UI Init...');
 
-        initNavigation();
-        initHeroAvatar();
-        initResourcesBar();
-        initSidebarContent();
+        // Wait for DOM
+        setTimeout(function () {
+            initNavigation();
+            moveSidebarContent();
+            initHeroAvatar();
 
-        console.log('✅ Mobile UI fully initialized!');
+            console.log('✅ Mobile UI Ready!');
+        }, 100);
     }
 
-    // Run init when DOM is ready
+    // Run init
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

@@ -46,6 +46,17 @@
         display: none !important;
     }
 
+    /* Hide desktop sidebars - content is MOVED to mobile sidebars */
+    .mobileOptimized #sidebarAfterContent {
+        display: none !important;
+    }
+
+    /* Hide any existing hero/player boxes - we use mobile hero avatar */
+    .mobileOptimized #playerBox,
+    .mobileOptimized .heroImageBg {
+        display: none !important;
+    }
+
     /* ============ 3. RESOURCES BAR (TOP - FIXED) ============ */
     .mobileOptimized #stockBar {
         position: fixed !important;
