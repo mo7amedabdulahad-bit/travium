@@ -16,21 +16,24 @@
         // ============ GLOBAL STATE ============
         let activeSidebar = null;
 
-        // ============ NAVIGATION - USE DESKTOP ICON CLASSES ============
+        // ============ NAVIGATION - USE COMPUTED STYLES FROM DESKTOP ============
 
         function initNavigation() {
             const mobileNav = document.getElementById('mobileNavigation');
             const desktopNav = document.getElementById('navigation');
 
-            if (!mobileNav || !desktopNav) return;
+            if (!mobileNav || !desktopNav) {
+                console.warn('Navigation elements not found');
+                return;
+            }
 
             // Map mobile buttons to desktop navigation items
             const navMap = {
-                'dorf1': { selector: '#n1, .villageResources', class: 'villageResources' },
-                'dorf2': { selector: '#n2, .villageBuildings', class: 'villageBuildings' },
-                'karte': { selector: '#n3, .map', class: 'map' },
-                'reports': { selector: '#n5, .reports', class: 'reports' },
-                'messages': { selector: '#n6, .messages', class: 'messages' }
+                'dorf1': '#n1 a',
+                'dorf2': '#n2 a',
+                'karte': '#n3 a',
+                'reports': '#n5 a',
+                'messages': '#n6 a'
             };
 
             // Get mobile buttons
@@ -40,39 +43,49 @@
                 const page = btn.dataset.page;
 
                 if (navMap[page]) {
-                    // Find desktop nav item
-                    const desktopItem = desktopNav.querySelector(navMap[page].selector);
-                    const desktopLink = desktopItem ? desktopItem.querySelector('a') : null;
+                    // Find desktop nav button
+                    const desktopBtn = desktopNav.querySelector(navMap[page]);
 
-                    if (desktopLink) {
-                        // Copy the icon class to the button
-                        const iconClass = navMap[page].class;
-                        btn.classList.add(iconClass);
+                    if (desktopBtn) {
+                        // Get computed styles from desktop button
+                        const computedStyle = window.getComputedStyle(desktopBtn);
+                        const bgImage = computedStyle.backgroundImage;
+                        const bgPosition = computedStyle.backgroundPosition;
 
-                        // Get the desktop link's href
-                        const href = desktopLink.getAttribute('href');
+                        // Apply to mobile button
+                        if (bgImage && bgImage !== 'none') {
+                            btn.style.backgroundImage = bgImage;
+                            btn.style.backgroundPosition = bgPosition;
+                            btn.style.backgroundSize = 'contain';
+                            btn.style.backgroundRepeat = 'no-repeat';
+                        }
+
+                        // Get href for navigation
+                        const href = desktopBtn.getAttribute('href');
 
                         // Add click handler
                         btn.addEventListener('click', function (e) {
                             e.preventDefault();
+                            e.stopPropagation();
                             if (href) {
                                 window.location.href = href;
                             }
                         });
 
                         // Highlight if active
-                        if (desktopLink.classList.contains('active')) {
+                        if (desktopBtn.classList.contains('active')) {
                             btn.classList.add('active');
                         }
                     }
                 }
-                // Special buttons
+                // Daily Quests button
                 else if (page === 'dailyQuests') {
                     btn.addEventListener('click', function (e) {
                         e.preventDefault();
                         window.location.href = 'daily_quests.php';
                     });
                 }
+                // Plus/Gold button
                 else if (page === 'plus') {
                     btn.addEventListener('click', function (e) {
                         e.preventDefault();

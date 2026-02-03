@@ -174,30 +174,9 @@
         border-color: #ffd700 !important;
     }
 
-    /* Navigation button icon classes - inherit from desktop */
-    .mobileOptimized .mobile-nav-btn.villageResources {
-        background-image: var(--icon-village-resources) !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn.villageBuildings {
-        background-image: var(--icon-village-buildings) !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn.map {
-        background-image: var(--icon-map) !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn.reports {
-        background-image: var(--icon-reports) !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn.messages {
-        background-image: var(--icon-messages) !important;
-    }
-
-    /* Fallback: copy background from desktop nav if CSS vars don't work */
+    /* Ensure background properties are preserved */
     body.mobileOptimized .mobile-nav-btn {
-        background-size: 70% !important;
+        background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
     }
