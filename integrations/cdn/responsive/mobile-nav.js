@@ -122,15 +122,17 @@
         window.closeMobileSidebar = closeSidebar;
         window.openMobileSidebar = openSidebar;
 
-        // ============ SIDEBAR CONTENT - MOVE EXISTING ============
+        // ============ SIDEBAR CONTENT - CLONE (NOT MOVE) ============
 
-        function moveSidebarContent() {
+        function cloneSidebarContent() {
             const leftSidebar = document.getElementById('mobileSidebarLeft');
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
 
             if (leftSidebar && sidebarBefore) {
-                // MOVE it to hide from main screen
-                leftSidebar.appendChild(sidebarBefore);
+                // CLONE it (not move) so desktop keeps original
+                const clone = sidebarBefore.cloneNode(true);
+                clone.id = 'sidebarBeforeContent_mobile'; // Prevent ID collision
+                leftSidebar.appendChild(clone);
             }
 
             // Backdrop listener
@@ -197,7 +199,7 @@
         // ============ RUN ALL INITIALIZATIONS ============
 
         initNavigation();
-        moveSidebarContent();
+        cloneSidebarContent();
     }
 
     // ============ WAIT FOR DOM THEN RUN ============
