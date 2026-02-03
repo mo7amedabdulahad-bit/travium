@@ -170,15 +170,47 @@
 
     /* Gold button styling */
     .mobileOptimized .mobile-nav-gold {
-        background: radial-gradient(circle, #ffd700, #b8860b) !important;
+        background-image: url('../TravianOld/mainPage/img/layout/goldButton.png') !important;
+        background-position: left top !important;
         border-color: #ffd700 !important;
     }
 
-    /* Ensure background properties are preserved */
+    /* Navigation icons - use desktop sprite sheet */
+    .mobileOptimized .mobile-nav-btn[data-page="dorf1"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: left -1776px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="dorf2"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: left -1452px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="karte"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: left -420px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="reports"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: left -892px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="messages"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: left -656px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="dailyQuests"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: left -1128px !important;
+        /* statistics icon */
+    }
+
+    /* Ensure background properties work correctly */
     body.mobileOptimized .mobile-nav-btn {
-        background-size: contain !important;
+        background-size: auto !important;
         background-repeat: no-repeat !important;
-        background-position: center !important;
     }
 
     /* ============ 6. BUILDING QUEUE BAR (ABOVE NAV) ============ */
