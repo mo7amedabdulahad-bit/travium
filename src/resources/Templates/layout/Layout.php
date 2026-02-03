@@ -7,31 +7,6 @@ use Core\Helper\TimezoneHelper;
 <?php require __DIR__ . "/head.php"; ?>
 <body class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1 mobileOptimized">
 
-<!-- Mobile Menu State (checkbox hack) -->
-<input type="checkbox" id="mobileMenuState" />
-
-<!-- Mobile Menu Button (Hamburger) -->
-<label class="mobileMenuButton" for="mobileMenuState">
-    <span></span>
-    <span></span>
-    <span></span>
-</label>
-
-<!-- Mobile Navigation Menu -->
-<nav id="mobileMenu">
-    <ul>
-        <li><a href="dorf1.php" accesskey="1"><?=T("inGame", "Navigation.Resources"); ?></a></li>
-        <li><a href="dorf2.php" accesskey="2"><?=T("inGame", "Navigation.Buildings"); ?></a></li>
-        <li><a href="karte.php" accesskey="3"><?=T("inGame", "Navigation.Map"); ?></a></li>
-        <li><a href="statistiken.php" accesskey="4"><?=T("inGame", "Navigation.Statistics"); ?></a></li>
-        <li><a href="reports.php" accesskey="5"><?=T("inGame", "Navigation.Reports"); ?></a></li>
-        <li><a href="messages.php" accesskey="6"><?=T("inGame", "Navigation.Messages"); ?></a></li>
-        <li><a href="build.php?gid=17" accesskey="7"><?=T("inGame", "Navigation.RallyPoint"); ?></a></li>
-        <li><a href="allianz.php"><?=T("inGame", "Navigation.Alliance"); ?></a></li>
-        <li><a href="hero.php"><?=T("inGame", "Hero"); ?></a></li>
-        <li><a href="options.php"><?=T("inGame", "Navigation.Options"); ?></a></li>
-    </ul>
-</nav>
 
 <div id="reactDialogWrapper"></div>
 <div id="background">
