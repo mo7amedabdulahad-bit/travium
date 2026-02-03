@@ -8,8 +8,18 @@
 (function () {
     'use strict';
 
+    // Wait for body to exist
+    if (!document.body) {
+        console.warn('Body not ready, waiting for DOMContentLoaded');
+        document.addEventListener('DOMContentLoaded', function () {
+            window.location.reload();
+        });
+        return;
+    }
+
     // Only run on mobile
     if (!document.body.classList.contains('mobileOptimized')) {
+        console.log('Not mobile optimized, skipping mobile UI');
         return;
     }
 
