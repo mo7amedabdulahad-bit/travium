@@ -176,35 +176,41 @@
     }
 
     /* Navigation icons - use desktop sprite sheet */
+    /* Icon sprite is 60px tall per icon, stacked vertically */
     .mobileOptimized .mobile-nav-btn[data-page="dorf1"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: left -1776px !important;
+        background-position: center 0px !important;
+        /* Resources - top icon */
     }
 
     .mobileOptimized .mobile-nav-btn[data-page="dorf2"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: left -1452px !important;
+        background-position: center -60px !important;
+        /* Village/Buildings */
     }
 
     .mobileOptimized .mobile-nav-btn[data-page="karte"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: left -420px !important;
+        background-position: center -120px !important;
+        /* Map/Temple */
     }
 
     .mobileOptimized .mobile-nav-btn[data-page="reports"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: left -892px !important;
+        background-position: center -540px !important;
+        /* Reports/Documents */
     }
 
     .mobileOptimized .mobile-nav-btn[data-page="messages"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: left -656px !important;
+        background-position: center -360px !important;
+        /* Envelope/Messages */
     }
 
     .mobileOptimized .mobile-nav-btn[data-page="dailyQuests"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: left -1128px !important;
-        /* statistics icon */
+        background-position: center -240px !important;
+        /* Statistics/Chart */
     }
 
     /* Ensure background properties work correctly */
