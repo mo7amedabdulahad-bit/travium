@@ -112,25 +112,7 @@
         font-weight: bold !important;
     }
 
-    /* ============ 4. MOBILE HERO AVATAR (TOP-LEFT) ============ */
-    .mobileOptimized #mobileHeroAvatar {
-        display: block !important;
-        position: fixed !important;
-        top: 55px !important;
-        /* Below resources bar */
-        left: 10px !important;
-
-        width: 80px !important;
-        height: 80px !important;
-
-        border-radius: 50% !important;
-        background: rgba(0, 0, 0, 0.3) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
-
-        z-index: 999 !important;
-        cursor: pointer;
-    }
-
+    /* Hero Avatar - REMOVED (swipe-only for sidebar) */
     /* ============ 5. MOBILE NAVIGATION (BOTTOM - FIXED) ============ */
     .mobileOptimized #mobileNavigation {
         display: flex !important;
@@ -191,11 +173,32 @@
         border-color: #ffd700 !important;
     }
 
-    /* Icon placeholders - will use background images */
-    .mobileOptimized .mobile-nav-btn .icon {
-        display: block;
-        width: 100%;
-        height: 100%;
+    /* Navigation button icon classes - inherit from desktop */
+    .mobileOptimized .mobile-nav-btn.villageResources {
+        background-image: var(--icon-village-resources) !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn.villageBuildings {
+        background-image: var(--icon-village-buildings) !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn.map {
+        background-image: var(--icon-map) !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn.reports {
+        background-image: var(--icon-reports) !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn.messages {
+        background-image: var(--icon-messages) !important;
+    }
+
+    /* Fallback: copy background from desktop nav if CSS vars don't work */
+    body.mobileOptimized .mobile-nav-btn {
+        background-size: 70% !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
     }
 
     /* ============ 6. BUILDING QUEUE BAR (ABOVE NAV) ============ */
@@ -215,8 +218,8 @@
 
     /* ============ 7. CONTENT AREA (SCROLLABLE) ============ */
     .mobileOptimized #contentOuterContainer {
-        margin-top: 140px !important;
-        /* Resources 50px + Hero 80px + gap 10px */
+        margin-top: 55px !important;
+        /* Resources bar 50px + gap 5px */
         margin-bottom: 75px !important;
         /* Navigation 70px + gap 5px */
         padding: 5px !important;

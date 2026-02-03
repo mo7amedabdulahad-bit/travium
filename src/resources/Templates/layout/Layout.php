@@ -34,9 +34,6 @@ use Core\Helper\TimezoneHelper;
     </button>
 </nav>
 
-<!-- Mobile Hero Avatar (Top-Left) -->
-<div id="mobileHeroAvatar" style="display: none;"></div>
-
 <!-- Mobile Sidebar Containers -->
 <div id="mobileSidebarLeft" class="mobile-sidebar"></div>
 
