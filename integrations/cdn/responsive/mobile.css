@@ -1,8 +1,35 @@
 /* ==========================================================================
-   TRAVIUM MOBILE OPTIMIZATION - CLEARED FOR FRESH START
+   TRAVIUM MOBILE - MINIMAL CLEAN IMPLEMENTATION
    
-   All previous mobile code has been removed.
-   Ready for new implementation.
+   Simple mobile optimization:
+   1. Hide top navigation on mobile
+   2. Make content fit on mobile screen
+   3. Nothing else - keep it simple
    ========================================================================== */
 
-/* No mobile styles - fresh start */
+/* Only apply on mobile devices */
+@media screen and (max-width: 620px) {
+
+   /* Hide the entire header (logo + navigation) on mobile */
+   body.mobileOptimized #header {
+      display: none !important;
+   }
+
+   /* Make sure body and content fit on mobile screen */
+   body.mobileOptimized,
+   body.mobileOptimized * {
+      max-width: 100vw !important;
+      box-sizing: border-box !important;
+   }
+
+   /* Prevent horizontal scrolling */
+   body.mobileOptimized {
+      overflow-x: hidden !important;
+   }
+
+   /* Make tables scrollable if too wide */
+   body.mobileOptimized table {
+      display: block !important;
+      overflow-x: auto !important;
+   }
+}
