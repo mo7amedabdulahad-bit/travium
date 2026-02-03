@@ -176,41 +176,66 @@
     }
 
     /* Navigation icons - use desktop sprite sheet */
-    /* Icon sprite is 60px tall per icon, stacked vertically */
+    /* Each icon has 2 states (normal + active), 60px tall each, stacked as pairs */
+
+    /* dorf1 - Resources (pair 1: 0px normal, -60px active) */
     .mobileOptimized .mobile-nav-btn[data-page="dorf1"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
         background-position: center 0px !important;
-        /* Resources - top icon */
     }
 
+    .mobileOptimized .mobile-nav-btn[data-page="dorf1"].active {
+        background-position: center -60px !important;
+    }
+
+    /* dorf2 - Village/Buildings (pair 2: -120px normal, -180px active) */
     .mobileOptimized .mobile-nav-btn[data-page="dorf2"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -60px !important;
-        /* Village/Buildings */
+        background-position: center -120px !important;
     }
 
+    .mobileOptimized .mobile-nav-btn[data-page="dorf2"].active {
+        background-position: center -180px !important;
+    }
+
+    /* karte - Map (pair 3: -240px normal, -300px active) */
     .mobileOptimized .mobile-nav-btn[data-page="karte"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -120px !important;
-        /* Map/Temple */
+        background-position: center -240px !important;
     }
 
-    .mobileOptimized .mobile-nav-btn[data-page="reports"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -540px !important;
-        /* Reports/Documents */
+    .mobileOptimized .mobile-nav-btn[data-page="karte"].active {
+        background-position: center -300px !important;
     }
 
+    /* messages - Envelope (pair 4: -360px normal, -420px active) */
     .mobileOptimized .mobile-nav-btn[data-page="messages"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
         background-position: center -360px !important;
-        /* Envelope/Messages */
     }
 
+    .mobileOptimized .mobile-nav-btn[data-page="messages"].active {
+        background-position: center -420px !important;
+    }
+
+    /* reports - Documents (pair 5: -480px normal, -540px active) */
+    .mobileOptimized .mobile-nav-btn[data-page="reports"] {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-position: center -480px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="reports"].active {
+        background-position: center -540px !important;
+    }
+
+    /* dailyQuests - Statistics (pair 6: -600px normal, -660px active) */
     .mobileOptimized .mobile-nav-btn[data-page="dailyQuests"] {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -240px !important;
-        /* Statistics/Chart */
+        background-position: center -600px !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn[data-page="dailyQuests"].active {
+        background-position: center -660px !important;
     }
 
     /* Ensure background properties work correctly */
