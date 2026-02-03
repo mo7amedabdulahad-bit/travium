@@ -7,6 +7,56 @@ use Core\Helper\TimezoneHelper;
 <?php require __DIR__ . "/head.php"; ?>
 <body class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1 mobileOptimized">
 
+<!-- MOBILE UI ELEMENTS (Official Travian Replication) -->
+
+<!-- Mobile Navigation Bar (Bottom - 7 Buttons) -->
+<nav id="mobileNavigation" style="display: none;">
+    <button class="mobile-nav-btn" data-page="dorf1">
+        <span class="icon villages"></span>
+    </button>
+    <button class="mobile-nav-btn" data-page="dorf2">
+        <span class="icon buildings"></span>
+    </button>
+    <button class="mobile-nav-btn" data-page="karte">
+        <span class="icon map"></span>
+    </button>
+    <button class="mobile-nav-btn" data-page="reports">
+        <span class="icon reports"></span>
+    </button>
+    <button class="mobile-nav-btn" data-page="messages">
+        <span class="icon messages"></span>
+    </button>
+    <button class="mobile-nav-btn" data-page="dailyQuests">
+        <span class="icon dailyQuests"></span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-gold" data-page="plus">
+        <span class="icon gold"></span>
+    </button>
+</nav>
+
+<!-- Mobile Hero Avatar (Top-Left) -->
+<div id="mobileHeroAvatar" style="display: none;"></div>
+
+<!-- Mobile Sidebar Containers -->
+<div id="mobileSidebarLeft" class="mobile-sidebar"></div>
+
+<div id="mobileSidebarRight" class="mobile-sidebar">
+    <div class="mobile-sidebar-header">
+        <button class="mobile-sidebar-close">&times;</button>
+    </div>
+    <ul class="mobile-options-menu">
+        <li><a href="daily_quests.php">Daily quests</a></li>
+        <li><a href="statistiken.php">Statistics</a></li>
+        <li><a href="spieler.php">Profile</a></li>
+        <li><a href="options.php">Options</a></li>
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</div>
+
+<!-- Mobile Sidebar Backdrop -->
+<div id="mobileSidebarBackdrop" style="display: none;"></div>
+
+<!-- END MOBILE UI ELEMENTS -->
 
 <div id="reactDialogWrapper"></div>
 <div id="background">
