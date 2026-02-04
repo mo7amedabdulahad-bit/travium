@@ -185,21 +185,21 @@
     }
 
     /* ============ NAVIGATION ICONS ============ */
-    /* Base sprite setup - JavaScript sets exact positions per button */
+    /* Navigation icons use desktop sprite sheet */
     .mobileOptimized .mobile-nav-btn {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-repeat: no-repeat !important;
-        background-size: auto !important;
-        /* Don't scale sprite */
-        background-position: center !important;
-        /* Default, JS overrides */
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png');
+        background-repeat: no-repeat;
+        /* Scale sprite from 70px desktop to 55px mobile */
+        background-size: auto 55px;
+        /* JavaScript sets exact position for each button */
     }
 
     /* Gold button uses different sprite */
     .mobileOptimized .mobile-nav-gold {
-        background-image: url('../TravianOld/mainPage/img/layout/goldButton.png') !important;
-        background-position: left top !important;
-        background-size: auto !important;
+        background-image: url('../TravianOld/mainPage/img/layout/goldButton.png');
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
     }
 
 

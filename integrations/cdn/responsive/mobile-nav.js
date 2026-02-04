@@ -27,37 +27,51 @@
                 return;
             }
 
-            // Desktop navigation sprite positions
+            // Desktop sprite positions (for 70px icons)
+            // Mobile buttons are 55px, so we scale: 55/70 = 0.7857
+            const scale = 55 / 70;
+
+            function scalePos(desktopPos) {
+                // Extract the Y value and scale it
+                const match = desktopPos.match(/left (-?\d+)px/);
+                if (match) {
+                    const yPos = parseInt(match[1]);
+                    const scaledY = Math.round(yPos * scale);
+                    return `left ${scaledY}px`;
+                }
+                return desktopPos;
+            }
+
             const navConfig = {
                 'dorf1': {
                     selector: '#n1',
-                    normalPos: 'left -1776px',
-                    activePos: 'left -1532px'
+                    normalPos: scalePos('left -1776px'),
+                    activePos: scalePos('left -1532px')
                 },
                 'dorf2': {
                     selector: '#n2',
-                    normalPos: 'left -1452px',
-                    activePos: 'left -1208px'
+                    normalPos: scalePos('left -1452px'),
+                    activePos: scalePos('left -1208px')
                 },
                 'karte': {
                     selector: '#n3',
-                    normalPos: 'left -420px',
-                    activePos: 'left -420px'
+                    normalPos: scalePos('left -420px'),
+                    activePos: scalePos('left -420px')
                 },
                 'reports': {
                     selector: '#n5',
-                    normalPos: 'left -892px',
-                    activePos: 'left -892px'
+                    normalPos: scalePos('left -892px'),
+                    activePos: scalePos('left -892px')
                 },
                 'messages': {
                     selector: '#n6',
-                    normalPos: 'left -656px',
-                    activePos: 'left -656px'
+                    normalPos: scalePos('left -656px'),
+                    activePos: scalePos('left -656px')
                 },
                 'dailyQuests': {
                     selector: '#n4',
-                    normalPos: 'left -1128px',
-                    activePos: 'left -1128px'
+                    normalPos: scalePos('left -1128px'),
+                    activePos: scalePos('left -1128px')
                 }
             };
 
@@ -75,8 +89,9 @@
                     const isActive = (page === currentPage) ||
                         (desktopBtn && desktopBtn.classList.contains('active'));
 
-                    // Set sprite position (CSS already has the image)
-                    btn.style.backgroundPosition = (isActive ? config.activePos : config.normalPos) + ' !important';
+                    // Set sprite position WITH !important to override CSS
+                    const pos = isActive ? config.activePos : config.normalPos;
+                    btn.style.setProperty('background-position', pos, 'important');
 
                     // Mark as active
                     if (isActive) {
@@ -157,7 +172,8 @@
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
             const outOfGame = document.getElementById('outOfGame');
 
-            // Clone LEFT sidebar content (info boxes)
+            // Clone LEFT sidebar content (info boxes) - NOT USED NOW
+            // Left sidebar button will open  the left desktop sidebar
             if (leftSidebar && sidebarBefore) {
                 // Add server time at the top of left sidebar
                 const servertime = document.getElementById('servertime');
@@ -175,23 +191,21 @@
 
                 // CLONE sidebar content (not move) so desktop keeps original
                 const clone = sidebarBefore.cloneNode(true);
-                clone.id = 'sidebarBeforeContent_mobile'; // Prevent ID collision
+                clone.id = 'sidebarBeforeContent_mobile_left'; // Prevent ID collision
                 leftSidebar.appendChild(clone);
             }
 
-            // Clone RIGHT sidebar content (top-right navigation: Profile, Options, Logout, etc.)
-            if (rightSidebar && outOfGame) {
-                const clone = outOfGame.cloneNode(true);
-                clone.id = 'outOfGame_mobile'; // Prevent ID collision
-                // Style the cloned navigation for mobile
-                clone.style.cssText = 'display: block !important; position: static !important; width: 100% !important;';
+            // Clone RIGHT sidebar content - also clone desktop sidebar boxes
+            // This shows Villages, Daily Quests, etc.
+            if (rightSidebar && sidebarBefore) {
+                console.log('Cloning desktop sidebar to mobile right sidebar');
+                const clone = sidebarBefore.cloneNode(true);
+                clone.id = 'sidebarBeforeContent_mobile_right'; // Prevent ID collision
+                // Style for mobile
+                clone.style.cssText = 'display: block; width: 100%; padding: 10px;';
                 rightSidebar.appendChild(clone);
-
-                // Make links in cloned navigation work as normal links (not mobile-specific)
-                const links = clone.querySelectorAll('a');
-                links.forEach(link => {
-                    link.style.cssText = 'display: block; padding: 15px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;';
-                });
+            } else {
+                console.warn('Cannot clone to right sidebar:', { rightSidebar, sidebarBefore });
             }
 
             // Backdrop listener
