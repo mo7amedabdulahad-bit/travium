@@ -486,3 +486,67 @@
  l - b e h a v i o r - x :   n o n e    
  ! i m p o r t a n t ;    
  
+/* ============ MOBILE SIDEBARS ============ */
+.mobileOptimized .mobile-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    width: 80% !important;
+    max-width: 320px !important;
+    height: 100% !important;
+    background: rgba(245, 240, 230, 0.98) !important;
+    z-index: 10000 !important;
+    overflow-y: auto !important;
+    transition: transform 0.3s ease !important;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.3) !important;
+}
+
+/* LEFT sidebar - slides from left */
+.mobileOptimized #mobileSidebarLeft {
+    left: 0 !important;
+    right: auto !important;
+    transform: translateX(-100%) !important;
+}
+
+.mobileOptimized #mobileSidebarLeft.open {
+    transform: translateX(0) !important;
+}
+
+/* RIGHT sidebar - slides from right */
+.mobileOptimized #mobileSidebarRight {
+    right: 0 !important;
+    left: auto !important;
+    transform: translateX(100%) !important;
+}
+
+.mobileOptimized #mobileSidebarRight.open {
+    transform: translateX(0) !important;
+}
+
+/* Sidebar header */
+.mobileOptimized .mobile-sidebar-header {
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding: 10px !important;
+    background: #3e2d1e !important;
+}
+
+/* Close button */
+.mobileOptimized .mobile-sidebar-close {
+    background: none !important;
+    border: none !important;
+    color: #fff !important;
+    font-size: 28px !important;
+    cursor: pointer !important;
+    padding: 5px 15px !important;
+}
+
+/* Backdrop overlay */
+.mobileOptimized #mobileSidebarBackdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0,0,0,0.5) !important;
+    z-index: 9999 !important;
+}
