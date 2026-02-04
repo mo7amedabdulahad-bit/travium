@@ -45,13 +45,13 @@
             const navConfig = {
                 'dorf1': {
                     selector: '#n1',
-                    normalPos: scalePos('left -1776px'),
-                    activePos: scalePos('left -1532px')
+                    normalPos: scalePos('left -1452px'),
+                    activePos: scalePos('left -1208px')
                 },
                 'dorf2': {
                     selector: '#n2',
-                    normalPos: scalePos('left -1452px'),
-                    activePos: scalePos('left -1208px')
+                    normalPos: scalePos('left -1128px'),
+                    activePos: scalePos('left -884px')
                 },
                 'karte': {
                     selector: '#n3',
@@ -70,8 +70,8 @@
                 },
                 'dailyQuests': {
                     selector: '#n4',
-                    normalPos: scalePos('left -1128px'),
-                    activePos: scalePos('left -1128px')
+                    normalPos: scalePos('left -804px'),
+                    activePos: scalePos('left -804px')
                 }
             };
 
