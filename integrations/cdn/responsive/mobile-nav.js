@@ -27,58 +27,90 @@
                 return;
             }
 
-            // Map mobile buttons to desktop navigation items
-            const navMap = {
-                'dorf1': '#n1 a',
-                'dorf2': '#n2 a',
-                'karte': '#n3 a',
-                'reports': '#n5 a',
-                'messages': '#n6 a',
-                'dailyQuests': '#n4 a'  // Daily Quests uses Statistics (#n4)
+            // Desktop navigation classes and their sprite positions
+            const navConfig = {
+                'dorf1': {
+                    selector: '#n1',
+                    className: 'villageResources',
+                    normalPos: 'left -1776px',
+                    activePos: 'left -1532px',
+                    hoverPos: 'left -1696px'
+                },
+                'dorf2': {
+                    selector: '#n2',
+                    className: 'villageBuildings',
+                    normalPos: 'left -1452px',
+                    activePos: 'left -1208px',
+                    hoverPos: 'left -1372px'
+                },
+                'karte': {
+                    selector: '#n3',
+                    className: 'map',
+                    normalPos: 'left -420px',
+                    activePos: 'left -420px',  // map doesn't have active state in mobile usually
+                    hoverPos: 'left -340px'
+                },
+                'reports': {
+                    selector: '#n5',
+                    className: 'reports',
+                    normalPos: 'left -892px',
+                    activePos: 'left -892px',
+                    hoverPos: 'left -812px'
+                },
+                'messages': {
+                    selector: '#n6',
+                    className: 'messages',
+                    normalPos: 'left -656px',
+                    activePos: 'left -656px',
+                    hoverPos: 'left -576px'
+                },
+                'dailyQuests': {
+                    selector: '#n4',
+                    className: 'statistics',
+                    normalPos: 'left -1128px',
+                    activePos: 'left -1128px',
+                    hoverPos: 'left -1048px'
+                }
             };
 
-            // Get mobile buttons
-            const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
+            const spriteImage = '../TravianOld/mainPage/img/layout/mainNavigation-ltr.png';
             const currentPage = window.location.pathname.split('/').pop().split('.')[0];
+
+            const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
 
             mobileButtons.forEach(btn => {
                 const page = btn.dataset.page;
 
-                if (navMap[page]) {
-                    // Find desktop nav button
-                    const desktopBtn = desktopNav.querySelector(navMap[page]);
+                if (navConfig[page]) {
+                    const config = navConfig[page];
+                    const desktopBtn = desktopNav.querySelector(config.selector + ' a');
 
-                    if (desktopBtn) {
-                        // Get computed styles from desktop button
-                        const computedStyle = window.getComputedStyle(desktopBtn);
-                        const bgImage = computedStyle.backgroundImage;
-                        const bgPosition = computedStyle.backgroundPosition;
+                    // Set sprite image
+                    btn.style.backgroundImage = `url('${spriteImage}')`;
 
-                        // Apply to mobile button
-                        if (bgImage && bgImage !== 'none') {
-                            btn.style.backgroundImage = bgImage;
-                            btn.style.backgroundPosition = bgPosition;
-                            btn.style.backgroundSize = 'contain';
-                            btn.style.backgroundRepeat = 'no-repeat';
-                        }
+                    // Determine if this page is active
+                    const isActive = (page === currentPage) ||
+                        (desktopBtn && desktopBtn.classList.contains('active'));
 
-                        // Get href for navigation
-                        const href = desktopBtn.getAttribute('href');
+                    // Set initial position
+                    btn.style.backgroundPosition = isActive ? config.activePos : config.normalPos;
 
-                        // Add click handler
-                        btn.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (href) {
-                                window.location.href = href;
-                            }
-                        });
-
-                        // Highlight if this is the active page
-                        if (page === currentPage || desktopBtn.classList.contains('active')) {
-                            btn.classList.add('active');
-                        }
+                    // Mark as active
+                    if (isActive) {
+                        btn.classList.add('active');
                     }
+
+                    // Get href for navigation
+                    const href = desktopBtn ? desktopBtn.getAttribute('href') : `${page}.php`;
+
+                    // Add click handler
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (href) {
+                            window.location.href = href;
+                        }
+                    });
                 }
                 // Plus/Gold button
                 else if (page === 'plus') {
@@ -138,8 +170,11 @@
 
         function cloneSidebarContent() {
             const leftSidebar = document.getElementById('mobileSidebarLeft');
+            const rightSidebar = document.getElementById('mobileSidebarRight');
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
+            const outOfGame = document.getElementById('outOfGame');
 
+            // Clone LEFT sidebar content (info boxes)
             if (leftSidebar && sidebarBefore) {
                 // Add server time at the top of left sidebar
                 const servertime = document.getElementById('servertime');
@@ -159,6 +194,21 @@
                 const clone = sidebarBefore.cloneNode(true);
                 clone.id = 'sidebarBeforeContent_mobile'; // Prevent ID collision
                 leftSidebar.appendChild(clone);
+            }
+
+            // Clone RIGHT sidebar content (top-right navigation: Profile, Options, Logout, etc.)
+            if (rightSidebar && outOfGame) {
+                const clone = outOfGame.cloneNode(true);
+                clone.id = 'outOfGame_mobile'; // Prevent ID collision
+                // Style the cloned navigation for mobile
+                clone.style.cssText = 'display: block !important; position: static !important; width: 100% !important;';
+                rightSidebar.appendChild(clone);
+
+                // Make links in cloned navigation work as normal links (not mobile-specific)
+                const links = clone.querySelectorAll('a');
+                links.forEach(link => {
+                    link.style.cssText = 'display: block; padding: 15px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;';
+                });
             }
 
             // Backdrop listener

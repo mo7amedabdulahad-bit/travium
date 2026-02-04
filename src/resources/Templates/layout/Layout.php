@@ -45,19 +45,7 @@ use Core\Helper\TimezoneHelper;
     <div class="mobile-sidebar-header">
         <button class="mobile-sidebar-close">&times;</button>
     </div>
-    <ul class="mobile-options-menu">
-        <li><a href="daily_quests.php"><span class="icon">!</span> Daily quests</a></li>
-        <li><a href="statistiken.php"><span class="icon">📊</span> Statistics</a></li>
-        <li><a href="spieler.php"><span class="icon">👤</span> Profile</a></li>
-        <li><a href="options.php"><span class="icon">⚙</span> Options</a></li>
-        <li><a href="help.php"><span class="icon">?</span> Help</a></li>
-        <li><a href="logout.php"><span class="icon">×</span> Logout</a></li>
-    </ul>
-    <div class="mobile-sidebar-footer">
-        <a href="<?=Config::getInstance()->settings->indexUrl; ?>">Homepage</a>
-        <a href="<?=Config::getInstance()->settings->indexUrl; ?>agb.php">Terms</a>
-        <a href="options.php">Privacy settings</a>
-    </div>
+    <!-- Content will be cloned from desktop #outOfGame by mobile-nav.js -->
 </div>
 
 
