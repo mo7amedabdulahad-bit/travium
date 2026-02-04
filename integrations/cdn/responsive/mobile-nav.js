@@ -124,59 +124,37 @@
             const leftSidebar = document.getElementById('mobileSidebarLeft');
             const rightSidebar = document.getElementById('mobileSidebarRight');
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
-            const outOfGame = document.getElementById('outOfGame');
 
             console.log('Cloning sidebar content...');
             console.log('sidebarBefore:', !!sidebarBefore);
-            console.log('outOfGame:', !!outOfGame);
 
             // ========================================
-            // LEFT SIDEBAR = MENU (Profile, Options, etc.)
-            // Based on official Travian screenshot "Mobile menu.png"
+            // BOTH SIDEBARS clone from sidebarBeforeContent (desktop left sidebar)
+            // Based on official Travian screenshots:
+            // - "Left side bar.png" = Info Box, Link List
+            // - "Right side bar.png" = Village info, Villages, Hero, Tasks
             // ========================================
-            if (leftSidebar && outOfGame) {
-                console.log('LEFT sidebar: Cloning outOfGame (menu items)');
 
-                const clone = outOfGame.cloneNode(true);
-                clone.id = 'outOfGame_mobile';
-                clone.style.cssText = 'display: block; list-style: none; margin: 0; padding: 0; width: 100%;';
+            if (sidebarBefore) {
+                // LEFT SIDEBAR = Full sidebar content
+                if (leftSidebar) {
+                    console.log('LEFT sidebar: Cloning sidebarBeforeContent');
+                    const clone = sidebarBefore.cloneNode(true);
+                    clone.id = 'sidebarBeforeContent_mobile_left';
+                    clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
+                    leftSidebar.appendChild(clone);
+                }
 
-                // Convert icon links to text menu
-                const items = clone.querySelectorAll('li');
-                items.forEach(item => {
-                    item.style.cssText = 'display: block; width: 100%; margin: 0; border-bottom: 1px solid #ddd;';
-
-                    const link = item.querySelector('a');
-                    const divLink = item.querySelector('div.a');
-                    const img = item.querySelector('img');
-
-                    if (img && img.alt) {
-                        const menuText = img.alt;
-                        if (link) {
-                            link.innerHTML = menuText;
-                            link.style.cssText = 'display: block; padding: 15px 20px; color: #333; text-decoration: none; font-size: 16px; background: none !important;';
-                        } else if (divLink) {
-                            divLink.innerHTML = menuText;
-                            divLink.style.cssText = 'display: block; padding: 15px 20px; color: #999; font-size: 16px; background: none !important;';
-                        }
-                    }
-                });
-
-                leftSidebar.appendChild(clone);
-            }
-
-            // ========================================
-            // RIGHT SIDEBAR = VILLAGE INFO (Villages, Hero, Tasks)
-            // Based on official Travian screenshot "Right side bar.png"
-            // ========================================
-            if (rightSidebar && sidebarBefore) {
-                console.log('RIGHT sidebar: Cloning sidebarBeforeContent (village info)');
-
-                const clone = sidebarBefore.cloneNode(true);
-                clone.id = 'sidebarBeforeContent_mobile';
-                clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
-
-                rightSidebar.appendChild(clone);
+                // RIGHT SIDEBAR = Same content (full sidebar)
+                if (rightSidebar) {
+                    console.log('RIGHT sidebar: Cloning sidebarBeforeContent');
+                    const clone = sidebarBefore.cloneNode(true);
+                    clone.id = 'sidebarBeforeContent_mobile_right';
+                    clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
+                    rightSidebar.appendChild(clone);
+                }
+            } else {
+                console.warn('sidebarBeforeContent not found!');
             }
 
             // Backdrop listener
