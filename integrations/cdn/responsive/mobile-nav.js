@@ -27,55 +27,41 @@
                 return;
             }
 
-            // Desktop navigation classes and their sprite positions
+            // Desktop navigation sprite positions
             const navConfig = {
                 'dorf1': {
                     selector: '#n1',
-                    className: 'villageResources',
                     normalPos: 'left -1776px',
-                    activePos: 'left -1532px',
-                    hoverPos: 'left -1696px'
+                    activePos: 'left -1532px'
                 },
                 'dorf2': {
                     selector: '#n2',
-                    className: 'villageBuildings',
                     normalPos: 'left -1452px',
-                    activePos: 'left -1208px',
-                    hoverPos: 'left -1372px'
+                    activePos: 'left -1208px'
                 },
                 'karte': {
                     selector: '#n3',
-                    className: 'map',
                     normalPos: 'left -420px',
-                    activePos: 'left -420px',  // map doesn't have active state in mobile usually
-                    hoverPos: 'left -340px'
+                    activePos: 'left -420px'
                 },
                 'reports': {
                     selector: '#n5',
-                    className: 'reports',
                     normalPos: 'left -892px',
-                    activePos: 'left -892px',
-                    hoverPos: 'left -812px'
+                    activePos: 'left -892px'
                 },
                 'messages': {
                     selector: '#n6',
-                    className: 'messages',
                     normalPos: 'left -656px',
-                    activePos: 'left -656px',
-                    hoverPos: 'left -576px'
+                    activePos: 'left -656px'
                 },
                 'dailyQuests': {
                     selector: '#n4',
-                    className: 'statistics',
                     normalPos: 'left -1128px',
-                    activePos: 'left -1128px',
-                    hoverPos: 'left -1048px'
+                    activePos: 'left -1128px'
                 }
             };
 
-            const spriteImage = '../TravianOld/mainPage/img/layout/mainNavigation-ltr.png';
             const currentPage = window.location.pathname.split('/').pop().split('.')[0];
-
             const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
 
             mobileButtons.forEach(btn => {
@@ -85,15 +71,12 @@
                     const config = navConfig[page];
                     const desktopBtn = desktopNav.querySelector(config.selector + ' a');
 
-                    // Set sprite image
-                    btn.style.backgroundImage = `url('${spriteImage}')`;
-
-                    // Determine if this page is active
+                    // CSS already sets the background-image, we only set the position
                     const isActive = (page === currentPage) ||
                         (desktopBtn && desktopBtn.classList.contains('active'));
 
-                    // Set initial position
-                    btn.style.backgroundPosition = isActive ? config.activePos : config.normalPos;
+                    // Set sprite position (CSS already has the image)
+                    btn.style.backgroundPosition = (isActive ? config.activePos : config.normalPos) + ' !important';
 
                     // Mark as active
                     if (isActive) {

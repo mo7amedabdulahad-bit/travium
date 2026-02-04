@@ -185,18 +185,22 @@
     }
 
     /* ============ NAVIGATION ICONS ============ */
-    /* Icons are copied from desktop navigation by JavaScript (mobile-nav.js) */
-    /* This approach ensures icons always match desktop sprite positions */
-    /* See initNavigation() function for implementation */
+    /* Base sprite setup - JavaScript sets exact positions per button */
+    .mobileOptimized .mobile-nav-btn {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
+        background-repeat: no-repeat !important;
+        background-size: auto !important;
+        /* Don't scale sprite */
+        background-position: center !important;
+        /* Default, JS overrides */
+    }
 
-    /* The mobile-nav.js script copies computed styles from desktop navigation: */
-    /* - dorf1: copied from #navigation #n1.villageResources a */
-    /* - dorf2: copied from #navigation #n2.villageBuildings a */
-    /* - karte: copied from #navigation #n3.map a */
-    /* - reports: copied from #navigation #n5.reports a */
-    /* - messages: copied from #navigation #n6.messages a */
-
-    /* Daily Quests button will have sprite copied by JavaScript from statistics navigation */
+    /* Gold button uses different sprite */
+    .mobileOptimized .mobile-nav-gold {
+        background-image: url('../TravianOld/mainPage/img/layout/goldButton.png') !important;
+        background-position: left top !important;
+        background-size: auto !important;
+    }
 
 
     /* ============ 6. BUILDING QUEUE BAR (ABOVE NAV) ============ */
