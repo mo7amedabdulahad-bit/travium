@@ -75,8 +75,14 @@
                 }
             };
 
+            console.log('=== INIT NAVIGATION ===');
+            console.log('Nav config:', navConfig);
+
             const currentPage = window.location.pathname.split('/').pop().split('.')[0];
             const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
+
+            console.log(`Found ${mobileButtons.length} mobile buttons`);
+            console.log(`Current page: ${currentPage}`);
 
             mobileButtons.forEach(btn => {
                 const page = btn.dataset.page;
@@ -92,6 +98,10 @@
                     // Set sprite position WITH !important to override CSS
                     const pos = isActive ? config.activePos : config.normalPos;
                     btn.style.setProperty('background-position', pos, 'important');
+
+                    console.log(`Button ${page}: position=${pos}, isActive=${isActive}`);
+                    console.log(`  Computed:`, window.getComputedStyle(btn).backgroundPosition);
+                    console.log(`  Image:`, window.getComputedStyle(btn).backgroundImage);
 
                     // Mark as active
                     if (isActive) {
