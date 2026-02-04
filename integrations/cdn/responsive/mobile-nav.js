@@ -151,22 +151,38 @@
                     leftSidebar.appendChild(clone);
                 }
 
-                // RIGHT SIDEBAR = Same content (full sidebar)
+                // RIGHT SIDEBAR = ONLY InfoBox and LinkList (the "left elements")
+                // Based on official Travian "Left side bar.png" screenshot
                 if (rightSidebar) {
-                    // Clear any existing cloned content (keep header)
-                    const existingRight = rightSidebar.querySelector('#sidebarBeforeContent_mobile_right');
+                    // Clear any existing cloned content
+                    const existingRight = rightSidebar.querySelector('.mobile-sidebar-content');
                     if (existingRight) existingRight.remove();
 
-                    // Also remove any old outOfGame content that might still exist
-                    const oldOutOfGame = rightSidebar.querySelector('#outOfGame_mobile');
-                    if (oldOutOfGame) oldOutOfGame.remove();
+                    // Create a container for the right sidebar content
+                    const container = document.createElement('div');
+                    container.className = 'mobile-sidebar-content';
+                    container.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
 
-                    console.log('RIGHT sidebar: Cloning sidebarBeforeContent');
-                    const clone = sidebarBefore.cloneNode(true);
-                    clone.id = 'sidebarBeforeContent_mobile_right';
-                    clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
-                    rightSidebar.appendChild(clone);
-                    console.log('RIGHT sidebar: Clone appended, children count:', rightSidebar.children.length);
+                    // Clone InfoBox
+                    const infoBox = document.getElementById('sidebarBoxInfobox');
+                    if (infoBox) {
+                        const infoClone = infoBox.cloneNode(true);
+                        infoClone.id = 'sidebarBoxInfobox_mobile';
+                        container.appendChild(infoClone);
+                        console.log('RIGHT sidebar: Cloned InfoBox');
+                    }
+
+                    // Clone LinkList
+                    const linkList = document.getElementById('sidebarBoxLinklist');
+                    if (linkList) {
+                        const linkClone = linkList.cloneNode(true);
+                        linkClone.id = 'sidebarBoxLinklist_mobile';
+                        container.appendChild(linkClone);
+                        console.log('RIGHT sidebar: Cloned LinkList');
+                    }
+
+                    rightSidebar.appendChild(container);
+                    console.log('RIGHT sidebar: Content appended, elements:', container.children.length);
                 }
             } else {
                 console.warn('sidebarBeforeContent not found!');
