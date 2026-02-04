@@ -1,180 +1,124 @@
 /**
  * Travium Mobile Navigation & Sidebar Handler
  * Official Travian Mobile UI Replication
+ * 
+ * FIXED VERSION: Uses emoji icons instead of broken sprite sheets
  */
 
 (function () {
     'use strict';
 
-    // Main initialization function
     function initMobileUI() {
-        // Check if mobile optimized
         if (!document.body || !document.body.classList.contains('mobileOptimized')) {
             return;
         }
 
+        console.log('=== MOBILE UI INIT ===');
+
         // ============ GLOBAL STATE ============
         let activeSidebar = null;
 
-        // ============ NAVIGATION - USE COMPUTED STYLES FROM DESKTOP ============
+        // ============ NAVIGATION ============
 
         function initNavigation() {
             const mobileNav = document.getElementById('mobileNavigation');
-            const desktopNav = document.getElementById('navigation');
-
-            if (!mobileNav || !desktopNav) {
-                console.warn('Navigation elements not found');
+            if (!mobileNav) {
+                console.warn('Mobile navigation not found');
                 return;
             }
 
-            // Desktop sprite positions (for 70px icons)
-            // Mobile buttons are 55px, so we scale: 55/70 = 0.7857
-            const scale = 55 / 70;
-
-            function scalePos(desktopPos) {
-                // Extract the Y value and scale it
-                const match = desktopPos.match(/left (-?\d+)px/);
-                if (match) {
-                    const yPos = parseInt(match[1]);
-                    const scaledY = Math.round(yPos * scale);
-                    return `left ${scaledY}px`;
-                }
-                return desktopPos;
-            }
-
-            const navConfig = {
-                'dorf1': {
-                    selector: '#n1',
-                    normalPos: scalePos('left -1452px'),
-                    activePos: scalePos('left -1208px')
-                },
-                'dorf2': {
-                    selector: '#n2',
-                    normalPos: scalePos('left -1128px'),
-                    activePos: scalePos('left -884px')
-                },
-                'karte': {
-                    selector: '#n3',
-                    normalPos: scalePos('left -420px'),
-                    activePos: scalePos('left -420px')
-                },
-                'reports': {
-                    selector: '#n5',
-                    normalPos: scalePos('left -892px'),
-                    activePos: scalePos('left -892px')
-                },
-                'messages': {
-                    selector: '#n6',
-                    normalPos: scalePos('left -656px'),
-                    activePos: scalePos('left -656px')
-                },
-                'dailyQuests': {
-                    selector: '#n4',
-                    normalPos: scalePos('left -804px'),
-                    activePos: scalePos('left -804px')
-                }
+            // Simple, stable icon mapping using emoji
+            const iconConfig = {
+                'dorf1': { icon: '🏡', url: 'dorf1.php', label: 'Resources' },
+                'dorf2': { icon: '🏛️', url: 'dorf2.php', label: 'Buildings' },
+                'karte': { icon: '🗺️', url: 'karte.php', label: 'Map' },
+                'reports': { icon: '📜', url: 'berichte.php', label: 'Reports' },
+                'messages': { icon: '✉️', url: 'messages.php', label: 'Messages' },
+                'dailyQuests': { icon: '📊', url: 'statistiken.php', label: 'Statistics' },
+                'plus': { icon: '💰', url: 'payment.php', label: 'Gold' }
             };
-
-            console.log('=== INIT NAVIGATION ===');
-            console.log('Nav config:', navConfig);
 
             const currentPage = window.location.pathname.split('/').pop().split('.')[0];
             const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
 
-            console.log(`Found ${mobileButtons.length} mobile buttons`);
-            console.log(`Current page: ${currentPage}`);
+            console.log(`Initializing ${mobileButtons.length} nav buttons, current page: ${currentPage}`);
 
             mobileButtons.forEach(btn => {
                 const page = btn.dataset.page;
+                const config = iconConfig[page];
 
-                if (navConfig[page]) {
-                    const config = navConfig[page];
-                    const desktopBtn = desktopNav.querySelector(config.selector + ' a');
+                if (config) {
+                    // Set emoji icon - STABLE, won't move
+                    btn.textContent = config.icon;
+                    btn.style.cssText = `
+                        font-size: 28px !important;
+                        line-height: 55px !important;
+                        text-align: center !important;
+                        background-image: none !important;
+                    `;
 
-                    // CSS already sets the background-image, we only set the position
-                    const isActive = (page === currentPage) ||
-                        (desktopBtn && desktopBtn.classList.contains('active'));
-
-                    // Set sprite position WITH !important to override CSS
-                    const pos = isActive ? config.activePos : config.normalPos;
-                    btn.style.setProperty('background-position', pos, 'important');
-
-                    console.log(`Button ${page}: position=${pos}, isActive=${isActive}`);
-                    console.log(`  Computed:`, window.getComputedStyle(btn).backgroundPosition);
-                    console.log(`  Image:`, window.getComputedStyle(btn).backgroundImage);
-
-                    // Mark as active
-                    if (isActive) {
+                    // Active state
+                    if (page === currentPage || page === 'berichte' && currentPage === 'reports') {
                         btn.classList.add('active');
                     }
 
-                    // Get href for navigation
-                    const href = desktopBtn ? desktopBtn.getAttribute('href') : `${page}.php`;
-
-                    // Add click handler
+                    // Click handler
                     btn.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (href) {
-                            window.location.href = href;
-                        }
-                    });
-                }
-                // Plus/Gold button
-                else if (page === 'plus') {
-                    btn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        if (typeof jQuery !== 'undefined') {
-                            jQuery(window).trigger('startPaymentWizard', {});
+                        if (page === 'plus') {
+                            if (typeof jQuery !== 'undefined') {
+                                jQuery(window).trigger('startPaymentWizard', {});
+                            } else {
+                                window.location.href = config.url;
+                            }
                         } else {
-                            window.location.href = 'payment.php';
+                            window.location.href = config.url;
                         }
                     });
+
+                    console.log(`Button ${page}: ${config.icon}`);
                 }
             });
         }
 
-        // ============ SIDEBAR FUNCTIONS ============
+        // ============ SIDEBARS ============
 
         function openSidebar(side) {
-            closeSidebar();
-
             const sidebarId = side === 'left' ? 'mobileSidebarLeft' : 'mobileSidebarRight';
             const sidebar = document.getElementById(sidebarId);
             const backdrop = document.getElementById('mobileSidebarBackdrop');
 
-            if (!sidebar || !backdrop) return;
+            if (!sidebar) {
+                console.warn(`Sidebar ${sidebarId} not found`);
+                return;
+            }
+
+            console.log(`Opening ${side} sidebar`);
+
+            // Close any open sidebar first
+            closeSidebar();
 
             sidebar.classList.add('open');
-            backdrop.classList.add('active');
-            backdrop.style.display = 'block';
+            if (backdrop) backdrop.style.display = 'block';
             activeSidebar = side;
-
-            document.body.style.overflow = 'hidden';
         }
 
         function closeSidebar() {
-            if (!activeSidebar) return;
-
-            const sidebarId = activeSidebar === 'left' ? 'mobileSidebarLeft' : 'mobileSidebarRight';
-            const sidebar = document.getElementById(sidebarId);
+            const leftSidebar = document.getElementById('mobileSidebarLeft');
+            const rightSidebar = document.getElementById('mobileSidebarRight');
             const backdrop = document.getElementById('mobileSidebarBackdrop');
 
-            if (sidebar) sidebar.classList.remove('open');
-            if (backdrop) {
-                backdrop.classList.remove('active');
-                backdrop.style.display = 'none';
-            }
-
-            document.body.style.overflow = '';
+            if (leftSidebar) leftSidebar.classList.remove('open');
+            if (rightSidebar) rightSidebar.classList.remove('open');
+            if (backdrop) backdrop.style.display = 'none';
             activeSidebar = null;
         }
 
-        // Export to window
         window.closeMobileSidebar = closeSidebar;
         window.openMobileSidebar = openSidebar;
 
-        // ============ SIDEBAR CONTENT - CLONE (NOT MOVE) ============
+        // ============ SIDEBAR CONTENT CLONING ============
 
         function cloneSidebarContent() {
             const leftSidebar = document.getElementById('mobileSidebarLeft');
@@ -182,21 +126,25 @@
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
             const outOfGame = document.getElementById('outOfGame');
 
-            // ============ SIDEBAR CONTENT - SWAPPED AS REQUESTED ============
+            console.log('Cloning sidebar content...');
+            console.log('sidebarBefore:', !!sidebarBefore);
+            console.log('outOfGame:', !!outOfGame);
 
-            // Clone LEFT mobile sidebar = Desktop top-right navigation (Profile, Options, Logout)
+            // ========================================
+            // LEFT SIDEBAR = MENU (Profile, Options, etc.)
+            // Based on official Travian screenshot "Mobile menu.png"
+            // ========================================
             if (leftSidebar && outOfGame) {
-                console.log('Cloning desktop outOfGame to mobile LEFT sidebar');
+                console.log('LEFT sidebar: Cloning outOfGame (menu items)');
+
                 const clone = outOfGame.cloneNode(true);
                 clone.id = 'outOfGame_mobile';
-
-                // Convert horizontal icon list to vertical text menu
                 clone.style.cssText = 'display: block; list-style: none; margin: 0; padding: 0; width: 100%;';
 
-                // Style and extract text from images
+                // Convert icon links to text menu
                 const items = clone.querySelectorAll('li');
                 items.forEach(item => {
-                    item.style.cssText = 'display: block; width: 100%; float: none; margin: 0; border-bottom: 1px solid #eee;';
+                    item.style.cssText = 'display: block; width: 100%; margin: 0; border-bottom: 1px solid #ddd;';
 
                     const link = item.querySelector('a');
                     const divLink = item.querySelector('div.a');
@@ -206,44 +154,29 @@
                         const menuText = img.alt;
                         if (link) {
                             link.innerHTML = menuText;
-                            link.style.cssText = 'display: block; padding: 15px 20px; color: #333; text-decoration: none; font-size: 16px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: left;';
+                            link.style.cssText = 'display: block; padding: 15px 20px; color: #333; text-decoration: none; font-size: 16px; background: none !important;';
                         } else if (divLink) {
                             divLink.innerHTML = menuText;
-                            divLink.style.cssText = 'display: block; padding: 15px 20px; color: #999; font-size: 16px; width: 100%; box-sizing: border-box; text-align: left;';
+                            divLink.style.cssText = 'display: block; padding: 15px 20px; color: #999; font-size: 16px; background: none !important;';
                         }
                     }
                 });
 
                 leftSidebar.appendChild(clone);
-            } else {
-                console.warn('Cannot clone to left sidebar:', { leftSidebar, outOfGame });
             }
 
-            // Clone RIGHT mobile sidebar = Desktop left sidebar (Villages, Daily Quests, etc.)
+            // ========================================
+            // RIGHT SIDEBAR = VILLAGE INFO (Villages, Hero, Tasks)
+            // Based on official Travian screenshot "Right side bar.png"
+            // ========================================
             if (rightSidebar && sidebarBefore) {
-                console.log('Cloning desktop sidebar to mobile RIGHT sidebar');
+                console.log('RIGHT sidebar: Cloning sidebarBeforeContent (village info)');
 
-                // Add server time at the top
-                const servertime = document.getElementById('servertime');
-                if (servertime) {
-                    const servertimeClone = servertime.cloneNode(true);
-                    servertimeClone.id = 'servertime_mobile_right';
-                    servertimeClone.style.cssText = 'display: block; text-align: center; padding: 10px; background: rgba(255,255,255,0.1); margin-bottom: 15px; color: #fff; font-size: 14px;';
-
-                    const header = rightSidebar.querySelector('.mobile-sidebar-header');
-                    if (header) header.after(servertimeClone);
-                    else rightSidebar.insertBefore(servertimeClone, rightSidebar.firstChild);
-                }
-
-                // Clone content
                 const clone = sidebarBefore.cloneNode(true);
-                clone.id = 'sidebarBeforeContent_mobile_right';
-                // Ensure village list works
+                clone.id = 'sidebarBeforeContent_mobile';
                 clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
 
                 rightSidebar.appendChild(clone);
-            } else {
-                console.warn('Cannot clone to right sidebar:', { rightSidebar, sidebarBefore });
             }
 
             // Backdrop listener
@@ -278,11 +211,11 @@
             // Ignore if too much vertical movement
             if (deltaY > VERTICAL_TOLERANCE) return;
 
-            // Swipe RIGHT from left edge → open left sidebar
+            // Swipe RIGHT from left edge → open LEFT sidebar (menu)
             if (deltaX > SWIPE_THRESHOLD && touchStartX < EDGE_THRESHOLD) {
                 openSidebar('left');
             }
-            // Swipe LEFT from right edge → open right sidebar
+            // Swipe LEFT from right edge → open RIGHT sidebar (village info)
             else if (deltaX < -SWIPE_THRESHOLD && touchStartX > (screenWidth - EDGE_THRESHOLD)) {
                 openSidebar('right');
             }
@@ -307,34 +240,12 @@
             handleSwipe();
         }, { passive: true });
 
-        // ============ SIDEBAR TOGGLE BUTTONS ============
-
-        function initSidebarToggles() {
-            const leftToggle = document.getElementById('mobileSidebarToggleLeft');
-            const rightToggle = document.getElementById('mobileSidebarToggleRight');
-
-            if (leftToggle) {
-                leftToggle.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openSidebar('left');
-                });
-            }
-
-            if (rightToggle) {
-                rightToggle.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openSidebar('right');
-                });
-            }
-        }
-
         // ============ RUN ALL INITIALIZATIONS ============
 
         initNavigation();
         cloneSidebarContent();
-        initSidebarToggles();
+
+        console.log('=== MOBILE UI INIT COMPLETE ===');
     }
 
     // ============ WAIT FOR DOM THEN RUN ============
