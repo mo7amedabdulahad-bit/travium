@@ -124,51 +124,48 @@
             const leftSidebar = document.getElementById('mobileSidebarLeft');
             const rightSidebar = document.getElementById('mobileSidebarRight');
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
+            const sidebarAfter = document.getElementById('sidebarAfterContent');
 
             console.log('Cloning sidebar content...');
             console.log('sidebarBefore:', !!sidebarBefore);
+            console.log('sidebarAfter:', !!sidebarAfter);
 
             // ========================================
-            // BOTH SIDEBARS clone from sidebarBeforeContent (desktop left sidebar)
-            // Based on official Travian screenshots:
-            // - "Left side bar.png" = Info Box, Link List
-            // - "Right side bar.png" = Village info, Villages, Hero, Tasks
+            // LEFT SIDEBAR = sidebarBeforeContent (Hero, Link List, Info Box)
+            // RIGHT SIDEBAR = sidebarAfterContent (Active Village, Villages, Quests, Tasks)
             // ========================================
 
-            if (sidebarBefore) {
-                console.log('sidebarBeforeContent found, content length:', sidebarBefore.innerHTML.length);
+            // LEFT SIDEBAR = sidebarBeforeContent
+            if (sidebarBefore && leftSidebar) {
+                // Clear any existing cloned content (keep header)
+                const existingLeft = leftSidebar.querySelector('#sidebarBeforeContent_mobile_left');
+                if (existingLeft) existingLeft.remove();
 
-                // LEFT SIDEBAR = Full sidebar content
-                if (leftSidebar) {
-                    // Clear any existing cloned content (keep header)
-                    const existingLeft = leftSidebar.querySelector('#sidebarBeforeContent_mobile_left');
-                    if (existingLeft) existingLeft.remove();
+                console.log('LEFT sidebar: Cloning sidebarBeforeContent');
+                const clone = sidebarBefore.cloneNode(true);
+                clone.id = 'sidebarBeforeContent_mobile_left';
+                clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
+                leftSidebar.appendChild(clone);
+            }
 
-                    console.log('LEFT sidebar: Cloning sidebarBeforeContent');
-                    const clone = sidebarBefore.cloneNode(true);
-                    clone.id = 'sidebarBeforeContent_mobile_left';
-                    clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
-                    leftSidebar.appendChild(clone);
-                }
+            // RIGHT SIDEBAR = sidebarAfterContent (Active Village, Villages, Daily Quests, Vote, Tasks)
+            if (sidebarAfter && rightSidebar) {
+                // Clear any existing cloned content
+                const existingRight = rightSidebar.querySelector('#sidebarAfterContent_mobile_right');
+                if (existingRight) existingRight.remove();
+                const oldContent = rightSidebar.querySelector('.mobile-sidebar-content');
+                if (oldContent) oldContent.remove();
+                const oldBefore = rightSidebar.querySelector('#sidebarBeforeContent_mobile_right');
+                if (oldBefore) oldBefore.remove();
 
-                // RIGHT SIDEBAR = Full sidebar content (Hero, Villages, Quests, etc.)
-                // Same as LEFT sidebar - matching screenshot 2
-                if (rightSidebar) {
-                    // Clear any existing cloned content
-                    const existingRight = rightSidebar.querySelector('#sidebarBeforeContent_mobile_right');
-                    if (existingRight) existingRight.remove();
-                    const oldContent = rightSidebar.querySelector('.mobile-sidebar-content');
-                    if (oldContent) oldContent.remove();
-
-                    console.log('RIGHT sidebar: Cloning full sidebarBeforeContent');
-                    const clone = sidebarBefore.cloneNode(true);
-                    clone.id = 'sidebarBeforeContent_mobile_right';
-                    clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
-                    rightSidebar.appendChild(clone);
-                    console.log('RIGHT sidebar: Full content appended');
-                }
+                console.log('RIGHT sidebar: Cloning sidebarAfterContent');
+                const clone = sidebarAfter.cloneNode(true);
+                clone.id = 'sidebarAfterContent_mobile_right';
+                clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
+                rightSidebar.appendChild(clone);
+                console.log('RIGHT sidebar: sidebarAfterContent appended');
             } else {
-                console.warn('sidebarBeforeContent not found!');
+                console.warn('sidebarAfterContent not found for RIGHT sidebar!');
             }
 
             // Backdrop listener
