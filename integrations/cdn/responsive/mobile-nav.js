@@ -136,8 +136,14 @@
             // ========================================
 
             if (sidebarBefore) {
+                console.log('sidebarBeforeContent found, content length:', sidebarBefore.innerHTML.length);
+
                 // LEFT SIDEBAR = Full sidebar content
                 if (leftSidebar) {
+                    // Clear any existing cloned content (keep header)
+                    const existingLeft = leftSidebar.querySelector('#sidebarBeforeContent_mobile_left');
+                    if (existingLeft) existingLeft.remove();
+
                     console.log('LEFT sidebar: Cloning sidebarBeforeContent');
                     const clone = sidebarBefore.cloneNode(true);
                     clone.id = 'sidebarBeforeContent_mobile_left';
@@ -147,11 +153,20 @@
 
                 // RIGHT SIDEBAR = Same content (full sidebar)
                 if (rightSidebar) {
+                    // Clear any existing cloned content (keep header)
+                    const existingRight = rightSidebar.querySelector('#sidebarBeforeContent_mobile_right');
+                    if (existingRight) existingRight.remove();
+
+                    // Also remove any old outOfGame content that might still exist
+                    const oldOutOfGame = rightSidebar.querySelector('#outOfGame_mobile');
+                    if (oldOutOfGame) oldOutOfGame.remove();
+
                     console.log('RIGHT sidebar: Cloning sidebarBeforeContent');
                     const clone = sidebarBefore.cloneNode(true);
                     clone.id = 'sidebarBeforeContent_mobile_right';
                     clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
                     rightSidebar.appendChild(clone);
+                    console.log('RIGHT sidebar: Clone appended, children count:', rightSidebar.children.length);
                 }
             } else {
                 console.warn('sidebarBeforeContent not found!');
