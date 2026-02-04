@@ -172,10 +172,11 @@
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
             const outOfGame = document.getElementById('outOfGame');
 
-            // Clone LEFT sidebar content (info boxes) - NOT USED NOW
-            // Left sidebar button will open  the left desktop sidebar
+            // Clone LEFT mobile sidebar = Desktop LEFT sidebar (Villages, Daily Quests, etc.)
             if (leftSidebar && sidebarBefore) {
-                // Add server time at the top of left sidebar
+                console.log('Cloning desktop LEFT sidebar to mobile LEFT sidebar');
+
+                // Add server time at the top
                 const servertime = document.getElementById('servertime');
                 if (servertime) {
                     const servertimeClone = servertime.cloneNode(true);
@@ -189,23 +190,40 @@
                     }
                 }
 
-                // CLONE sidebar content (not move) so desktop keeps original
+                // Clone desktop left sidebar content
                 const clone = sidebarBefore.cloneNode(true);
-                clone.id = 'sidebarBeforeContent_mobile_left'; // Prevent ID collision
+                clone.id = 'sidebarBeforeContent_mobile_left';
                 leftSidebar.appendChild(clone);
+            } else {
+                console.warn('Cannot clone to left sidebar:', { leftSidebar, sidebarBefore });
             }
 
-            // Clone RIGHT sidebar content - also clone desktop sidebar boxes
-            // This shows Villages, Daily Quests, etc.
-            if (rightSidebar && sidebarBefore) {
-                console.log('Cloning desktop sidebar to mobile right sidebar');
-                const clone = sidebarBefore.cloneNode(true);
-                clone.id = 'sidebarBeforeContent_mobile_right'; // Prevent ID collision
-                // Style for mobile
-                clone.style.cssText = 'display: block; width: 100%; padding: 10px;';
+            // Clone RIGHT mobile sidebar = Desktop top-right navigation (Profile, Options, Logout)
+            if (rightSidebar && outOfGame) {
+                console.log('Cloning desktop outOfGame to mobile RIGHT sidebar');
+                const clone = outOfGame.cloneNode(true);
+                clone.id = 'outOfGame_mobile';
+                // Convert horizontal icon list to vertical menu
+                clone.style.cssText = 'display: block; list-style: none; margin: 0; padding: 0; width: 100%;';
+
+                // Style each list item as a menu item
+                const items = clone.querySelectorAll('li');
+                items.forEach(item => {
+                    item.style.cssText = 'display: block; width: 100%; float: none; margin: 0; border-bottom: 1px solid #eee;';
+                    const link = item.querySelector('a, div.a');
+                    if (link) {
+                        link.style.cssText = 'display: block; padding: 15px 20px; width: 100%; height: auto; background: none; text-align: left;';
+                        // Get the title for link text
+                        const img = link.querySelector('img');
+                        if (img && img.alt) {
+                            link.innerHTML = img.alt;
+                        }
+                    }
+                });
+
                 rightSidebar.appendChild(clone);
             } else {
-                console.warn('Cannot clone to right sidebar:', { rightSidebar, sidebarBefore });
+                console.warn('Cannot clone to right sidebar:', { rightSidebar, outOfGame });
             }
 
             // Backdrop listener
