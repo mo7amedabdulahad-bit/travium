@@ -198,9 +198,10 @@
         let touchStartY = 0;
         let touchEndX = 0;
         let touchEndY = 0;
+        let isEdgeSwipe = false;
 
-        const SWIPE_THRESHOLD = 80;
-        const EDGE_THRESHOLD = 50;
+        const SWIPE_THRESHOLD = 60;
+        const EDGE_THRESHOLD = 40;
         const VERTICAL_TOLERANCE = 100;
 
         function handleSwipe() {
@@ -208,15 +209,22 @@
             const deltaY = Math.abs(touchEndY - touchStartY);
             const screenWidth = window.innerWidth;
 
+            console.log(`Swipe: startX=${touchStartX}, deltaX=${deltaX}, deltaY=${deltaY}, screenWidth=${screenWidth}`);
+
             // Ignore if too much vertical movement
-            if (deltaY > VERTICAL_TOLERANCE) return;
+            if (deltaY > VERTICAL_TOLERANCE) {
+                console.log('Swipe ignored: too vertical');
+                return;
+            }
 
             // Swipe RIGHT from left edge → open LEFT sidebar (menu)
             if (deltaX > SWIPE_THRESHOLD && touchStartX < EDGE_THRESHOLD) {
+                console.log('>>> OPENING LEFT SIDEBAR');
                 openSidebar('left');
             }
             // Swipe LEFT from right edge → open RIGHT sidebar (village info)
             else if (deltaX < -SWIPE_THRESHOLD && touchStartX > (screenWidth - EDGE_THRESHOLD)) {
+                console.log('>>> OPENING RIGHT SIDEBAR');
                 openSidebar('right');
             }
             // Swipe LEFT to close left sidebar
@@ -229,15 +237,32 @@
             }
         }
 
+        // Touchstart - detect edge swipes
         document.addEventListener('touchstart', function (e) {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            const screenWidth = window.innerWidth;
+
+            // Detect if starting from edge
+            isEdgeSwipe = (touchStartX < EDGE_THRESHOLD) || (touchStartX > screenWidth - EDGE_THRESHOLD);
+
+            console.log(`Touch start: x=${touchStartX}, isEdge=${isEdgeSwipe}`);
         }, { passive: true });
 
+        // Touchmove - BLOCK browser back navigation on edge swipes
+        document.addEventListener('touchmove', function (e) {
+            if (isEdgeSwipe) {
+                // Prevent browser's back/forward gesture
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Touchend - process the swipe
         document.addEventListener('touchend', function (e) {
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
+            touchEndX = e.changedTouches[0].clientX;
+            touchEndY = e.changedTouches[0].clientY;
             handleSwipe();
+            isEdgeSwipe = false;
         }, { passive: true });
 
         // ============ RUN ALL INITIALIZATIONS ============
