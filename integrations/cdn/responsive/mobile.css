@@ -188,8 +188,8 @@
     .mobileOptimized .mobile-nav-btn {
         background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png');
         background-repeat: no-repeat;
-        /* Scale sprite from 70px desktop to 55px mobile */
-        background-size: auto 55px;
+        /* Scale sprite width to fit button (55px), height auto scales proportionally */
+        background-size: 100% auto;
         /* JavaScript sets exact position for each button */
     }
 

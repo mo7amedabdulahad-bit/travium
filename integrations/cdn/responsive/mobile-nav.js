@@ -182,58 +182,68 @@
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
             const outOfGame = document.getElementById('outOfGame');
 
-            // Clone LEFT mobile sidebar = Desktop LEFT sidebar (Villages, Daily Quests, etc.)
-            if (leftSidebar && sidebarBefore) {
-                console.log('Cloning desktop LEFT sidebar to mobile LEFT sidebar');
+            // ============ SIDEBAR CONTENT - SWAPPED AS REQUESTED ============
+
+            // Clone LEFT mobile sidebar = Desktop top-right navigation (Profile, Options, Logout)
+            if (leftSidebar && outOfGame) {
+                console.log('Cloning desktop outOfGame to mobile LEFT sidebar');
+                const clone = outOfGame.cloneNode(true);
+                clone.id = 'outOfGame_mobile';
+
+                // Convert horizontal icon list to vertical text menu
+                clone.style.cssText = 'display: block; list-style: none; margin: 0; padding: 0; width: 100%;';
+
+                // Style and extract text from images
+                const items = clone.querySelectorAll('li');
+                items.forEach(item => {
+                    item.style.cssText = 'display: block; width: 100%; float: none; margin: 0; border-bottom: 1px solid #eee;';
+
+                    const link = item.querySelector('a');
+                    const divLink = item.querySelector('div.a');
+                    const img = item.querySelector('img');
+
+                    if (img && img.alt) {
+                        const menuText = img.alt;
+                        if (link) {
+                            link.innerHTML = menuText;
+                            link.style.cssText = 'display: block; padding: 15px 20px; color: #333; text-decoration: none; font-size: 16px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: left;';
+                        } else if (divLink) {
+                            divLink.innerHTML = menuText;
+                            divLink.style.cssText = 'display: block; padding: 15px 20px; color: #999; font-size: 16px; width: 100%; box-sizing: border-box; text-align: left;';
+                        }
+                    }
+                });
+
+                leftSidebar.appendChild(clone);
+            } else {
+                console.warn('Cannot clone to left sidebar:', { leftSidebar, outOfGame });
+            }
+
+            // Clone RIGHT mobile sidebar = Desktop left sidebar (Villages, Daily Quests, etc.)
+            if (rightSidebar && sidebarBefore) {
+                console.log('Cloning desktop sidebar to mobile RIGHT sidebar');
 
                 // Add server time at the top
                 const servertime = document.getElementById('servertime');
                 if (servertime) {
                     const servertimeClone = servertime.cloneNode(true);
-                    servertimeClone.id = 'servertime_mobile';
+                    servertimeClone.id = 'servertime_mobile_right';
                     servertimeClone.style.cssText = 'display: block; text-align: center; padding: 10px; background: rgba(255,255,255,0.1); margin-bottom: 15px; color: #fff; font-size: 14px;';
-                    const header = leftSidebar.querySelector('.mobile-sidebar-header');
-                    if (header) {
-                        header.after(servertimeClone);
-                    } else {
-                        leftSidebar.insertBefore(servertimeClone, leftSidebar.firstChild);
-                    }
+
+                    const header = rightSidebar.querySelector('.mobile-sidebar-header');
+                    if (header) header.after(servertimeClone);
+                    else rightSidebar.insertBefore(servertimeClone, rightSidebar.firstChild);
                 }
 
-                // Clone desktop left sidebar content
+                // Clone content
                 const clone = sidebarBefore.cloneNode(true);
-                clone.id = 'sidebarBeforeContent_mobile_left';
-                leftSidebar.appendChild(clone);
-            } else {
-                console.warn('Cannot clone to left sidebar:', { leftSidebar, sidebarBefore });
-            }
-
-            // Clone RIGHT mobile sidebar = Desktop top-right navigation (Profile, Options, Logout)
-            if (rightSidebar && outOfGame) {
-                console.log('Cloning desktop outOfGame to mobile RIGHT sidebar');
-                const clone = outOfGame.cloneNode(true);
-                clone.id = 'outOfGame_mobile';
-                // Convert horizontal icon list to vertical menu
-                clone.style.cssText = 'display: block; list-style: none; margin: 0; padding: 0; width: 100%;';
-
-                // Style each list item as a menu item
-                const items = clone.querySelectorAll('li');
-                items.forEach(item => {
-                    item.style.cssText = 'display: block; width: 100%; float: none; margin: 0; border-bottom: 1px solid #eee;';
-                    const link = item.querySelector('a, div.a');
-                    if (link) {
-                        link.style.cssText = 'display: block; padding: 15px 20px; width: 100%; height: auto; background: none; text-align: left;';
-                        // Get the title for link text
-                        const img = link.querySelector('img');
-                        if (img && img.alt) {
-                            link.innerHTML = img.alt;
-                        }
-                    }
-                });
+                clone.id = 'sidebarBeforeContent_mobile_right';
+                // Ensure village list works
+                clone.style.cssText = 'display: block; width: 100%; padding: 10px; box-sizing: border-box;';
 
                 rightSidebar.appendChild(clone);
             } else {
-                console.warn('Cannot clone to right sidebar:', { rightSidebar, outOfGame });
+                console.warn('Cannot clone to right sidebar:', { rightSidebar, sidebarBefore });
             }
 
             // Backdrop listener
