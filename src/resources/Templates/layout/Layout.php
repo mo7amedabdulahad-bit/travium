@@ -10,6 +10,16 @@ use Core\Helper\TimezoneHelper;
 <!-- MOBILE UI ELEMENTS (Official Travian Replication) -->
 
 <!-- Mobile Navigation Bar (Bottom - 7 Buttons) -->
+<div id="mobileHeader">
+    <button id="mobileSidebarToggleLeft" class="mobile-sidebar-toggle">
+        &#9776; <!-- Hamburger Icon -->
+    </button>
+    <div class="mobile-header-title">TRAVIUM</div>
+    <button id="mobileSidebarToggleRight" class="mobile-sidebar-toggle">
+        &#127968; <!-- House/Village Icon -->
+    </button>
+</div>
+
 <nav id="mobileNavigation" style="display: none;">
     <button class="mobile-nav-btn" data-page="dorf1">
         <span class="icon villages"></span>

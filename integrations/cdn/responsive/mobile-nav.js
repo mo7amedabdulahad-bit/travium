@@ -307,10 +307,34 @@
             handleSwipe();
         }, { passive: true });
 
+        // ============ SIDEBAR TOGGLE BUTTONS ============
+
+        function initSidebarToggles() {
+            const leftToggle = document.getElementById('mobileSidebarToggleLeft');
+            const rightToggle = document.getElementById('mobileSidebarToggleRight');
+
+            if (leftToggle) {
+                leftToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openSidebar('left');
+                });
+            }
+
+            if (rightToggle) {
+                rightToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openSidebar('right');
+                });
+            }
+        }
+
         // ============ RUN ALL INITIALIZATIONS ============
 
         initNavigation();
         cloneSidebarContent();
+        initSidebarToggles();
     }
 
     // ============ WAIT FOR DOM THEN RUN ============
