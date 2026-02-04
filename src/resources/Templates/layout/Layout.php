@@ -35,20 +35,31 @@ use Core\Helper\TimezoneHelper;
 </nav>
 
 <!-- Mobile Sidebar Containers -->
-<div id="mobileSidebarLeft" class="mobile-sidebar"></div>
+<div id="mobileSidebarLeft" class="mobile-sidebar">
+    <div class="mobile-sidebar-header">
+        <button class="mobile-sidebar-close">&times;</button>
+    </div>
+</div>
 
 <div id="mobileSidebarRight" class="mobile-sidebar">
     <div class="mobile-sidebar-header">
         <button class="mobile-sidebar-close">&times;</button>
     </div>
     <ul class="mobile-options-menu">
-        <li><a href="daily_quests.php">Daily quests</a></li>
-        <li><a href="statistiken.php">Statistics</a></li>
-        <li><a href="spieler.php">Profile</a></li>
-        <li><a href="options.php">Options</a></li>
-        <li><a href="logout.php">Logout</a></li>
+        <li><a href="daily_quests.php"><span class="icon">!</span> Daily quests</a></li>
+        <li><a href="statistiken.php"><span class="icon">📊</span> Statistics</a></li>
+        <li><a href="spieler.php"><span class="icon">👤</span> Profile</a></li>
+        <li><a href="options.php"><span class="icon">⚙</span> Options</a></li>
+        <li><a href="help.php"><span class="icon">?</span> Help</a></li>
+        <li><a href="logout.php"><span class="icon">×</span> Logout</a></li>
     </ul>
+    <div class="mobile-sidebar-footer">
+        <a href="<?=Config::getInstance()->settings->indexUrl; ?>">Homepage</a>
+        <a href="<?=Config::getInstance()->settings->indexUrl; ?>agb.php">Terms</a>
+        <a href="options.php">Privacy settings</a>
+    </div>
 </div>
+
 
 <!-- Mobile Sidebar Backdrop -->
 <div id="mobileSidebarBackdrop" style="display: none;"></div>

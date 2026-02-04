@@ -33,11 +33,13 @@
                 'dorf2': '#n2 a',
                 'karte': '#n3 a',
                 'reports': '#n5 a',
-                'messages': '#n6 a'
+                'messages': '#n6 a',
+                'dailyQuests': '#n4 a'  // Daily Quests uses Statistics (#n4)
             };
 
             // Get mobile buttons
             const mobileButtons = mobileNav.querySelectorAll('.mobile-nav-btn');
+            const currentPage = window.location.pathname.split('/').pop().split('.')[0];
 
             mobileButtons.forEach(btn => {
                 const page = btn.dataset.page;
@@ -72,24 +74,21 @@
                             }
                         });
 
-                        // Highlight if active
-                        if (desktopBtn.classList.contains('active')) {
+                        // Highlight if this is the active page
+                        if (page === currentPage || desktopBtn.classList.contains('active')) {
                             btn.classList.add('active');
                         }
                     }
-                }
-                // Daily Quests button
-                else if (page === 'dailyQuests') {
-                    btn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        window.location.href = 'daily_quests.php';
-                    });
                 }
                 // Plus/Gold button
                 else if (page === 'plus') {
                     btn.addEventListener('click', function (e) {
                         e.preventDefault();
-                        window.location.href = 'payment.php';
+                        if (typeof jQuery !== 'undefined') {
+                            jQuery(window).trigger('startPaymentWizard', {});
+                        } else {
+                            window.location.href = 'payment.php';
+                        }
                     });
                 }
             });
@@ -142,7 +141,21 @@
             const sidebarBefore = document.getElementById('sidebarBeforeContent');
 
             if (leftSidebar && sidebarBefore) {
-                // CLONE it (not move) so desktop keeps original
+                // Add server time at the top of left sidebar
+                const servertime = document.getElementById('servertime');
+                if (servertime) {
+                    const servertimeClone = servertime.cloneNode(true);
+                    servertimeClone.id = 'servertime_mobile';
+                    servertimeClone.style.cssText = 'display: block; text-align: center; padding: 10px; background: rgba(255,255,255,0.1); margin-bottom: 15px; color: #fff; font-size: 14px;';
+                    const header = leftSidebar.querySelector('.mobile-sidebar-header');
+                    if (header) {
+                        header.after(servertimeClone);
+                    } else {
+                        leftSidebar.insertBefore(servertimeClone, leftSidebar.firstChild);
+                    }
+                }
+
+                // CLONE sidebar content (not move) so desktop keeps original
                 const clone = sidebarBefore.cloneNode(true);
                 clone.id = 'sidebarBeforeContent_mobile'; // Prevent ID collision
                 leftSidebar.appendChild(clone);

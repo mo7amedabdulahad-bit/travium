@@ -129,120 +129,75 @@
         justify-content: space-around !important;
         align-items: center !important;
 
-        padding: 5px !important;
+        padding: 8px 5px !important;
         margin: 0 !important;
-        gap: 3px !important;
+        gap: 4px !important;
 
         z-index: 1000 !important;
         background: rgba(62, 45, 30, 0.98) !important;
-        /* Brown theme */
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4) !important;
     }
 
     .mobileOptimized .mobile-nav-btn {
+        /* Perfect circular buttons matching screenshot */
         width: 55px !important;
         height: 55px !important;
         min-width: 44px !important;
         min-height: 44px !important;
 
         border-radius: 50% !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        border: 2px solid rgba(139, 90, 43, 0.5) !important;
 
-        background: rgba(80, 60, 40, 0.9) !important;
-        background-size: 70% !important;
+        background-color: rgba(62, 45, 30, 0.9) !important;
+        background-size: contain !important;
         background-position: center !important;
         background-repeat: no-repeat !important;
 
         cursor: pointer !important;
         transition: all 0.2s ease !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 
         flex-shrink: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
     }
 
-    .mobileOptimized .mobile-nav-btn:active,
-    .mobileOptimized .mobile-nav-btn.active {
-        background: rgba(120, 90, 60, 1) !important;
-        border-color: rgba(255, 215, 0, 0.6) !important;
+    .mobileOptimized .mobile-nav-btn:active {
         transform: scale(0.95) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Gold button styling */
+    .mobileOptimized .mobile-nav-btn.active {
+        background-color: rgba(100, 75, 50, 1) !important;
+        border-color: rgba(255, 215, 0, 0.7) !important;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.4) !important;
+    }
+
+    /* Gold button - distinct golden styling */
     .mobileOptimized .mobile-nav-gold {
-        background-image: url('../TravianOld/mainPage/img/layout/goldButton.png') !important;
-        background-position: left top !important;
-        border-color: #ffd700 !important;
+        background-color: rgba(218, 165, 32, 0.9) !important;
+        border: 3px solid #ffd700 !important;
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.5) !important;
     }
 
-    /* Navigation icons - use desktop sprite sheet */
-    /* Each icon has 2 states (normal + active), 60px tall each, stacked as pairs */
-
-    /* dorf1 - Resources (pair 1: 0px normal, -60px active) */
-    .mobileOptimized .mobile-nav-btn[data-page="dorf1"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center 0px !important;
+    .mobileOptimized .mobile-nav-gold:active {
+        background-color: rgba(255, 215, 0, 1) !important;
     }
 
-    .mobileOptimized .mobile-nav-btn[data-page="dorf1"].active {
-        background-position: center -60px !important;
-    }
+    /* ============ NAVIGATION ICONS ============ */
+    /* Icons are copied from desktop navigation by JavaScript (mobile-nav.js) */
+    /* This approach ensures icons always match desktop sprite positions */
+    /* See initNavigation() function for implementation */
 
-    /* dorf2 - Village/Buildings (pair 2: -120px normal, -180px active) */
-    .mobileOptimized .mobile-nav-btn[data-page="dorf2"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -120px !important;
-    }
+    /* The mobile-nav.js script copies computed styles from desktop navigation: */
+    /* - dorf1: copied from #navigation #n1.villageResources a */
+    /* - dorf2: copied from #navigation #n2.villageBuildings a */
+    /* - karte: copied from #navigation #n3.map a */
+    /* - reports: copied from #navigation #n5.reports a */
+    /* - messages: copied from #navigation #n6.messages a */
 
-    .mobileOptimized .mobile-nav-btn[data-page="dorf2"].active {
-        background-position: center -180px !important;
-    }
+    /* Daily Quests button will have sprite copied by JavaScript from statistics navigation */
 
-    /* karte - Map (pair 3: -240px normal, -300px active) */
-    .mobileOptimized .mobile-nav-btn[data-page="karte"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -240px !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn[data-page="karte"].active {
-        background-position: center -300px !important;
-    }
-
-    /* messages - Envelope (pair 4: -360px normal, -420px active) */
-    .mobileOptimized .mobile-nav-btn[data-page="messages"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -360px !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn[data-page="messages"].active {
-        background-position: center -420px !important;
-    }
-
-    /* reports - Documents (pair 5: -480px normal, -540px active) */
-    .mobileOptimized .mobile-nav-btn[data-page="reports"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -480px !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn[data-page="reports"].active {
-        background-position: center -540px !important;
-    }
-
-    /* dailyQuests - Statistics (pair 6: -600px normal, -660px active) */
-    .mobileOptimized .mobile-nav-btn[data-page="dailyQuests"] {
-        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png') !important;
-        background-position: center -600px !important;
-    }
-
-    .mobileOptimized .mobile-nav-btn[data-page="dailyQuests"].active {
-        background-position: center -660px !important;
-    }
-
-    /* Ensure background properties work correctly */
-    body.mobileOptimized .mobile-nav-btn {
-        background-size: auto !important;
-        background-repeat: no-repeat !important;
-    }
 
     /* ============ 6. BUILDING QUEUE BAR (ABOVE NAV) ============ */
     .mobileOptimized #buildingList {
@@ -386,6 +341,27 @@
     }
 
     .mobileOptimized .mobile-options-menu a:active {
+        background: rgba(0, 0, 0, 0.05) !important;
+    }
+
+    /* Mobile sidebar footer links */
+    .mobileOptimized .mobile-sidebar-footer {
+        margin-top: 20px !important;
+        padding-top: 15px !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .mobileOptimized .mobile-sidebar-footer a {
+        color: #666 !important;
+        text-decoration: none !important;
+        font-size: 13px !important;
+        padding: 5px 10px !important;
+    }
+
+    .mobileOptimized .mobile-sidebar-footer a:active {
         background: rgba(0, 0, 0, 0.05) !important;
     }
 
