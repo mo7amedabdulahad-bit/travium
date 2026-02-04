@@ -149,9 +149,8 @@
         border: 2px solid rgba(139, 90, 43, 0.5) !important;
 
         background-color: rgba(62, 45, 30, 0.9) !important;
-        background-size: contain !important;
-        background-position: center !important;
         background-repeat: no-repeat !important;
+        /* JavaScript sets background-position for each button */
 
         cursor: pointer !important;
         transition: all 0.2s ease !important;
