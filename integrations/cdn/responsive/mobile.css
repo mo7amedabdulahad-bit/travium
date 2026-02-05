@@ -504,3 +504,27 @@
     background: rgba(0, 0, 0, 0.5) !important;
     z-index: 9999 !important;
 }
+/* ============ DORF1 RESOURCE FIELDS - TRAVIAN-STYLE TOUCH ============ */
+/* Using transform: scale() on container to maintain alignment while enlarging touch targets */
+
+@media screen and (max-width: 620px) and (orientation: portrait) {
+
+    /* Scale the entire village map to make all fields larger together */
+    .mobileOptimized #village_map {
+        transform: scale(1.25) !important;
+        transform-origin: center center !important;
+        touch-action: manipulation !important;
+    }
+
+    /* Ensure resource fields are clickable and touchable */
+    .mobileOptimized #village_map .level {
+        cursor: pointer !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: rgba(255, 215, 0, 0.4) !important;
+    }
+
+    /* Prevent accidental zoom on double-tap */
+    .mobileOptimized #resfeld {
+        touch-action: manipulation !important;
+    }
+}
