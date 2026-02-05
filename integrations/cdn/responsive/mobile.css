@@ -505,22 +505,23 @@
     z-index: 9999 !important;
 }
 
-/* ============ RESOURCE BAR OPTIMIZATION (Larger & Clearer) ============ */
+/* ============ RESOURCE BAR OPTIMIZATION (Full Width Fit) ============ */
 
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
-    /* HIDE SERVER TIME on mobile to save space */
+    /* HIDE SERVER TIME */
     .mobileOptimized #servertime {
         display: none !important;
     }
 
-    /* Main Container - Travian Gold/Brown Gradient */
+    /* Main Container */
     .mobileOptimized #stockBar {
         height: 40px !important;
         min-height: 40px !important;
         max-height: 40px !important;
-        padding: 0 4px !important;
-        gap: 4px !important;
+        padding: 0 2px !important;
+        /* Minimal padding */
+        gap: 2px !important;
         background: linear-gradient(to bottom, #dabe8d 0%, #7e6341 100%) !important;
         border-bottom: 1px solid #3e2d1e !important;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important;
@@ -531,17 +532,32 @@
         box-sizing: border-box !important;
     }
 
+    /* 
+       CRITICAL: Hide the LIST ITEMS for Warehouse, Granary, FreeCrop, and Clear divs.
+       This ensures only the 4 main resources remain flex-children and expand to fill width.
+    */
+    .mobileOptimized #stockBar #stockBarWarehouseWrapper,
+    .mobileOptimized #stockBar #stockBarGranaryWrapper,
+    .mobileOptimized #stockBar #stockBarFreeCropWrapper,
+    .mobileOptimized #stockBar .clear,
+    .mobileOptimized #stockBar .gold,
+    .mobileOptimized #stockBar .silver {
+        display: none !important;
+    }
+
+
     /* Individual Resource Item - Tan background box */
     .mobileOptimized #stockBar .stockBarButton {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
         flex: 1 !important;
+        /* GROW TO FILL SPACE */
+        width: auto !important;
+        /* Let flex handle width */
         height: 34px !important;
-        /* Fit inside 40px bar */
         padding: 0 4px !important;
         background: #e3d4bc !important;
-        /* Travian Tan */
         border: 1px solid #7e6341 !important;
         border-radius: 4px !important;
         box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.5) !important;
@@ -549,9 +565,11 @@
         margin: 0 !important;
         min-width: 0 !important;
         gap: 2px !important;
+        max-width: none !important;
+        /* Remove any constraints */
     }
 
-    /* Neutralize Desktop Containers (.begin, .middle, .end) that might break layout */
+    /* Neutralize Desktop Containers */
     .mobileOptimized #stockBar .stockBarButton .begin,
     .mobileOptimized #stockBar .stockBarButton .end {
         display: none !important;
@@ -575,7 +593,6 @@
         flex-shrink: 0 !important;
         display: block !important;
         order: 1 !important;
-        /* Ensure distinct order */
     }
 
     /* Value Wrapper */
@@ -584,13 +601,11 @@
         font-size: 13px !important;
         font-weight: 700 !important;
         color: #333333 !important;
-        /* Dark Gray */
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) !important;
         z-index: 2 !important;
         white-space: nowrap !important;
         line-height: 1 !important;
         margin-bottom: 8px !important;
-        /* Space for bar */
         position: relative !important;
         top: -2px !important;
         order: 2 !important;
@@ -604,7 +619,6 @@
         position: absolute !important;
         bottom: 3px !important;
         left: 32px !important;
-        /* Adjusted for icon */
         right: 4px !important;
         height: 5px !important;
         min-height: 5px !important;
@@ -615,32 +629,17 @@
         order: 3 !important;
     }
 
-    /* The actual bar filler - Green */
+    /* The actual bar filler */
     .mobileOptimized #stockBar .bar {
         height: 100% !important;
         border-radius: 1px !important;
         background: #699e32 !important;
-        /* Travian Green */
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
     }
 
-    /* Warehouse/Granary Capacity - HIDDEN */
-    .mobileOptimized #stockBar .stock .value,
-    .mobileOptimized #stockBarWarehouseWrapper .value,
-    .mobileOptimized #stockBarGranaryWrapper .value {
-        display: none !important;
-    }
-
-    /* Hide the warehouse/granary wrapper labels */
+    /* Redundant selectors just to be safe */
     .mobileOptimized #stockBar .warehouse,
     .mobileOptimized #stockBar .granary {
-        display: none !important;
-    }
-
-    /* Hide Gold, Silver, and Free Crop from top bar to make room for resources (like Official Travian) */
-    .mobileOptimized #stockBar .gold,
-    .mobileOptimized #stockBar .silver,
-    .mobileOptimized #stockBar .r5 {
         display: none !important;
     }
 }
