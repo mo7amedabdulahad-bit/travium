@@ -1,3 +1,10 @@
+<?php
+/*
+ * EARN FREE GOLD BOX - COMMENTED OUT
+ * Uncomment this block to re-enable the voting system
+ */
+?>
+<!-- 
 <div id="sidebarBoxDailyquests" class="sidebarBox   ">
 	<div class="sidebarBoxBaseBox">
 		<div class="baseBox baseBoxTop">
@@ -53,3 +60,4 @@
 		</div>
 	</div>
 </div>
+-->
