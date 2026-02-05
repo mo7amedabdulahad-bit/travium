@@ -504,3 +504,82 @@
     background: rgba(0, 0, 0, 0.5) !important;
     z-index: 9999 !important;
 }
+/* ============ RESOURCE BAR OPTIMIZATION (Travian-style compact) ============ */
+
+@media screen and (max-width: 620px) and (orientation: portrait) {
+
+    /* Make resource bar more compact - Travian uses ~40px */
+    .mobileOptimized #stockBar {
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        padding: 2px 3px !important;
+        gap: 2px !important;
+    }
+
+    /* Each resource button - use grid layout like Travian */
+    .mobileOptimized #stockBar .stockBarButton {
+        display: grid !important;
+        grid-template-columns: auto 1fr !important;
+        grid-template-rows: 1fr auto !important;
+        align-items: center !important;
+        min-width: 60px !important;
+        max-width: 80px !important;
+        padding: 1px 3px !important;
+        gap: 1px !important;
+    }
+
+    /* Resource icons - smaller and to the left */
+    .mobileOptimized #stockBar i {
+        transform: scale(0.65) !important;
+        grid-row: span 2 !important;
+        margin: 0 !important;
+    }
+
+    /* Resource values - bold 11px like Travian */
+    .mobileOptimized #stockBar .value {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        line-height: 1.1 !important;
+        text-align: right !important;
+    }
+
+    /* Progress bar - slim 5px height */
+    .mobileOptimized #stockBar .barBox {
+        height: 5px !important;
+        min-height: 5px !important;
+        max-height: 5px !important;
+        margin: 0 !important;
+        grid-column: 2 !important;
+    }
+
+    .mobileOptimized #stockBar .bar {
+        height: 5px !important;
+    }
+
+    /* Hide warehouse/granary capacity text - use progress bar instead */
+    .mobileOptimized #stockBar .stock .value,
+    .mobileOptimized #stockBarWarehouseWrapper .value,
+    .mobileOptimized #stockBarGranaryWrapper .value {
+        display: none !important;
+    }
+
+    /* Hide the warehouse/granary wrapper labels */
+    .mobileOptimized #stockBar .warehouse,
+    .mobileOptimized #stockBar .granary {
+        display: none !important;
+    }
+
+    /* Gold and Silver - keep compact */
+    .mobileOptimized #stockBar .gold,
+    .mobileOptimized #stockBar .silver {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        padding: 2px 5px !important;
+    }
+
+    /* Free crop - smaller */
+    .mobileOptimized #stockBar .r5 .value {
+        font-size: 10px !important;
+    }
+}
