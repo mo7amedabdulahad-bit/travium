@@ -504,60 +504,68 @@
     background: rgba(0, 0, 0, 0.5) !important;
     z-index: 9999 !important;
 }
-/* ============ RESOURCE BAR OPTIMIZATION (Travian-style compact) ============ */
+
+/* ============ RESOURCE BAR OPTIMIZATION (Bigger & Cleaner) ============ */
 
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
-    /* Make resource bar more compact - Travian uses ~40px */
+    /* Make resource bar bigger and cleaner - User Request */
     .mobileOptimized #stockBar {
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        padding: 2px 3px !important;
-        gap: 2px !important;
+        height: 50px !important;
+        min-height: 50px !important;
+        max-height: 50px !important;
+        padding: 5px 5px !important;
+        gap: 4px !important;
+        background: rgba(62, 45, 30, 0.98) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Each resource button - use grid layout like Travian */
+    /* Each resource button - Grid layout with more breathing room */
     .mobileOptimized #stockBar .stockBarButton {
         display: grid !important;
         grid-template-columns: auto 1fr !important;
         grid-template-rows: 1fr auto !important;
         align-items: center !important;
-        min-width: 60px !important;
-        max-width: 80px !important;
-        padding: 1px 3px !important;
-        gap: 1px !important;
+        min-width: 65px !important;
+        padding: 2px 4px !important;
+        gap: 3px !important;
     }
 
-    /* Resource icons - smaller and to the left */
+    /* Resource icons - larger clear icons */
     .mobileOptimized #stockBar i {
-        transform: scale(0.65) !important;
+        transform: scale(0.85) !important;
         grid-row: span 2 !important;
-        margin: 0 !important;
+        margin-right: 2px !important;
     }
 
-    /* Resource values - bold 11px like Travian */
+    /* Resource values - larger, readable font */
     .mobileOptimized #stockBar .value {
-        font-size: 11px !important;
+        font-size: 13px !important;
         font-weight: 700 !important;
-        line-height: 1.1 !important;
+        line-height: 1.2 !important;
         text-align: right !important;
+        color: #fff !important;
+        text-shadow: 1px 1px 2px #000 !important;
     }
 
-    /* Progress bar - slim 5px height */
+    /* Progress bar - clearly visible but sleek */
     .mobileOptimized #stockBar .barBox {
-        height: 5px !important;
-        min-height: 5px !important;
-        max-height: 5px !important;
-        margin: 0 !important;
+        height: 6px !important;
+        min-height: 6px !important;
+        max-height: 6px !important;
+        margin-top: 2px !important;
         grid-column: 2 !important;
+        border-radius: 3px !important;
+        border: 1px solid rgba(0, 0, 0, 0.5) !important;
+        background: rgba(0, 0, 0, 0.3) !important;
     }
 
     .mobileOptimized #stockBar .bar {
-        height: 5px !important;
+        height: 100% !important;
+        border-radius: 2px !important;
     }
 
-    /* Hide warehouse/granary capacity text - use progress bar instead */
+    /* Hide warehouse/granary capacity text - keep it clean */
     .mobileOptimized #stockBar .stock .value,
     .mobileOptimized #stockBarWarehouseWrapper .value,
     .mobileOptimized #stockBarGranaryWrapper .value {
@@ -570,16 +578,19 @@
         display: none !important;
     }
 
-    /* Gold and Silver - keep compact */
+    /* Gold and Silver - Distinct and visible */
     .mobileOptimized #stockBar .gold,
     .mobileOptimized #stockBar .silver {
-        font-size: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
-        padding: 2px 5px !important;
+        padding: 2px 6px !important;
     }
 
-    /* Free crop - smaller */
+    /* Free crop - cleaner */
     .mobileOptimized #stockBar .r5 .value {
-        font-size: 10px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
     }
 }
