@@ -505,20 +505,21 @@
     z-index: 9999 !important;
 }
 
-/* ============ RESOURCE BAR OPTIMIZATION (Final Clean / Seamless) ============ */
+/* ============ RESOURCE BAR OPTIMIZATION (Exact Travian Replica) ============ */
 
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
-    /* Main Container - Seamless dark brown bar */
+    /* Main Container - Travian Gold/Brown Gradient */
     .mobileOptimized #stockBar {
-        height: 44px !important;
-        min-height: 44px !important;
-        max-height: 44px !important;
+        height: 35px !important;
+        min-height: 35px !important;
+        max-height: 35px !important;
         padding: 0 4px !important;
-        gap: 2px !important;
-        background: #3e2d1e !important;
-        /* Solid brown from Travian */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5) !important;
+        gap: 3px !important;
+        background: linear-gradient(to bottom, #dabe8d 0%, #7e6341 100%) !important;
+        /* Gold/Brown Gradient */
+        border-bottom: 1px solid #3e2d1e !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important;
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
@@ -526,72 +527,71 @@
         box-sizing: border-box !important;
     }
 
-    /* Individual Resource Item - No borders, just content */
+    /* Individual Resource Item - Tan background box */
     .mobileOptimized #stockBar .stockBarButton {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
-        justify-content: center !important;
         flex: 1 !important;
-        /* Distribute space evenly */
-        height: 100% !important;
+        height: 29px !important;
+        /* Fit inside 35px bar */
         padding: 0 2px !important;
-        gap: 0 !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        min-width: 0 !important;
-        /* Allow shrinking if needed */
+        background: #e3d4bc !important;
+        /* Travian Tan */
+        border: 1px solid #7e6341 !important;
+        border-radius: 3px !important;
+        box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.5) !important;
         position: relative !important;
+        margin: 0 !important;
+        min-width: 0 !important;
+        gap: 2px !important;
     }
 
     /* Resource Icon - Left side */
     .mobileOptimized #stockBar i {
-        transform: scale(0.75) !important;
+        transform: scale(0.7) !important;
         margin-right: 2px !important;
         flex-shrink: 0 !important;
         display: block !important;
     }
 
-    /* Resource Value - Top number */
+    /* Value Wrapper */
     .mobileOptimized #stockBar .value {
-        font-family: 'Roboto', 'Helvetica', sans-serif !important;
+        font-family: Arial, Helvetica, sans-serif !important;
         font-size: 11px !important;
         font-weight: 700 !important;
-        color: #fff !important;
-        text-shadow: 1px 1px 1px #000 !important;
+        color: #333333 !important;
+        /* Dark Gray */
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) !important;
         z-index: 2 !important;
         white-space: nowrap !important;
-        /* Prevent line break */
-        overflow: visible !important;
-        /* Show full number */
         line-height: 1 !important;
-        margin-bottom: 3px !important;
+        margin-bottom: 6px !important;
+        /* Space for bar */
         position: relative !important;
-        top: -3px !important;
+        top: -1px !important;
     }
 
-    /* Progress Bar Container - Bottom */
+    /* Progress Bar - Green */
     .mobileOptimized #stockBar .barBox {
         position: absolute !important;
-        bottom: 6px !important;
+        bottom: 2px !important;
         left: 28px !important;
-        /* Offset for icon */
-        right: 4px !important;
-        height: 4px !important;
-        min-height: 4px !important;
-        border: 1px solid rgba(0, 0, 0, 0.3) !important;
-        background: rgba(0, 0, 0, 0.3) !important;
+        right: 2px !important;
+        height: 5px !important;
+        min-height: 5px !important;
+        border: 1px solid #555 !important;
+        background: #333 !important;
         border-radius: 2px !important;
         display: block !important;
-        width: auto !important;
-        margin: 0 !important;
     }
 
-    /* The actual bar filler */
+    /* The actual bar filler - Green */
     .mobileOptimized #stockBar .bar {
         height: 100% !important;
         border-radius: 1px !important;
+        background: #699e32 !important;
+        /* Travian Green */
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
     }
 
@@ -608,24 +608,20 @@
         display: none !important;
     }
 
-    /* Specific Layout Helper for stock buttons to align items properly */
-    /* We reset the grid display we used before */
-
     /* Gold Button - Distinct style */
     .mobileOptimized #stockBar .gold,
     .mobileOptimized #stockBar .silver {
         display: flex !important;
         flex-direction: row !important;
-        min-width: auto !important;
         border: 1px solid #cfaa38 !important;
         background: linear-gradient(to bottom, #fcefa8 0%, #dcc266 100%) !important;
-        border-radius: 4px !important;
-        padding: 1px 4px !important;
-        height: 22px !important;
+        border-radius: 3px !important;
+        padding: 0 4px !important;
+        height: 29px !important;
         margin-left: 2px !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
         min-width: 45px !important;
-        /* Ensure minimum width for gold */
+        align-items: center !important;
     }
 
     .mobileOptimized #stockBar .gold .value,
@@ -636,13 +632,12 @@
         margin: 0 !important;
         padding-left: 4px !important;
         top: 0 !important;
-        /* Reset position adjustment */
         margin-bottom: 0 !important;
     }
 
     .mobileOptimized #stockBar .gold img,
     .mobileOptimized #stockBar .silver img {
-        transform: scale(0.85) !important;
+        transform: scale(0.8) !important;
     }
 
     /* Free Crop Icon */
@@ -651,7 +646,6 @@
         align-items: center !important;
         justify-content: center !important;
         flex: 0.8 !important;
-        /* Slightly smaller space */
     }
 
     .mobileOptimized #stockBar .r5 .value {
