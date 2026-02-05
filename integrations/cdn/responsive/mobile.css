@@ -509,13 +509,18 @@
 
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
+    /* HIDE SERVER TIME on mobile to save space */
+    .mobileOptimized #servertime {
+        display: none !important;
+    }
+
     /* Main Container - Travian Gold/Brown Gradient */
     .mobileOptimized #stockBar {
         height: 35px !important;
         min-height: 35px !important;
         max-height: 35px !important;
-        padding: 0 4px !important;
-        gap: 3px !important;
+        padding: 0 5px !important;
+        gap: 5px !important;
         background: linear-gradient(to bottom, #dabe8d 0%, #7e6341 100%) !important;
         /* Gold/Brown Gradient */
         border-bottom: 1px solid #3e2d1e !important;
@@ -535,7 +540,7 @@
         flex: 1 !important;
         height: 29px !important;
         /* Fit inside 35px bar */
-        padding: 0 2px !important;
+        padding: 0 4px !important;
         background: #e3d4bc !important;
         /* Travian Tan */
         border: 1px solid #7e6341 !important;
@@ -544,12 +549,12 @@
         position: relative !important;
         margin: 0 !important;
         min-width: 0 !important;
-        gap: 2px !important;
+        gap: 4px !important;
     }
 
     /* Resource Icon - Left side */
     .mobileOptimized #stockBar i {
-        transform: scale(0.7) !important;
+        transform: scale(0.75) !important;
         margin-right: 2px !important;
         flex-shrink: 0 !important;
         display: block !important;
@@ -576,7 +581,8 @@
     .mobileOptimized #stockBar .barBox {
         position: absolute !important;
         bottom: 2px !important;
-        left: 28px !important;
+        left: 30px !important;
+        /* Adjusted for icon */
         right: 2px !important;
         height: 5px !important;
         min-height: 5px !important;
@@ -608,49 +614,10 @@
         display: none !important;
     }
 
-    /* Gold Button - Distinct style */
+    /* Hide Gold, Silver, and Free Crop from top bar to make room for resources (like Official Travian) */
     .mobileOptimized #stockBar .gold,
-    .mobileOptimized #stockBar .silver {
-        display: flex !important;
-        flex-direction: row !important;
-        border: 1px solid #cfaa38 !important;
-        background: linear-gradient(to bottom, #fcefa8 0%, #dcc266 100%) !important;
-        border-radius: 3px !important;
-        padding: 0 4px !important;
-        height: 29px !important;
-        margin-left: 2px !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
-        min-width: 45px !important;
-        align-items: center !important;
-    }
-
-    .mobileOptimized #stockBar .gold .value,
-    .mobileOptimized #stockBar .silver .value {
-        color: #58440b !important;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-        font-size: 10px !important;
-        margin: 0 !important;
-        padding-left: 4px !important;
-        top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-
-    .mobileOptimized #stockBar .gold img,
-    .mobileOptimized #stockBar .silver img {
-        transform: scale(0.8) !important;
-    }
-
-    /* Free Crop Icon */
+    .mobileOptimized #stockBar .silver,
     .mobileOptimized #stockBar .r5 {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex: 0.8 !important;
-    }
-
-    .mobileOptimized #stockBar .r5 .value {
-        margin: 0 !important;
-        top: 0 !important;
-        margin-bottom: 0 !important;
+        display: none !important;
     }
 }
