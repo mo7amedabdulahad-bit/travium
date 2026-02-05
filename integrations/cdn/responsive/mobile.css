@@ -505,7 +505,7 @@
     z-index: 9999 !important;
 }
 
-/* ============ RESOURCE BAR OPTIMIZATION (Full Width Fit) ============ */
+/* ============ RESOURCE BAR OPTIMIZATION (Seamless & Aligned) ============ */
 
 @media screen and (max-width: 620px) and (orientation: portrait) {
 
@@ -514,14 +514,13 @@
         display: none !important;
     }
 
-    /* Main Container */
+    /* Main Container - Travian Gold/Brown Gradient */
     .mobileOptimized #stockBar {
         height: 40px !important;
         min-height: 40px !important;
         max-height: 40px !important;
-        padding: 0 2px !important;
-        /* Minimal padding */
-        gap: 2px !important;
+        padding: 0 0px !important;
+        gap: 0px !important;
         background: linear-gradient(to bottom, #dabe8d 0%, #7e6341 100%) !important;
         border-bottom: 1px solid #3e2d1e !important;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important;
@@ -534,7 +533,6 @@
 
     /* 
        CRITICAL: Hide the LIST ITEMS for Warehouse, Granary, FreeCrop, and Clear divs.
-       This ensures only the 4 main resources remain flex-children and expand to fill width.
     */
     .mobileOptimized #stockBar #stockBarWarehouseWrapper,
     .mobileOptimized #stockBar #stockBarGranaryWrapper,
@@ -546,27 +544,28 @@
     }
 
 
-    /* Individual Resource Item - Tan background box */
+    /* Individual Resource Item - TRANSPARENT & ALIGNED */
     .mobileOptimized #stockBar .stockBarButton {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
+        justify-content: center !important;
+        /* Center the group [Icon+Text] in the available space */
         flex: 1 !important;
-        /* GROW TO FILL SPACE */
         width: auto !important;
-        /* Let flex handle width */
-        height: 34px !important;
-        padding: 0 4px !important;
-        background: #e3d4bc !important;
-        border: 1px solid #7e6341 !important;
-        border-radius: 4px !important;
-        box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.5) !important;
+        height: 100% !important;
+        padding: 0 2px !important;
+        background: transparent !important;
+        /* REMOVED BACKGROUND */
+        border: none !important;
+        /* REMOVED BORDER */
+        box-shadow: none !important;
+        /* REMOVED SHADOW */
         position: relative !important;
         margin: 0 !important;
         min-width: 0 !important;
-        gap: 2px !important;
+        gap: 4px !important;
         max-width: none !important;
-        /* Remove any constraints */
     }
 
     /* Neutralize Desktop Containers */
@@ -580,7 +579,8 @@
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
-        width: 100% !important;
+        width: auto !important;
+        /* Allow shrink */
         height: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
@@ -588,45 +588,50 @@
 
     /* Resource Icon - Left side */
     .mobileOptimized #stockBar i {
-        transform: scale(0.85) !important;
-        margin-right: 2px !important;
+        transform: scale(0.9) !important;
+        margin: 0 !important;
         flex-shrink: 0 !important;
         display: block !important;
         order: 1 !important;
     }
 
-    /* Value Wrapper */
+    /* Value Wrapper - Aligned Left next to Icon */
     .mobileOptimized #stockBar .value {
         font-family: Arial, Helvetica, sans-serif !important;
         font-size: 13px !important;
         font-weight: 700 !important;
-        color: #333333 !important;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+        color: #333 !important;
+        /* Keep dark text for contrast on gold */
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
         z-index: 2 !important;
         white-space: nowrap !important;
         line-height: 1 !important;
-        margin-bottom: 8px !important;
+        margin: 0 !important;
+        /* Reset margin */
         position: relative !important;
-        top: -2px !important;
+        top: 0 !important;
         order: 2 !important;
-        flex-grow: 1 !important;
-        text-align: right !important;
-        padding-right: 2px !important;
+        flex-grow: 0 !important;
+        /* Don't stretch */
+        text-align: left !important;
+        /* Align Left */
+        padding-left: 2px !important;
     }
 
-    /* Progress Bar - Green */
+    /* Progress Bar - Green strip at bottom */
     .mobileOptimized #stockBar .barBox {
         position: absolute !important;
-        bottom: 3px !important;
-        left: 32px !important;
-        right: 4px !important;
-        height: 5px !important;
-        min-height: 5px !important;
-        border: 1px solid #555 !important;
-        background: #333 !important;
-        border-radius: 2px !important;
+        bottom: 0px !important;
+        left: 2px !important;
+        right: 2px !important;
+        height: 4px !important;
+        min-height: 4px !important;
+        border: none !important;
+        background: rgba(0, 0, 0, 0.2) !important;
+        border-radius: 1px !important;
         display: block !important;
         order: 3 !important;
+        width: auto !important;
     }
 
     /* The actual bar filler */
