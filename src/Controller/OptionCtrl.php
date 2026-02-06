@@ -56,13 +56,13 @@ class OptionCtrl extends GameCtrl
         } else if ($selectedTab == 2) {
             $this->Account();
             if (isset($_POST['gpackNew'])) {
-                error_log("OptionCtrl: POST gpackNew = " . $_POST['gpackNew']);
+                file_put_contents('/tmp/debug_gpack.txt', "OptionCtrl: POST gpackNew = " . $_POST['gpackNew'] . "\n", FILE_APPEND);
                 if (trim($_POST['gpackNew']) != get_gpack_version()) {
-                    error_log("OptionCtrl: Calling set_gpack_version");
+                    file_put_contents('/tmp/debug_gpack.txt', "OptionCtrl: Calling set_gpack_version\n", FILE_APPEND);
                     set_gpack_version(trim($_POST['gpackNew']));
                     $this->redirect("options.php?s=2");
                 } else {
-                    error_log("OptionCtrl: gpackNew matches current version, no update.");
+                    file_put_contents('/tmp/debug_gpack.txt', "OptionCtrl: gpackNew matches current version, no update.\n", FILE_APPEND);
                 }
             }
         } else if ($selectedTab == 3) {

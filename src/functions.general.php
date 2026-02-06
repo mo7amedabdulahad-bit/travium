@@ -641,11 +641,11 @@ function set_gpack_version($gpack_version)
 {
     global $globalConfig;
     $gpackList = $globalConfig['staticParameters']['gpacks']['list'];
-    error_log("set_gpack_version: Trying to set " . $gpack_version);
-    error_log("set_gpack_version: Check key exists? " . (isset($gpackList[$gpack_version]) ? 'YES' : 'NO'));
+    file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: Trying to set " . $gpack_version . "\n", FILE_APPEND);
+    file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: Check key exists? " . (isset($gpackList[$gpack_version]) ? 'YES' : 'NO') . "\n", FILE_APPEND);
     
     if ($gpackList[$gpack_version]) {
-        error_log("set_gpack_version: Setting cookie.");
+        file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: Setting cookie.\n", FILE_APPEND);
         setcookie('travian_gpack_hash', $gpack_version, time() + 365 * 86400, '/');
     }
 }
