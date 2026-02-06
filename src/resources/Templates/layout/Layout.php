@@ -52,6 +52,30 @@ use Core\Helper\TimezoneHelper;
 <!-- Mobile Sidebar Backdrop -->
 <div id="mobileSidebarBackdrop" style="display: none;"></div>
 
+<!-- Mobile Troops Toggle Button (Floating) -->
+<button id="mobileTroopsToggle" class="mobile-troops-toggle" title="Show Troops">
+    <i class="troopsIcon"></i> ⚔️
+</button>
+
+<script type="text/javascript">
+jQuery(function() {
+    // Toggle Troops Bubble
+    jQuery('#mobileTroopsToggle').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        jQuery('.boxes.villageList.units').toggleClass('mobile-troops-popup');
+    });
+
+    // Close when clicking outside
+    jQuery(document).on('click', function(e) {
+        if (!jQuery(e.target).closest('.boxes.villageList.units').length && 
+            !jQuery(e.target).closest('#mobileTroopsToggle').length) {
+            jQuery('.boxes.villageList.units').removeClass('mobile-troops-popup');
+        }
+    });
+});
+</script>
+
 <!-- END MOBILE UI ELEMENTS -->
 
 <div id="reactDialogWrapper"></div>

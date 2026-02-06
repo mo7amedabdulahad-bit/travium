@@ -17,7 +17,8 @@
 #mobileNavigation,
 #mobileHeroAvatar,
 .mobile-sidebar,
-#mobileSidebarBackdrop {
+#mobileSidebarBackdrop,
+#mobileTroopsToggle {
     display: none !important;
 }
 
@@ -642,6 +643,85 @@
     /* Redundant selectors just to be safe */
     .mobileOptimized #stockBar .warehouse,
     .mobileOptimized #stockBar .granary {
+        display: none !important;
+    }
+
+    /* ============ FOOTER & CONTENT TOGGLES ============ */
+    .mobileOptimized #footer {
+        display: none !important;
+    }
+
+    /* Hide Content Boxes by default on mobile */
+    .mobileOptimized .boxes.villageList.production,
+    .mobileOptimized .boxes.villageList.units {
+        display: none !important;
+    }
+
+    /* Troops Toggle Button (Floating FAB) */
+    #mobileTroopsToggle {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        position: fixed !important;
+        bottom: 90px !important;
+        /* Above bottom nav */
+        right: 15px !important;
+        width: 50px !important;
+        height: 50px !important;
+        background: radial-gradient(circle, #8db950 0%, #689230 100%) !important;
+        border: 2px solid #3e2d1e !important;
+        border-radius: 50% !important;
+        color: #fff !important;
+        font-size: 20px !important;
+        line-height: 1 !important;
+        z-index: 9000 !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        transition: transform 0.1s;
+    }
+
+    #mobileTroopsToggle:active {
+        transform: scale(0.95);
+    }
+
+    /* Troops Bubble Popup */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup {
+        display: block !important;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 85% !important;
+        max-width: 320px !important;
+        background: #fbfbd0 !important;
+        /* Classic Travian Box BG */
+        border: 2px solid #7e6341 !important;
+        border-radius: 8px !important;
+        padding: 15px !important;
+        z-index: 10000 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+    }
+
+    /* Ensure styles inside popup are visible */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup table {
+        width: 100% !important;
+        background: none !important;
+        margin: 0 !important;
+    }
+
+    /* Hide decorators */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-tl,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-tr,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-tc,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-ml,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-mr,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-mc,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-bl,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-br,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-bc {
         display: none !important;
     }
 }
