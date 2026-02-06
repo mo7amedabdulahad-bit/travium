@@ -641,7 +641,11 @@ function set_gpack_version($gpack_version)
 {
     global $globalConfig;
     $gpackList = $globalConfig['staticParameters']['gpacks']['list'];
+    error_log("set_gpack_version: Trying to set " . $gpack_version);
+    error_log("set_gpack_version: Check key exists? " . (isset($gpackList[$gpack_version]) ? 'YES' : 'NO'));
+    
     if ($gpackList[$gpack_version]) {
+        error_log("set_gpack_version: Setting cookie.");
         setcookie('travian_gpack_hash', $gpack_version, time() + 365 * 86400, '/');
     }
 }
