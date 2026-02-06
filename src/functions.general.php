@@ -625,13 +625,22 @@ function get_gpack_version($default = false)
     global $globalConfig;
     $gpack_version = $globalConfig['staticParameters']['gpacks']['default'];
 
-    return $gpack_version;
+    
+    // Removed early return
+    // return $gpack_version; 
+
     if (!$default) {
         $gpackList = $globalConfig['staticParameters']['gpacks']['list'];
+        
+        $cookieValue = isset($_COOKIE['travian_gpack_hash']) ? $_COOKIE['travian_gpack_hash'] : 'NOT SET';
+        file_put_contents('/tmp/debug_gpack.txt', "get_gpack_version: Cookie value is: " . $cookieValue . "\n", FILE_APPEND);
+
         if (isset($_COOKIE['travian_gpack_hash'])) {
             if (isset($gpackList[$_COOKIE['travian_gpack_hash']])) {
                 $gpack_version = $_COOKIE['travian_gpack_hash'];
-            }
+             } else {
+                 file_put_contents('/tmp/debug_gpack.txt', "get_gpack_version: Cookie value not in gpackList.\n", FILE_APPEND);
+             }
         }
     }
     return $gpack_version;
@@ -645,8 +654,11 @@ function set_gpack_version($gpack_version)
     file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: Check key exists? " . (isset($gpackList[$gpack_version]) ? 'YES' : 'NO') . "\n", FILE_APPEND);
     
     if ($gpackList[$gpack_version]) {
-        file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: Setting cookie.\n", FILE_APPEND);
-        setcookie('travian_gpack_hash', $gpack_version, time() + 365 * 86400, '/');
+        if (headers_sent($file, $line)) {
+            file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: ERROR - Headers already sent at $file:$line\n", FILE_APPEND);
+        }
+        $result = setcookie('travian_gpack_hash', $gpack_version, time() + 365 * 86400, '/');
+        file_put_contents('/tmp/debug_gpack.txt', "set_gpack_version: Setting cookie result: " . ($result ? 'TRUE' : 'FALSE') . "\n", FILE_APPEND);
     }
 }
 
