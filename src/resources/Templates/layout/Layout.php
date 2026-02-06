@@ -9,6 +9,13 @@ use Core\Helper\TimezoneHelper;
 
 <!-- MOBILE UI ELEMENTS (Official Travian Replication) -->
 
+<!-- Mobile Hero Avatar (Top Left) -->
+<div id="mobileHeroAvatar">
+    <div class="hero-circle">
+        <img src="img/hero_head.png" alt="Hero" id="mobileHeroImage">
+    </div>
+</div>
+
 <!-- Mobile Navigation Bar (Bottom - 7 Buttons) -->
 <nav id="mobileNavigation" style="display: none;">
     <button class="mobile-nav-btn" data-page="dorf1">
@@ -59,6 +66,13 @@ use Core\Helper\TimezoneHelper;
 
 <script type="text/javascript">
 jQuery(function() {
+    // Mobile Hero Avatar Sync
+    var desktopHero = jQuery('.hero_headbox .heroImage');
+    if(desktopHero.length == 0) desktopHero = jQuery('#sidebarBoxHero img');
+    if(desktopHero.length > 0) {
+        jQuery('#mobileHeroImage').attr('src', desktopHero.attr('src'));
+    }
+
     // Toggle Troops Bubble
     jQuery('#mobileTroopsToggle').on('click', function(e) {
         e.preventDefault();

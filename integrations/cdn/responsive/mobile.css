@@ -740,4 +740,96 @@
         display: table-cell !important;
     }
 
+
+    /* ============ DORF2 SCREENSHOT REPLICATION ============ */
+    .mobileOptimized .villageMapWrapper {
+        width: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        justify-content: center !important;
+        position: relative !important;
+        min-height: 80vh !important;
+        padding-top: 10px !important;
+    }
+
+    .mobileOptimized .villageMapWrapper #village_map {
+        margin: 0 !important;
+        padding: 0 !important;
+        /* Scale to fit width better - 0.85 fits standard mobile width */
+        transform: scale(0.85) !important;
+        transform-origin: top center !important;
+        margin-bottom: 150px !important;
+        /* Space for queue/nav */
+        display: block !important;
+    }
+
+    /* Big Yellow Level Indicators - Matching Screenshot */
+    .mobileOptimized #levels .level,
+    .mobileOptimized #village_map .level,
+    .mobileOptimized .villageMapWrapper .aid,
+    .mobileOptimized .villageMapWrapper div[class^="aid"] {
+        background: radial-gradient(circle, #fcefa1 0%, #f0c327 100%) !important;
+        /* Yellow gradient */
+        border: 2px solid #6d5436 !important;
+        /* Brown border */
+        color: #3e2815 !important;
+        border-radius: 50% !important;
+        width: 30px !important;
+        height: 30px !important;
+        line-height: 26px !important;
+        font-weight: bold !important;
+        font-size: 14px !important;
+        text-align: center !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+        z-index: 100 !important;
+        /* Ensure text is centered */
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    /* Hero Avatar Styling - Top Left Floating */
+    #mobileHeroAvatar {
+        position: fixed !important;
+        top: 60px !important;
+        /* Below stockbar (50px) + gap */
+        left: 10px !important;
+        width: 70px !important;
+        height: 70px !important;
+        z-index: 2000 !important;
+        pointer-events: auto !important;
+    }
+
+    #mobileHeroAvatar .hero-circle {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 50% !important;
+        border: 3px solid #bfa16d !important;
+        background: #283032 !important;
+        /* Dark bg */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    #mobileHeroAvatar img {
+        width: 100% !important;
+        height: auto !important;
+        margin-top: -10% !important;
+        /* Center face */
+    }
+
+    /* Circular Status Bars around Hero (Simplified as border) */
+    #mobileHeroAvatar::after {
+        content: '' !important;
+        position: absolute !important;
+        top: -4px !important;
+        left: -4px !important;
+        right: -4px !important;
+        bottom: -4px !important;
+        border-radius: 50% !important;
+        border: 2px solid #5a8e26 !important;
+        /* Green Health ring simulation */
+        z-index: -1 !important;
+    }
 }
