@@ -724,4 +724,19 @@
     .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-bc {
         display: none !important;
     }
+
+    /* FIX: Ensure Troop Icons are visible (override global height: auto) */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup img.unit {
+        width: 16px !important;
+        height: 16px !important;
+        max-width: none !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup td.ico {
+        padding: 2px !important;
+        width: 22px !important;
+        display: table-cell !important;
+    }
 }
