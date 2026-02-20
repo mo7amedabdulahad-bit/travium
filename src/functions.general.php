@@ -650,12 +650,16 @@ function set_gpack_version($gpack_version)
 
 function get_gpack_cdn_url($default = false)
 {
-    return get_gpack_cdn_base_url() . get_gpack_version($default) . '/';
+    return get_gpack_cdn_base_url() . '/' . get_gpack_version($default) . '/';
 }
 
 function get_gpack_cdn_mainPage_url($default = false)
 {
-    return get_gpack_cdn_base_url() . get_gpack_version($default) . '/mainPage/';
+    $version = get_gpack_version($default);
+    if ($version === '326.6') {
+        return get_gpack_cdn_base_url() . '/' . $version . '/';
+    }
+    return get_gpack_cdn_base_url() . '/' . $version . '/mainPage/';
 }
 
 function redirect($url, $code = 302)
@@ -776,6 +780,16 @@ function get_locale()
 
 function get_gpack_link_and_hash($fileName, $useLang = true)
 {
+    $version = get_gpack_version();
+    if ($version === '326.6') {
+        if (strpos($fileName, '.css') !== false) {
+            // For now, map all core CSS to the large compressed one
+            // We use css_ltr for now, assuming LTR is default or detected
+            $dir = (getDirection() == 'RTL' ? 'css_rtl' : 'css_ltr');
+            return get_gpack_cdn_mainPage_url() . $dir . '/imports_compressed.css';
+        }
+    }
+
     if ($useLang) {
         $fileName = get_gpack_cdn_mainPage_url() . 'lang/' . get_language_properties('locale') . '/' . $fileName;
     } else {
