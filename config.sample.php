@@ -78,6 +78,7 @@ $globalConfig['staticParameters']['gpacks'] = [
         'd11cb434' => ['hash' => 'd11cb434', 'name' => 'Travian T4.4 Seasonized v2', 'isNew' => false],
 		'3f73c13f' => ['hash' => '3f73c13f', 'name' => 'Travian T4.6', 'isNew' => false],
 		'29c89d54' => ['hash' => '29c89d54', 'name' => 'Travian T4.6', 'isNew' => true],
+        '326.6' => ['hash' => '326.6', 'name' => 'Travian v326.6 (SVG)', 'isNew' => true],
         'TravianOld' => ['hash' => 'TravianOld', 'name' => 'Travian T4.4 Classic', 'isNew' => false]
     ]
 ];
