@@ -141,6 +141,7 @@ class Dorf1Ctrl extends GameCtrl
         $session = $this->session;
         $this->dorf1View->vars['onLoadBuildings'] = Dispatcher::getInstance()->dispatch("onLoadBuildingsDorfCtrl",
             FALSE);
+        $this->dorf1View->vars['race'] = $this->session->getRace();
         $this->dorf1View->vars['production'] = $this->session->village->getProduction();
         $this->dorf1View->vars['productionBoost'] = [
             $session->hasProductionBoost(1),
