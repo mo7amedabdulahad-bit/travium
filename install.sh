@@ -345,6 +345,7 @@ cat >/etc/systemd/system/travium@.service <<UNIT
 [Unit]
 Description=Travium engine for %i
 After=network.target mysqld.service
+StartLimitIntervalSec=0
 
 [Service]
 User=${SITE_USER}
@@ -353,7 +354,6 @@ ExecStart=/usr/bin/env TRAVIUM_UNDER_SYSTEMD=1 /usr/bin/php8.4 /home/${SITE_USER
 Type=simple
 Restart=on-failure
 RestartSec=2
-StartLimitIntervalSec=0
 KillMode=control-group
 StandardOutput=journal
 StandardError=journal
