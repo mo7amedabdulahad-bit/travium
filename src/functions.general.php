@@ -780,14 +780,9 @@ function get_locale()
 
 function get_gpack_link_and_hash($fileName, $useLang = true)
 {
-    $version = get_gpack_version();
-    if ($version === '326.6') {
-        if (strpos($fileName, '.css') !== false) {
-            // For now, map all core CSS to the large compressed one
-            // We use css_ltr for now, assuming LTR is default or detected
-            $dir = (getDirection() == 'RTL' ? 'css_rtl' : 'css_ltr');
-            return get_gpack_cdn_mainPage_url() . $dir . '/imports_compressed.css';
-        }
+    if (strpos($fileName, '.css') !== false) {
+        $dir = (getDirection() == 'RTL' ? 'css_rtl' : 'css_ltr');
+        return get_gpack_cdn_mainPage_url() . $dir . '/imports_compressed.css';
     }
 
     if ($useLang) {
