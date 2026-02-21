@@ -7,7 +7,8 @@
         <?php $index = 0; ?>
         <?php foreach ($vars['maps'] as $index => $map): ++$index; ?>
             <a href="build.php?id=<?= $index; ?><?= Session::getInstance()->fastUpgradeActive() ? '&fastUP=1' : '' ?>"
-               class="level colorLayer gid<?= $map['item_id']; ?> buildingSlot<?= $index; ?> level<?= $map['level']; ?> <?= $map['upgradeState'] ? 'underConstruction' : '' ?>"
+               class="level colorLayer <?= $map['color']; ?> gid<?= $map['item_id']; ?> buildingSlot<?= $index; ?> level<?= $map['level']; ?> <?= $map['upgradeState'] ? 'underConstruction' : '' ?>"
+               style="<?= $map['style']; ?>"
                data-aid="<?= $index; ?>" data-gid="<?= $map['item_id']; ?>"
                title="<?= htmlspecialchars($map['title']); ?>">
                 <div class="labelLayer"><?= $map['level'] > 0 ? $map['level'] : ''; ?></div>
