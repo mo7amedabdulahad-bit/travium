@@ -287,6 +287,21 @@ fi
 chown -R "${SITE_USER}:${SITE_USER}" "${HTDOCS}"
 
 #####################################
+# Create CDN symlinks for each server
+# This allows game servers to serve CDN assets from the same origin,
+# avoiding CORS issues without requiring a separate cdn subdomain setup.
+#####################################
+log "Creating CDN integrations symlinks for game servers..."
+for server_public in "${HTDOCS}"/servers/*/public; do
+    if [[ -d "$server_public" ]]; then
+        ln -sfn "${HTDOCS}/integrations" "${server_public}/integrations"
+        chown -h "${SITE_USER}:${SITE_USER}" "${server_public}/integrations"
+        log "  Created symlink: ${server_public}/integrations -> ${HTDOCS}/integrations"
+    fi
+done
+ok "CDN symlinks created."
+
+#####################################
 # Import DB
 #####################################
 log "Importing database maindb..."
