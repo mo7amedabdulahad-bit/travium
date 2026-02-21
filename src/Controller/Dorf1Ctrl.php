@@ -236,6 +236,7 @@ class Dorf1Ctrl extends GameCtrl
                 "level"        => $village->getField($i)['level'],
                 "upgradeState" => $village->getField($i)['upgrade_state'],
                 "style"        => $this->field_maps[$direction]['styles'][$i],
+                "title"        => $village->getFieldTitleAsString($i),
             ];
         }
     }

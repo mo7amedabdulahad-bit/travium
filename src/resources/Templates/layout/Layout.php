@@ -451,7 +451,7 @@ jQuery(function() {
                            title="<?=T("Global", "FAQ"); ?>">&nbsp;</a>
                     <?php endif; ?>
                 </div>
-                <div class="contentContainer">
+                <div id="contentOuterContainer" class="contentContainer">
                     <div id="content"
                          class="<?=$vars['contentCssClass']; ?>">
                         <?php
