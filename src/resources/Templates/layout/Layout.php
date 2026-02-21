@@ -5,7 +5,7 @@ use Core\Helper\TimezoneHelper;
 
 ?>
 <?php require __DIR__ . "/head.php"; ?>
-<body data-theme="<?= detect_season() === 'winter' ? 'winter' : 'default'; ?>" class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1">
+<body data-theme="<?= detect_season() === 'winter' ? 'winter' : 'default'; ?>" data-village-perspective="<?=$vars['bodyCssClass']; ?>" class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1">
 
 
 
@@ -26,72 +26,59 @@ use Core\Helper\TimezoneHelper;
             if ($vars['showNavBar']) {
                 ?>
 
-                <ul id="navigation">
-                    <li id="n1" class="villageResources">
-                        <a class="<?=$vars['bodyCssClass'] == 'perspectiveBuildings' ? 'in' : ''; ?>active"
-                           href="dorf1.php"
-                           accesskey="1"
-                           title="<?=T("inGame", "Navigation.Resources"); ?>||"></a>
-                    </li>
-                    <li id="n2" class="villageBuildings">
-                        <a class="<?=$vars['bodyCssClass'] == 'perspectiveResources' ? 'in' : ''; ?>active"
-                           href="dorf2.php"
-                           accesskey="2"
-                           title="<?=T("inGame", "Navigation.Buildings"); ?>||"></a>
-                    </li>
-                    <li id="n3" class="map">
-                        <a href="karte.php" accesskey="3"
-                           title="<?=T("inGame", "Navigation.Map"); ?>||"></a>
-                    </li>
-                    <li id="n4" class="statistics">
-                        <a href="statistiken.php" accesskey="4"
-                           title="<?=T("inGame", "Navigation.Statistics"); ?>||"></a>
-                    </li>
-                    <li id="n5" class="reports">
-                        <a href="reports.php" accesskey="5"
-                           title="<?=T("inGame", "Navigation.Reports"); ?>||<?=T("inGame",
-                               "Navigation.newReports"); ?>: <?=$vars['newReportsCount']; ?>"></a>
-                        <?php if ($vars['newReportsCount']): ?>
-                            <div class="speechBubbleContainer ">
-                                <div class="speechBubbleBackground">
-                                    <div class="start">
-                                        <div class="end">
-                                            <div class="middle"></div>
-                                        </div>
+                <div id="navigation">
+                    <a id="n1" class="village resourceView <?=$vars['bodyCssClass'] == 'perspectiveBuildings' ? 'in' : ''; ?>active"
+                       href="dorf1.php"
+                       accesskey="1"
+                       title="<?=T("inGame", "Navigation.Resources"); ?>||"></a>
+                    <a id="n2" class="village buildingView <?=$vars['bodyCssClass'] == 'perspectiveResources' ? 'in' : ''; ?>active"
+                       href="dorf2.php"
+                       accesskey="2"
+                       title="<?=T("inGame", "Navigation.Buildings"); ?>||"></a>
+                    <a id="n3" class="map" href="karte.php" accesskey="3"
+                       title="<?=T("inGame", "Navigation.Map"); ?>||"></a>
+                    <a id="n4" class="statistics" href="statistiken.php" accesskey="4"
+                       title="<?=T("inGame", "Navigation.Statistics"); ?>||"></a>
+                    
+                    <a id="n5" class="reports" href="reports.php" accesskey="5"
+                       title="<?=T("inGame", "Navigation.Reports"); ?>||<?=T("inGame", "Navigation.newReports"); ?>: <?=$vars['newReportsCount']; ?>">
+                    </a>
+                    <?php if ($vars['newReportsCount']): ?>
+                        <div class="speechBubbleContainer ">
+                            <div class="speechBubbleBackground">
+                                <div class="start">
+                                    <div class="end">
+                                        <div class="middle"></div>
                                     </div>
                                 </div>
-                                <div
-                                        class="speechBubbleContent"><?=$vars['newReportsCount'] > 99 ? '+99' : $vars['newReportsCount']; ?></div>
                             </div>
-                            <div class="clear"></div>
-                        <?php endif; ?>
-                    </li>
-                    <li id="n6" class="messages">
-                        <a href="messages.php" accesskey="6"
-                           title="<?=T("inGame", "Navigation.Messages"); ?>||<?=T("inGame",
-                               "Navigation.newMessages"); ?>: <?=$vars['newMessagesCount']; ?>"></a>
-                        <?php if ($vars['newMessagesCount']): ?>
-                            <div class="speechBubbleContainer ">
-                                <div class="speechBubbleBackground">
-                                    <div class="start">
-                                        <div class="end">
-                                            <div class="middle"></div>
-                                        </div>
+                            <div class="speechBubbleContent"><?=$vars['newReportsCount'] > 99 ? '+99' : $vars['newReportsCount']; ?></div>
+                        </div>
+                        <div class="clear"></div>
+                    <?php endif; ?>
+                    
+                    <a id="n6" class="messages" href="messages.php" accesskey="6"
+                       title="<?=T("inGame", "Navigation.Messages"); ?>||<?=T("inGame", "Navigation.newMessages"); ?>: <?=$vars['newMessagesCount']; ?>">
+                    </a>
+                    <?php if ($vars['newMessagesCount']): ?>
+                        <div class="speechBubbleContainer ">
+                            <div class="speechBubbleBackground">
+                                <div class="start">
+                                    <div class="end">
+                                        <div class="middle"></div>
                                     </div>
                                 </div>
-                                <div
-                                        class="speechBubbleContent"><?=$vars['newMessagesCount'] > 99 ? '+99' : $vars['newMessagesCount']; ?></div>
                             </div>
-                            <div class="clear"></div>
-                        <?php endif; ?>
-                    </li>
-                    <li id="n7" class="gold">
-                        <a href="#" accesskey="7"
-                           title="<?=T("inGame", "Navigation.Buy gold"); ?>"
-                           onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
-                    </li>
-                    <li class="clear">&nbsp;</li>
-                </ul>
+                            <div class="speechBubbleContent"><?=$vars['newMessagesCount'] > 99 ? '+99' : $vars['newMessagesCount']; ?></div>
+                        </div>
+                        <div class="clear"></div>
+                    <?php endif; ?>
+                    
+                    <a id="n7" class="gold" href="#" accesskey="7"
+                       title="<?=T("inGame", "Navigation.Buy gold"); ?>"
+                       onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
+                    <div class="clear">&nbsp;</div>
+                </div>
                 <div id="goldSilver">
                     <div class="gold">
                         <img src="img/x.gif" alt="<?=T("inGame", "gold"); ?>"
