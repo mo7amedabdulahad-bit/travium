@@ -650,16 +650,13 @@ function set_gpack_version($gpack_version)
 
 function get_gpack_cdn_url($default = false)
 {
-    return get_gpack_cdn_base_url() . get_gpack_version($default) . '/';
+    return get_gpack_cdn_base_url() . '326.6/';
 }
 
 function get_gpack_cdn_mainPage_url($default = false)
 {
-    $version = get_gpack_version($default);
-    if ($version === '326.6') {
-        return get_gpack_cdn_base_url() . $version . '/';
-    }
-    return get_gpack_cdn_base_url() . $version . '/mainPage/';
+    // The CDN folder is always '326.6' regardless of the version hash stored in config.
+    return get_gpack_cdn_base_url() . '326.6/';
 }
 
 function redirect($url, $code = 302)
