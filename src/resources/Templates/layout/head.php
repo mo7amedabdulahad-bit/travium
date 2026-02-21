@@ -27,13 +27,22 @@ use Core\Helper\PreferencesHelper;
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
         window._player_uuid = '<?=(isset($vars['_player_uuid']) ? $vars['_player_uuid'] : null);?>';
     </script>
-    <script type="text/javascript" src="js/default/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="js/default/jquery.md5.min.js"></script>
-    <script type="text/javascript" src="js/default/jquery.scrollbar.min.js"></script>
-    <script type="text/javascript" src="js/default/d3/d3.min.js"></script>
-    <script type="text/javascript" src="js/default/d3/d3pie.min.js"></script>
-    <script type="text/javascript" src="js/default/gsap/minified/TweenMax.min.js"></script>
-    <script type="text/javascript" src="js/default/gsap/minified/plugins/MorphSVGPlugin.min.js"></script>
+    <!--  Core libraries from Gpack CDN -->
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/jquery.md5.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/deepmerge.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/simplebar.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/popper.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/tippy.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/d3/d3.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/d3/d3pie.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/ChartJs/Chart.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/gsap/TweenMax.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/gsap/plugins/MorphSVGPlugin.min.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/PixiJS/pixi.min.js"></script>
+    <!-- React app bundles (navigation, backgrounds, interactive elements) -->
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/vendor.js"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/runtime.js"></script>
     <script type="text/javascript" src="js/Game/General/General.js"></script>
     <script type="text/javascript">
         <?php
@@ -53,7 +62,7 @@ use Core\Helper\PreferencesHelper;
         ?>
         window.TravianDefaults = Object.assign(<?=json_encode($data);?>, false || {});
     </script>
-    <script type="text/javascript" src="<?=get_crypt_js_link(); ?>"></script>
+    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/main.js"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <script type="text/javascript">
         <?php if(!(isset($vars['autoReload']) && $vars['autoReload'] == 1)):?>
