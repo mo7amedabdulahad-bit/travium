@@ -43,8 +43,8 @@ use Core\Helper\PreferencesHelper;
     <!-- React app bundles (navigation, backgrounds, interactive elements) -->
     <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/vendor.js"></script>
     <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/runtime.js"></script>
-    <!-- crypt.js defines the Travian global namespace needed by inline setup scripts -->
-    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/crypt.js"></script>
+    <!-- crypt.js (T4.4): defines window.Travian namespace needed by inline setup scripts -->
+    <script type="text/javascript" src="/integrations/cdn/3f73c13f/mainPage/js/crypt.js"></script>
     <script type="text/javascript" src="js/Game/General/General.js"></script>
     <script type="text/javascript">
         <?php
