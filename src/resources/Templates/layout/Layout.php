@@ -5,78 +5,9 @@ use Core\Helper\TimezoneHelper;
 
 ?>
 <?php require __DIR__ . "/head.php"; ?>
-<body data-theme="default" class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1 mobileOptimized">
-
-<!-- MOBILE UI ELEMENTS (Official Travian Replication) -->
-
-<!-- Mobile Navigation Bar (Bottom - 7 Buttons) -->
-<nav id="mobileNavigation" style="display: none;">
-    <button class="mobile-nav-btn" data-page="dorf1">
-        <span class="icon villages"></span>
-    </button>
-    <button class="mobile-nav-btn" data-page="dorf2">
-        <span class="icon buildings"></span>
-    </button>
-    <button class="mobile-nav-btn" data-page="karte">
-        <span class="icon map"></span>
-    </button>
-    <button class="mobile-nav-btn" data-page="reports">
-        <span class="icon reports"></span>
-    </button>
-    <button class="mobile-nav-btn" data-page="messages">
-        <span class="icon messages"></span>
-    </button>
-    <button class="mobile-nav-btn" data-page="dailyQuests">
-        <span class="icon dailyQuests"></span>
-    </button>
-    <button class="mobile-nav-btn mobile-nav-gold" data-page="plus">
-        <span class="icon gold"></span>
-    </button>
-</nav>
-
-<!-- Mobile Sidebar Containers -->
-<div id="mobileSidebarLeft" class="mobile-sidebar">
-    <div class="mobile-sidebar-header">
-        <button class="mobile-sidebar-close">&times;</button>
-    </div>
-</div>
-
-<div id="mobileSidebarRight" class="mobile-sidebar">
-    <div class="mobile-sidebar-header">
-        <button class="mobile-sidebar-close">&times;</button>
-    </div>
-    <!-- Content will be cloned from desktop #outOfGame by mobile-nav.js -->
-</div>
+<body data-theme="default" class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1">
 
 
-<!-- Mobile Sidebar Backdrop -->
-<div id="mobileSidebarBackdrop" style="display: none;"></div>
-
-<!-- Mobile Troops Toggle Button (Floating) -->
-<button id="mobileTroopsToggle" class="mobile-troops-toggle" title="Show Troops">
-    <i class="troopsIcon"></i> ⚔️
-</button>
-
-<script type="text/javascript">
-jQuery(function() {
-    // Toggle Troops Bubble
-    jQuery('#mobileTroopsToggle').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        jQuery('.boxes.villageList.units').toggleClass('mobile-troops-popup');
-    });
-
-    // Close when clicking outside
-    jQuery(document).on('click', function(e) {
-        if (!jQuery(e.target).closest('.boxes.villageList.units').length && 
-            !jQuery(e.target).closest('#mobileTroopsToggle').length) {
-            jQuery('.boxes.villageList.units').removeClass('mobile-troops-popup');
-        }
-    });
-});
-</script>
-
-<!-- END MOBILE UI ELEMENTS -->
 
 <div id="reactDialogWrapper"></div>
 <div id="background">

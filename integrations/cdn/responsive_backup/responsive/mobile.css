@@ -1,0 +1,743 @@
+﻿/* ==========================================================================
+   TRAVIUM MOBILE - OFFICIAL TRAVIAN UI REPLICATION
+   
+   Based on official Travian mobile screenshots
+   
+   Layout:
+   - Resources bar: Fixed top (50px)
+   - Hero avatar: Fixed top-left below resources
+   - Navigation: Fixed bottom (70px) - 7 circular buttons
+   - Sidebars: Overlay from left/right
+   - Content: Scrollable between top/bottom bars
+   - Building queue: Above navigation
+   ========================================================================== */
+
+/* ============ DESKTOP - HIDE MOBILE ELEMENTS ============ */
+
+#mobileNavigation,
+#mobileHeroAvatar,
+.mobile-sidebar,
+#mobileSidebarBackdrop,
+#mobileTroopsToggle {
+    display: none !important;
+}
+
+/* ============ MOBILE BREAKPOINT: 620px PORTRAIT ============ */
+@media screen and (max-width: 620px) and (orientation: portrait) {
+
+    /* ============ 1. BODY & HTML - PREVENT SCROLL ============ */
+    body.mobileOptimized,
+    html {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+        width: 100% !important;
+    }
+
+    body.mobileOptimized {
+        -webkit-text-size-adjust: 100% !important;
+        font-size: 14px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* ============ 2. HIDE DESKTOP ELEMENTS ============ */
+    .mobileOptimized #header,
+    .mobileOptimized #logo,
+    .mobileOptimized #navigation {
+        display: none !important;
+    }
+
+    /* Hide desktop sidebars ONLY ON MOBILE - they will be cloned to mobile sidebars */
+    .mobileOptimized #sidebarBeforeContent,
+    .mobileOptimized #sidebarAfterContent {
+        display: none !important;
+    }
+
+    /* Hide any existing hero/player boxes - we use mobile hero avatar */
+    .mobileOptimized #playerBox,
+    .mobileOptimized .heroImageBg {
+        display: none !important;
+    }
+
+    /* ============ 3. RESOURCES BAR (TOP - FIXED) ============ */
+    .mobileOptimized #stockBar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+
+        width: 100% !important;
+        height: 50px !important;
+        min-height: 50px !important;
+        max-height: 50px !important;
+
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+
+        padding: 2px 5px !important;
+        margin: 0 !important;
+        gap: 3px !important;
+
+        z-index: 1000 !important;
+        background: rgba(62, 45, 30, 0.95) !important;
+        /* Brown theme */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Resources items - compact */
+    .mobileOptimized #stockBar .warehouse,
+    .mobileOptimized #stockBar .granary {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 2px !important;
+        font-size: 10px !important;
+        flex-shrink: 1 !important;
+    }
+
+    .mobileOptimized #stockBar i {
+        transform: scale(0.8) !important;
+    }
+
+    .mobileOptimized #stockBar .stockBarButton {
+        min-width: auto !important;
+        padding: 2px 4px !important;
+        font-size: 10px !important;
+    }
+
+    /* Gold/Silver */
+    .mobileOptimized #stockBar .gold,
+    .mobileOptimized #stockBar .silver {
+        font-size: 11px !important;
+        font-weight: bold !important;
+    }
+
+    /* Hero Avatar - REMOVED (swipe-only for sidebar) */
+    /* ============ 5. MOBILE NAVIGATION (BOTTOM - FIXED) ============ */
+    .mobileOptimized #mobileNavigation {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+
+        width: 100% !important;
+        height: 70px !important;
+        min-height: 70px !important;
+
+        justify-content: space-around !important;
+        align-items: center !important;
+
+        padding: 8px 5px !important;
+        margin: 0 !important;
+        gap: 4px !important;
+
+        z-index: 1000 !important;
+        background: rgba(62, 45, 30, 0.98) !important;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn {
+        /* Perfect circular buttons matching screenshot */
+        width: 55px !important;
+        height: 55px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+
+        border-radius: 50% !important;
+        border: 2px solid rgba(139, 90, 43, 0.5) !important;
+
+        background-color: rgba(62, 45, 30, 0.9) !important;
+        background-repeat: no-repeat !important;
+        /* JavaScript sets background-position for each button */
+
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+
+        flex-shrink: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn:active {
+        transform: scale(0.95) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .mobileOptimized .mobile-nav-btn.active {
+        background-color: rgba(100, 75, 50, 1) !important;
+        border-color: rgba(255, 215, 0, 0.7) !important;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.4) !important;
+    }
+
+    /* Gold button - distinct golden styling */
+    .mobileOptimized .mobile-nav-gold {
+        background-color: rgba(218, 165, 32, 0.9) !important;
+        border: 3px solid #ffd700 !important;
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.5) !important;
+    }
+
+    .mobileOptimized .mobile-nav-gold:active {
+        background-color: rgba(255, 215, 0, 1) !important;
+    }
+
+    /* ============ NAVIGATION ICONS ============ */
+    /* Navigation icons use desktop sprite sheet */
+    .mobileOptimized .mobile-nav-btn {
+        background-image: url('../TravianOld/mainPage/img/layout/mainNavigation-ltr.png');
+        background-repeat: no-repeat;
+        /* Scale sprite width to fit button (55px), height auto scales proportionally */
+        background-size: 100% auto;
+        /* JavaScript sets exact position for each button */
+    }
+
+    /* Gold button uses different sprite */
+    .mobileOptimized .mobile-nav-gold {
+        background-image: url('../TravianOld/mainPage/img/layout/goldButton.png');
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+
+    /* ============ 6. BUILDING QUEUE BAR (ABOVE NAV) ============ */
+    .mobileOptimized #buildingList {
+        position: fixed !important;
+        bottom: 70px !important;
+        /* Above navigation */
+        left: 0 !important;
+        right: 0 !important;
+
+        background: rgba(255, 255, 255, 0.95) !important;
+        padding: 8px !important;
+
+        z-index: 999 !important;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* ============ 7. CONTENT AREA (SCROLLABLE) ============ */
+    .mobileOptimized #contentOuterContainer {
+        margin-top: 55px !important;
+        /* Resources bar 50px + gap 5px */
+        margin-bottom: 75px !important;
+        /* Navigation 70px + gap 5px */
+        padding: 5px !important;
+
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .mobileOptimized #contentInnerContainer {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Centervillage map */
+    .mobileOptimized #villageContent,
+    .mobileOptimized #village_map {
+        margin: 0 auto !important;
+        display: block !important;
+    }
+
+    /* Make tables responsive */
+    .mobileOptimized table {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        display: block !important;
+        font-size: 12px !important;
+    }
+
+    .mobileOptimized td,
+    .mobileOptimized th {
+        padding: 5px !important;
+    }
+
+    /* ============ 8. MOBILE SIDEBARS (OVERLAY) ============ */
+
+    /* Base sidebar styles */
+    .mobileOptimized .mobile-sidebar {
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+
+        width: 80% !important;
+        max-width: 300px !important;
+
+        background: rgba(255, 255, 255, 0.98) !important;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
+
+        z-index: 1001 !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        transition: transform 0.3s ease !important;
+
+        padding: 20px !important;
+    }
+
+    /* Left sidebar */
+    .mobileOptimized #mobileSidebarLeft {
+        left: 0 !important;
+        transform: translateX(-100%) !important;
+    }
+
+    .mobileOptimized #mobileSidebarLeft.open {
+        transform: translateX(0) !important;
+    }
+
+    /* Right sidebar */
+    .mobileOptimized #mobileSidebarRight {
+        right: 0 !important;
+        transform: translateX(100%) !important;
+    }
+
+    .mobileOptimized #mobileSidebarRight.open {
+        transform: translateX(0) !important;
+    }
+
+    /* Sidebar close button */
+    .mobileOptimized .mobile-sidebar-close {
+        position: absolute !important;
+        top: 10px !important;
+        right: 10px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+
+        background: rgba(0, 0, 0, 0.1) !important;
+        border: none !important;
+        border-radius: 50% !important;
+
+        font-size: 24px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+    }
+
+    /* Options menu in right sidebar */
+    .mobileOptimized .mobile-options-menu {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 40px 0 0 0 !important;
+    }
+
+    .mobileOptimized .mobile-options-menu li {
+        margin: 0 !important;
+        padding: 0 !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .mobileOptimized .mobile-options-menu a {
+        display: block !important;
+        padding: 15px 10px !important;
+        color: #333 !important;
+        text-decoration: none !important;
+        font-size: 16px !important;
+    }
+
+    .mobileOptimized .mobile-options-menu a:active {
+        background: rgba(0, 0, 0, 0.05) !important;
+    }
+
+    /* Mobile sidebar footer links */
+    .mobileOptimized .mobile-sidebar-footer {
+        margin-top: 20px !important;
+        padding-top: 15px !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .mobileOptimized .mobile-sidebar-footer a {
+        color: #666 !important;
+        text-decoration: none !important;
+        font-size: 13px !important;
+        padding: 5px 10px !important;
+    }
+
+    .mobileOptimized .mobile-sidebar-footer a:active {
+        background: rgba(0, 0, 0, 0.05) !important;
+    }
+
+    /* ============ 9. SIDEBAR BACKDROP ============ */
+    .mobileOptimized #mobileSidebarBackdrop {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+
+        background: rgba(0, 0, 0, 0.6) !important;
+        z-index: 1000 !important;
+
+        cursor: pointer !important;
+    }
+
+    .mobileOptimized #mobileSidebarBackdrop.active {
+        display: block !important;
+    }
+
+    /* ============ 10. COMPACT TYPOGRAPHY ============ */
+    .mobileOptimized h1 {
+        font-size: 1.5em !important;
+    }
+
+    .mobileOptimized h2 {
+        font-size: 1.3em !important;
+    }
+
+    .mobileOptimized h3 {
+        font-size: 1.1em !important;
+    }
+
+    .mobileOptimized p {
+        font-size: 1em !important;
+        line-height: 1.4 !important;
+    }
+
+    .mobileOptimized .contentBox {
+        padding: 8px !important;
+        margin: 5px 0 !important;
+    }
+
+    /* ============ 11. TOUCH-FRIENDLY BUTTONS ============ */
+    .mobileOptimized button,
+    .mobileOptimized a.button,
+    .mobileOptimized input[type="submit"],
+    .mobileOptimized input[type="button"] {
+        min-height: 44px !important;
+        padding: 10px 15px !important;
+        font-size: 14px !important;
+        touch-action: manipulation !important;
+    }
+
+    /* ============ 12. IMAGES RESPONSIVE ============ */
+    .mobileOptimized img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* ============ 13. PREVENT TEXT SELECTION DURING SWIPE ============ */
+    .mobileOptimized * {
+        -webkit-user-select: none !important;
+        user-select: none !important;
+    }
+
+    .mobileOptimized input,
+    .mobileOptimized textarea {
+        -webkit-user-select: text !important;
+        user-select: text !important;
+    }
+}
+
+/* ============ MOBILE SIDEBARS ============ */
+.mobileOptimized .mobile-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    width: 80% !important;
+    max-width: 320px !important;
+    height: 100% !important;
+    background: rgba(245, 240, 230, 0.5) !important;
+    z-index: 10000 !important;
+    overflow-y: auto !important;
+    transition: transform 0.3s ease !important;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* LEFT sidebar - slides from left */
+.mobileOptimized #mobileSidebarLeft {
+    left: 0 !important;
+    right: auto !important;
+    transform: translateX(-100%) !important;
+}
+
+.mobileOptimized #mobileSidebarLeft.open {
+    transform: translateX(0) !important;
+}
+
+/* RIGHT sidebar - slides from right */
+.mobileOptimized #mobileSidebarRight {
+    right: 0 !important;
+    left: auto !important;
+    transform: translateX(100%) !important;
+}
+
+.mobileOptimized #mobileSidebarRight.open {
+    transform: translateX(0) !important;
+}
+
+/* Sidebar header */
+.mobileOptimized .mobile-sidebar-header {
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding: 10px !important;
+    background: #3e2d1e !important;
+}
+
+/* Close button */
+.mobileOptimized .mobile-sidebar-close {
+    background: none !important;
+    border: none !important;
+    color: #fff !important;
+    font-size: 28px !important;
+    cursor: pointer !important;
+    padding: 5px 15px !important;
+}
+
+/* Backdrop overlay */
+.mobileOptimized #mobileSidebarBackdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 9999 !important;
+}
+
+/* ============ RESOURCE BAR OPTIMIZATION (Off-White & Left Aligned) ============ */
+
+@media screen and (max-width: 620px) and (orientation: portrait) {
+
+    /* HIDE SERVER TIME */
+    .mobileOptimized #servertime {
+        display: none !important;
+    }
+
+    /* Main Container */
+    .mobileOptimized #stockBar {
+        height: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
+        padding: 0 2px !important;
+        gap: 2px !important;
+        background: linear-gradient(to bottom, #dabe8d 0%, #7e6341 100%) !important;
+        border-bottom: 1px solid #3e2d1e !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 
+       CRITICAL: Hide the LIST ITEMS for Warehouse, Granary, FreeCrop, and Clear divs.
+    */
+    .mobileOptimized #stockBar #stockBarWarehouseWrapper,
+    .mobileOptimized #stockBar #stockBarGranaryWrapper,
+    .mobileOptimized #stockBar #stockBarFreeCropWrapper,
+    .mobileOptimized #stockBar .clear,
+    .mobileOptimized #stockBar .gold,
+    .mobileOptimized #stockBar .silver {
+        display: none !important;
+    }
+
+
+    /* Individual Resource Item - OFF-WHITE background box */
+    .mobileOptimized #stockBar .stockBarButton {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        /* Align content LEFT */
+        flex: 1 !important;
+        width: auto !important;
+        height: 34px !important;
+        padding: 0 4px !important;
+        background: #fdfdfd !important;
+        /* Off-White */
+        border: 1px solid #7e6341 !important;
+        border-radius: 4px !important;
+        box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.5) !important;
+        position: relative !important;
+        margin: 0 !important;
+        min-width: 0 !important;
+        gap: 4px !important;
+        /* Space between Icon and Text */
+        max-width: none !important;
+    }
+
+    /* Neutralize Desktop Containers */
+    .mobileOptimized #stockBar .stockBarButton .begin,
+    .mobileOptimized #stockBar .stockBarButton .end {
+        display: none !important;
+    }
+
+    .mobileOptimized #stockBar .stockBarButton .middle {
+        background: none !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Resource Icon - Left side */
+    .mobileOptimized #stockBar i {
+        transform: scale(0.85) !important;
+        margin-right: 0 !important;
+        flex-shrink: 0 !important;
+        display: block !important;
+        order: 1 !important;
+    }
+
+    /* Value Wrapper - BLACK & LEFT ALIGNED */
+    .mobileOptimized #stockBar .value {
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        color: #000000 !important;
+        /* Black */
+        text-shadow: none !important;
+        /* Clean text */
+        z-index: 2 !important;
+        white-space: nowrap !important;
+        line-height: 1 !important;
+        margin-bottom: 8px !important;
+        position: relative !important;
+        top: -2px !important;
+        order: 2 !important;
+        flex-grow: 1 !important;
+        text-align: left !important;
+        /* Force Left Align */
+        padding-right: 0 !important;
+    }
+
+    /* Progress Bar - Green */
+    .mobileOptimized #stockBar .barBox {
+        position: absolute !important;
+        bottom: 3px !important;
+        left: 32px !important;
+        right: 4px !important;
+        height: 5px !important;
+        min-height: 5px !important;
+        border: 1px solid #555 !important;
+        background: #333 !important;
+        border-radius: 2px !important;
+        display: block !important;
+        order: 3 !important;
+    }
+
+    /* The actual bar filler */
+    .mobileOptimized #stockBar .bar {
+        height: 100% !important;
+        border-radius: 1px !important;
+        background: #699e32 !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    }
+
+    /* Redundant selectors just to be safe */
+    .mobileOptimized #stockBar .warehouse,
+    .mobileOptimized #stockBar .granary {
+        display: none !important;
+    }
+
+    /* ============ FOOTER & CONTENT TOGGLES ============ */
+    .mobileOptimized #footer {
+        display: none !important;
+    }
+
+    /* Hide Content Boxes by default on mobile */
+    .mobileOptimized .boxes.villageList.production,
+    .mobileOptimized .boxes.villageList.units {
+        display: none !important;
+    }
+
+    /* Troops Toggle Button (Floating FAB) */
+    #mobileTroopsToggle {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        position: fixed !important;
+        bottom: 90px !important;
+        /* Above bottom nav */
+        right: 15px !important;
+        width: 50px !important;
+        height: 50px !important;
+        background: radial-gradient(circle, #8db950 0%, #689230 100%) !important;
+        border: 2px solid #3e2d1e !important;
+        border-radius: 50% !important;
+        color: #fff !important;
+        font-size: 20px !important;
+        line-height: 1 !important;
+        z-index: 9000 !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        transition: transform 0.1s;
+    }
+
+    #mobileTroopsToggle:active {
+        transform: scale(0.95);
+    }
+
+    /* Troops Bubble Popup */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup {
+        display: block !important;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 85% !important;
+        max-width: 320px !important;
+        background: #fbfbd0 !important;
+        /* Classic Travian Box BG */
+        border: 2px solid #7e6341 !important;
+        border-radius: 8px !important;
+        padding: 15px !important;
+        z-index: 10000 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+    }
+
+    /* Ensure styles inside popup are visible */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup table {
+        width: 100% !important;
+        background: none !important;
+        margin: 0 !important;
+    }
+
+    /* Hide decorators */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-tl,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-tr,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-tc,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-ml,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-mr,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-mc,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-bl,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-br,
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup .boxes-bc {
+        display: none !important;
+    }
+
+    /* FIX: Ensure Troop Icons are visible (override global height: auto) */
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup img.unit {
+        width: 16px !important;
+        height: 16px !important;
+        max-width: none !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    .mobileOptimized .boxes.villageList.units.mobile-troops-popup td.ico {
+        padding: 2px !important;
+        width: 22px !important;
+        display: table-cell !important;
+    }
+
+}
