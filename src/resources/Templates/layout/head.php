@@ -40,31 +40,9 @@ use Core\Helper\PreferencesHelper;
     <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/gsap/TweenMax.min.js"></script>
     <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/gsap/plugins/MorphSVGPlugin.min.js"></script>
     <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/PixiJS/pixi.min.js"></script>
-    <!-- React app bundles (navigation, backgrounds, interactive elements) -->
-    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/vendor.js"></script>
-    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/runtime.js"></script>
     <!-- crypt.js (T4.4): defines window.Travian namespace needed by inline setup scripts -->
     <script type="text/javascript" src="/integrations/cdn/3f73c13f/mainPage/js/crypt.js"></script>
     <script type="text/javascript" src="js/Game/General/General.js"></script>
-    <script type="text/javascript">
-        <?php
-        $data = [
-            'Map' => [
-                'Size' => [
-                    'width'  => (2 * MAP_SIZE) + 1,
-                    'height' => (2 * MAP_SIZE) + 1,
-                    'left'   => -MAP_SIZE,
-                    'right'  => MAP_SIZE,
-                    'bottom' => -MAP_SIZE,
-                    'top'    => MAP_SIZE,
-                ],
-            ],
-            'Season' => detect_season(),
-        ];
-        ?>
-        window.TravianDefaults = Object.assign(<?=json_encode($data);?>, false || {});
-    </script>
-    <script type="text/javascript" src="<?=get_gpack_cdn_mainPage_url();?>js/bundle/main.js"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <script type="text/javascript">
         <?php if(!(isset($vars['autoReload']) && $vars['autoReload'] == 1)):?>
