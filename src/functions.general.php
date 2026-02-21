@@ -612,12 +612,12 @@ function is_lowres()
 
 function get_gpack_cdn_base_url()
 {
-    return '//cdn.' . WebService::getRealDomain() . '/';
+    return '/integrations/cdn/';
 }
 
 function get_gpack_cdn_base_url_with_protocol()
 {
-    return 'https://cdn.' . WebService::getRealDomain() . '/';
+    return '/integrations/cdn/';
 }
 
 function get_gpack_version($default = false)
