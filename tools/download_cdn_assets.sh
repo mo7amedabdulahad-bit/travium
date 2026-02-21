@@ -14,11 +14,12 @@ LOCAL_CDN_DIR="${2:-/home/travium/htdocs/integrations/cdn/${GPACK_VERSION}/img_l
 CSS_FILE="${3:-/home/travium/htdocs/integrations/cdn/${GPACK_VERSION}/css_ltr/imports_compressed.css}"
 PARALLEL_JOBS="${4:-8}"
 
-# Live Travian CDN - try multiple known domain patterns
-# The Travian CDN hosts Gpack at these paths:
+# Live Travian CDN - confirmed URL format from browser inspection of nys.x5.international.travian.com
+# The real game uses gpack 347.6 even though our CSS is for 326.6
+# We download FROM 347.6 and save TO our 326.6 folder since the assets are compatible
 SOURCE_CDN_BASES=(
-    "https://cdn.legends.travian.com/img/${GPACK_VERSION}"
-    "https://resources.legends.travian.com/img/${GPACK_VERSION}"
+    "https://cdn.legends.travian.com/gpack/347.6"
+    "https://cdn.legends.travian.com/gpack/${GPACK_VERSION}"
 )
 
 # Colors
@@ -76,9 +77,9 @@ fi
 WORKING_CDN=""
 log "Testing CDN connectivity..."
 for cdn_base in "${SOURCE_CDN_BASES[@]}"; do
-    # Test with a known small file
-    TEST_URL="${cdn_base}/img_ltr/themes/default/background/resourceFields/resourceField3.png"
-    HTTP=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 \
+    # Test with a known file from the live CDN
+    TEST_URL="${cdn_base}/img_ltr/hud/sidebar/sidebarBox.png"
+    HTTP=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 8 \
            -H "Referer: https://legends.travian.com/" "$TEST_URL" 2>/dev/null || echo "000")
     if [[ "$HTTP" == "200" ]]; then
         WORKING_CDN="$cdn_base"
