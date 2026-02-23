@@ -1,13 +1,13 @@
 <div id="topBarHero" class="heroV2">
     <!-- Health Progress -->
-    <svg class="health" viewBox="0 0 110 110">
+    <svg class="health" viewBox="0 0 110 110" style="width: 110px; height: 110px;">
         <circle cx="55" cy="55" r="50" fill="none" stroke="#e0e0e0" stroke-width="10"/>
         <circle cx="55" cy="55" r="50" fill="none" stroke="<?= ($vars['regenerating'] ? $vars['regeneratedHealth'] : $vars['health']) < 25 ? '#FF0000' : '#88CC00'; ?>" stroke-width="10" 
                 stroke-dasharray="<?= (($vars['regenerating'] ? $vars['regeneratedHealth'] : $vars['health'])/100) * 314; ?> 314" transform="rotate(-90 55 55)"/>
     </svg>
     
     <!-- Experience Progress -->
-    <svg class="experience" viewBox="0 0 110 110">
+    <svg class="experience" viewBox="0 0 110 110" style="width: 110px; height: 110px;">
         <circle cx="55" cy="55" r="50" fill="none" stroke="#e0e0e0" stroke-width="10"/>
         <circle cx="55" cy="55" r="50" fill="none" stroke="#0000FF" stroke-width="10" 
                 stroke-dasharray="<?= ($vars['expPercent']/100) * 314; ?> 314" transform="rotate(-90 55 55)"/>
