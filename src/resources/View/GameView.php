@@ -229,7 +229,7 @@ class GameView
         }
         $view->vars['adventureWhiteButton']['id'] = get_button_id();
         $view->vars['auctionWhiteButton']['id'] = get_button_id();
-        $this->vars['sidebarBeforeContent'] .= $view->output();
+        $this->vars['topBarHero'] = $view->output();
     }
 
     private function renderAllianceBox()

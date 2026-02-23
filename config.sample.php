@@ -71,13 +71,14 @@ $globalConfig['staticParameters']['global_css_class'] = 'travium';
 /* DO NOT EDIT BELOW THIS POINT UNLESS YOU KNOW WHAT YOU ARE DOING */
 $globalConfig['cachingServers'] = ['memcached' => [['127.0.0.1', 11211],],];
 $globalConfig['staticParameters']['gpacks'] = [
-    'default' => 'a17a8f72',
+    'default' => '347.6',
     'list' => [
         'a17a8f72' => ['hash' => 'a17a8f72', 'name' => 'Travian T4.5', 'isNew' => true],
         '68597666' => ['hash' => '68597666', 'name' => 'Travian T4.4 Seasonized', 'isNew' => false],
         'd11cb434' => ['hash' => 'd11cb434', 'name' => 'Travian T4.4 Seasonized v2', 'isNew' => false],
 		'3f73c13f' => ['hash' => '3f73c13f', 'name' => 'Travian T4.6', 'isNew' => false],
 		'29c89d54' => ['hash' => '29c89d54', 'name' => 'Travian T4.6', 'isNew' => true],
+        '347.6'    => ['hash' => '347.6', 'name' => 'Travian T4.6', 'isNew' => true],
         '326.6' => ['hash' => '326.6', 'name' => 'Travian v326.6 (SVG)', 'isNew' => true],
         'TravianOld' => ['hash' => 'TravianOld', 'name' => 'Travian T4.4 Classic', 'isNew' => false]
     ]

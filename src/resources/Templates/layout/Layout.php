@@ -27,80 +27,48 @@ use Core\Helper\TimezoneHelper;
                 ?>
 
                 <div id="navigation">
-                    <a id="n1" class="village resourceView <?=$vars['bodyCssClass'] == 'perspectiveBuildings' ? 'in' : ''; ?>active"
-                       href="dorf1.php"
-                       accesskey="1"
-                       title="<?=T("inGame", "Navigation.Resources"); ?>||"></a>
-                    <a id="n2" class="village buildingView <?=$vars['bodyCssClass'] == 'perspectiveResources' ? 'in' : ''; ?>active"
-                       href="dorf2.php"
-                       accesskey="2"
-                       title="<?=T("inGame", "Navigation.Buildings"); ?>||"></a>
-                    <a id="n3" class="map" href="karte.php" accesskey="3"
-                       title="<?=T("inGame", "Navigation.Map"); ?>||"></a>
-                    <a id="n4" class="statistics" href="statistiken.php" accesskey="4"
-                       title="<?=T("inGame", "Navigation.Statistics"); ?>||"></a>
+                    <a class="village resourceView <?=$vars['bodyCssClass'] == 'perspectiveBuildings' ? 'in' : ''; ?>active"
+                       href="dorf1.php" accesskey="1" title="<?=T("inGame", "Navigation.Resources"); ?>||"></a>
+                       
+                    <a class="village buildingView <?=$vars['bodyCssClass'] == 'perspectiveResources' ? 'in' : ''; ?>active"
+                       href="dorf2.php" accesskey="2" title="<?=T("inGame", "Navigation.Buildings"); ?>||"></a>
+                       
+                    <a class="map" href="karte.php" accesskey="3" title="<?=T("inGame", "Navigation.Map"); ?>||"></a>
+                    <a class="statistics" href="statistiken.php" accesskey="4" title="<?=T("inGame", "Navigation.Statistics"); ?>||"></a>
                     
-                    <a id="n5" class="reports" href="reports.php" accesskey="5"
-                       title="<?=T("inGame", "Navigation.Reports"); ?>||<?=T("inGame", "Navigation.newReports"); ?>: <?=$vars['newReportsCount']; ?>">
+                    <a class="reports" href="reports.php" accesskey="5" title="<?=T("inGame", "Navigation.Reports"); ?>||<?=T("inGame", "Navigation.newReports"); ?>: <?=$vars['newReportsCount']; ?>">
+                        <?php if ($vars['newReportsCount']): ?>
+                            <div class="indicator"><?=$vars['newReportsCount'] > 99 ? '99+' : $vars['newReportsCount']; ?></div>
+                        <?php endif; ?>
                     </a>
-                    <?php if ($vars['newReportsCount']): ?>
-                        <div class="speechBubbleContainer ">
-                            <div class="speechBubbleBackground">
-                                <div class="start">
-                                    <div class="end">
-                                        <div class="middle"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="speechBubbleContent"><?=$vars['newReportsCount'] > 99 ? '+99' : $vars['newReportsCount']; ?></div>
-                        </div>
-                        <div class="clear"></div>
-                    <?php endif; ?>
                     
-                    <a id="n6" class="messages" href="messages.php" accesskey="6"
-                       title="<?=T("inGame", "Navigation.Messages"); ?>||<?=T("inGame", "Navigation.newMessages"); ?>: <?=$vars['newMessagesCount']; ?>">
+                    <a class="messages" href="messages.php" accesskey="6" title="<?=T("inGame", "Navigation.Messages"); ?>||<?=T("inGame", "Navigation.newMessages"); ?>: <?=$vars['newMessagesCount']; ?>">
+                        <?php if ($vars['newMessagesCount']): ?>
+                            <div class="indicator"><?=$vars['newMessagesCount'] > 99 ? '99+' : $vars['newMessagesCount']; ?></div>
+                        <?php endif; ?>
                     </a>
-                    <?php if ($vars['newMessagesCount']): ?>
-                        <div class="speechBubbleContainer ">
-                            <div class="speechBubbleBackground">
-                                <div class="start">
-                                    <div class="end">
-                                        <div class="middle"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="speechBubbleContent"><?=$vars['newMessagesCount'] > 99 ? '+99' : $vars['newMessagesCount']; ?></div>
-                        </div>
-                        <div class="clear"></div>
-                    <?php endif; ?>
                     
-                    <a id="n7" class="gold" href="#" accesskey="7"
-                       title="<?=T("inGame", "Navigation.Buy gold"); ?>"
-                       onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
-                    <div class="clear">&nbsp;</div>
+                    <a class="dailyQuests" href="#" accesskey="7" onclick="Travian.React.openDailyQuestsDialog(); return false;"></a>
+                    <label class="mobileMenuButton" for="mobileMenuState"></label>
+                    <a class="mobileShopButton" href="#" accesskey="8" onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
                 </div>
+                
+                <?= $vars['topBarHero'] ?? ''; ?>
+                
                 <div id="goldSilver">
                     <div class="gold">
-                        <img src="img/x.gif" alt="<?=T("inGame", "gold"); ?>"
-                             title="<?=T("inGame", "gold"); ?>"
-                             class="gold"
-                             onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: 'pros'}}); return false;"/>
-                        <span
-                                class="ajaxReplaceableGoldAmount">
-            <?php if (getCustom("serverIsFreeGold")): ?>
-                <b><?= T("Global", "Unlimited"); ?></b>
-            <?php else: ?>
-                <?=$vars['goldCount']; ?>
-            <?php endif; ?>
-        </span>
+                        <img src="img/x.gif" alt="<?=T("inGame", "gold"); ?>" title="<?=T("inGame", "gold"); ?>" class="gold" onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: 'pros'}}); return false;"/>
+                        <span class="ajaxReplaceableGoldAmount">
+                            <?php if (getCustom("serverIsFreeGold")): ?>
+                                <b><?= T("Global", "Unlimited"); ?></b>
+                            <?php else: ?>
+                                <?=$vars['goldCount']; ?>
+                            <?php endif; ?>
+                        </span>
                     </div>
                     <div class="silver">
-                        <img src="img/x.gif" alt="<?=T("inGame", "silver"); ?>"
-                             title="<?=T("inGame", "silver"); ?>"
-                             class="silver"
-                             onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: 'pros'}}); return false;"/>
-                        <span
-                                class="ajaxReplaceableSilverAmount"><?=$vars['silverCount']; ?></span>
+                        <img src="img/x.gif" alt="<?=T("inGame", "silver"); ?>" title="<?=T("inGame", "silver"); ?>" class="silver" onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: 'pros'}}); return false;"/>
+                        <span class="ajaxReplaceableSilverAmount"><?=$vars['silverCount']; ?></span>
                     </div>
                 </div>
                 <ul id="outOfGame" class="<?=getDirection(); ?>">
@@ -196,140 +164,54 @@ use Core\Helper\TimezoneHelper;
             <div id="contentOuterContainer" class="size1">
                 <?php
                 if (isset($vars['stockBar']) && $vars['showStockbar']):?>
-                    <ul id="stockBar">
-                        <li id="stockBarWarehouseWrapper" class="stock"
-                            title="<?=T("Buildings", "10.title"); ?>">
-                            <i class="warehouse"></i>
-                            <span class="value"
-                                  id="stockBarWarehouse" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 9px;' : ''); ?>"
-                            ><?=number_format_x($vars['stockBar']['maxstore'], 9 * 1e6); ?></span>
-                        </li>
-                        <li id="stockBarResource1" class="stockBarButton"
-                            title="<?=$vars['stockBar']['titles'][0]; ?>">
-                            <div class="begin"></div>
-                            <div class="middle">
+                    <div id="stockBar">
+                        <div class="warehouse">
+                            <div class="capacity" title="<?=T("Buildings", "10.title"); ?>">
+                                <i class="warehouse_medium"></i>
+                                <div class="value" id="stockBarWarehouse"><?=number_format_x($vars['stockBar']['maxstore']); ?></div>
+                            </div>
+                            
+                            <a id="stockBarResource1" class="stockBarButton resource1" href="production.php?t=1" title="<?=$vars['stockBar']['titles'][0]; ?>">
                                 <i class="r1"></i>
-                                <?php if ($vars['stockBar']['productionBoost'][0]): ?>
-                                    <img src="img/x.gif" class="productionBoost"
-                                         alt="">
-                                <?php endif; ?>
-                                <span id="l1"
-                                      class="value"
-                                      style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 9px;' : ''); ?>"><?=$vars['stockBar']['storageString'][0]; ?></span>
-
-                                <div class="barBox">
-                                    <div id="lbar1"
-                                         class="bar stock<?=$vars['stockBar']['storageClass'][0];?>"
-                                         style="width:<?=$vars['stockBar']['percents'][0]; ?>%;"></div>
-                                </div>
-                                <a href="production.php?t=1"
-                                   title="<?=$vars['stockBar']['titles'][0]; ?>"><img
-                                            src="img/x.gif"
-                                            alt=""/></a>
-                            </div>
-                            <div class="end"></div>
-                        </li>
-                        <li id="stockBarResource2" class="stockBarButton"
-                            title="<?=$vars['stockBar']['titles'][1]; ?>">
-                            <div class="begin"></div>
-                            <div class="middle">
+                                <?php if ($vars['stockBar']['productionBoost'][0]): ?><img src="img/x.gif" class="productionBoost" alt=""><?php endif; ?>
+                                <span id="l1" class="value" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 11px;' : ''); ?>"><?=$vars['stockBar']['storageString'][0]; ?></span>
+                                <div class="barBox"><div id="lbar1" class="bar stock<?=$vars['stockBar']['storageClass'][0];?>" style="width:<?=$vars['stockBar']['percents'][0]; ?>%;"></div></div>
+                            </a>
+                            
+                            <a id="stockBarResource2" class="stockBarButton resource2" href="production.php?t=2" title="<?=$vars['stockBar']['titles'][1]; ?>">
                                 <i class="r2"></i>
-                                <?php if ($vars['stockBar']['productionBoost'][1]): ?>
-                                    <img src="img/x.gif" class="productionBoost"
-                                         alt="">
-                                <?php endif; ?>
-                                <span id="l2"
-                                      class="value"
-                                      style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 9px;' : ''); ?>"><?=$vars['stockBar']['storageString'][1]; ?></span>
-
-                                <div class="barBox">
-                                    <div id="lbar2"
-                                         class="bar stock<?=$vars['stockBar']['storageClass'][1];?>"
-                                         style="width:<?=$vars['stockBar']['percents'][1]; ?>%;"></div>
-                                </div>
-                                <a href="production.php?t=2"
-                                   title="<?=$vars['stockBar']['titles'][1]; ?>"><img
-                                            src="img/x.gif"
-                                            alt=""/></a>
-                            </div>
-                            <div class="end"></div>
-                        </li>
-                        <li id="stockBarResource3" class="stockBarButton"
-                            title="<?=$vars['stockBar']['titles'][2]; ?>">
-                            <div class="begin"></div>
-                            <div class="middle">
+                                <?php if ($vars['stockBar']['productionBoost'][1]): ?><img src="img/x.gif" class="productionBoost" alt=""><?php endif; ?>
+                                <span id="l2" class="value" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 11px;' : ''); ?>"><?=$vars['stockBar']['storageString'][1]; ?></span>
+                                <div class="barBox"><div id="lbar2" class="bar stock<?=$vars['stockBar']['storageClass'][1];?>" style="width:<?=$vars['stockBar']['percents'][1]; ?>%;"></div></div>
+                            </a>
+                            
+                            <a id="stockBarResource3" class="stockBarButton resource3" href="production.php?t=3" title="<?=$vars['stockBar']['titles'][2]; ?>">
                                 <i class="r3"></i>
-                                <?php if ($vars['stockBar']['productionBoost'][2]): ?>
-                                    <img src="img/x.gif" class="productionBoost"
-                                         alt="">
-                                <?php endif; ?>
-                                <span id="l3"
-                                      class="value"
-                                      style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 9px;' : ''); ?>"><?=$vars['stockBar']['storageString'][2]; ?></span>
-
-                                <div class="barBox">
-                                    <div id="lbar3"
-                                         class="bar stock<?=$vars['stockBar']['storageClass'][2];?>"
-                                         style="width:<?=$vars['stockBar']['percents'][2]; ?>%;"></div>
-                                </div>
-                                <a href="production.php?t=3"
-                                   title="<?=$vars['stockBar']['titles'][2]; ?>"><img
-                                            src="img/x.gif"
-                                            alt=""/></a>
+                                <?php if ($vars['stockBar']['productionBoost'][2]): ?><img src="img/x.gif" class="productionBoost" alt=""><?php endif; ?>
+                                <span id="l3" class="value" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 11px;' : ''); ?>"><?=$vars['stockBar']['storageString'][2]; ?></span>
+                                <div class="barBox"><div id="lbar3" class="bar stock<?=$vars['stockBar']['storageClass'][2];?>" style="width:<?=$vars['stockBar']['percents'][2]; ?>%;"></div></div>
+                            </a>
+                        </div>
+                        
+                        <div class="granary">
+                            <div class="capacity" title="<?=T("Buildings", "11.title"); ?>">
+                                <i class="granary_medium"></i>
+                                <div class="value" id="stockBarGranary"><?=number_format_x($vars['stockBar']['maxcrop']); ?></div>
                             </div>
-                            <div class="end"></div>
-                        </li>
-
-                        <li id="stockBarGranaryWrapper" class="stock"
-                            title="<?=T("Buildings", "11.title"); ?>">
-                            <i class="granary"></i>
-                            <span class="value" id="stockBarGranary" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 9px;' : ''); ?>"
-                            ><?=number_format_x($vars['stockBar']['maxcrop'], 9 * 1e6); ?></span>
-                        </li>
-
-                        <li id="stockBarResource4" class="stockBarButton"
-                            title="<?=htmlspecialchars($vars['stockBar']['titles'][3]); ?>">
-                            <div class="begin"></div>
-                            <div class="middle">
+                            
+                            <a id="stockBarResource4" class="stockBarButton resource4" href="production.php?t=4" title="<?=$vars['stockBar']['titles'][3]; ?>">
                                 <i class="r4"></i>
-                                <?php if ($vars['stockBar']['productionBoost'][3]): ?>
-                                    <img src="img/x.gif" class="productionBoost"
-                                         alt="">
-                                <?php endif; ?>
-                                <span id="l4"
-                                      class="value <?= ($vars['stockBar']['production'][3] < 0 ? 'alert' : ''); ?>"
-                                      style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 9px;' : ''); ?>"><?=$vars['stockBar']['storageString'][3]; ?></span>
-
-                                <div class="barBox">
-                                    <div id="lbar4"
-                                         class="bar stock<?=$vars['stockBar']['storageClass'][3];?>"
-                                         style="width:<?=$vars['stockBar']['percents'][3]; ?>%;"></div>
-                                </div>
-                                <a href="production.php?t=4"
-                                   title="<?=htmlspecialchars($vars['stockBar']['titles'][3]); ?>"><img
-                                            src="img/x.gif"
-                                            alt=""/></a>
-                            </div>
-                            <div class="end"></div>
-                        </li>
-
-                        <li id="stockBarFreeCropWrapper" class="stockBarButton r5"
-                            title="<?=$vars['stockBar']['titles'][4]; ?>">
-                            <div class="begin"></div>
-                            <div class="middle">
+                                <?php if ($vars['stockBar']['productionBoost'][3]): ?><img src="img/x.gif" class="productionBoost" alt=""><?php endif; ?>
+                                <span id="l4" class="value <?= ($vars['stockBar']['production'][3] < 0 ? 'alert' : ''); ?>" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 11px;' : ''); ?>"><?=$vars['stockBar']['storageString'][3]; ?></span>
+                                <div class="barBox"><div id="lbar4" class="bar stock<?=$vars['stockBar']['storageClass'][3];?>" style="width:<?=$vars['stockBar']['percents'][3]; ?>%;"></div></div>
+                            </a>
+                            
+                            <a id="stockBarFreeCropWrapper" class="stockBarButton r5" href="production.php?t=5" title="<?=$vars['stockBar']['titles'][4]; ?>">
                                 <i class="r5"></i>
-                                <span id="stockBarFreeCrop"
-                                      class="value"
-                                      style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 8px;' : ''); ?>"><?=$vars['stockBar']['production'][4]; ?></span>
-                                <a href="production.php?t=5"
-                                   title="<?=$vars['stockBar']['titles'][4]; ?>"><img
-                                            src="img/x.gif"
-                                            alt=""/></a>
-                            </div>
-                            <div class="end"></div>
-                        </li>
-                        <li class="clear">&nbsp;</li>
-                    </ul>
+                                <span id="stockBarFreeCrop" class="value" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 11px;' : ''); ?>"><?=$vars['stockBar']['production'][4]; ?></span>
+                            </a>
+                        </div>
+                    </div>
 
                     <script type="text/javascript">
                         var resources = {};
