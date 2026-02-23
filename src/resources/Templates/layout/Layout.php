@@ -19,161 +19,243 @@ use Core\Helper\TimezoneHelper;
     <div id="bodyWrapper">
         <img style="filter:chroma();" src="img/x.gif" id="msfilter" alt=""/>
 
-        <div id="header">
-            <a id="logo" href="<?=Config::getInstance()->settings->indexUrl; ?>" target="_blank"
-               title="<?=T("Global", "Travian"); ?>"></a>
-            <?php
-            if ($vars['showNavBar']) {
-                ?>
+        
+        <div id="header" class="referAFriend">
+            <a id="logo" href="<?=Config::getInstance()->settings->indexUrl; ?>" target="_blank" title="<?=T("Global", "Travian"); ?>"></a>
+            <?php if ($vars['showNavBar']): ?>
+            <input type="checkbox" id="mobileMenuState">
+            
 
-                <div id="navigation">
-                    <a class="village resourceView <?=$vars['bodyCssClass'] == 'perspectiveBuildings' ? 'in' : ''; ?>active"
-                       href="dorf1.php" accesskey="1" title="<?=T("inGame", "Navigation.Resources"); ?>||"></a>
-                       
-                    <a class="village buildingView <?=$vars['bodyCssClass'] == 'perspectiveResources' ? 'in' : ''; ?>active"
-                       href="dorf2.php" accesskey="2" title="<?=T("inGame", "Navigation.Buildings"); ?>||"></a>
-                       
-                    <a class="map" href="karte.php" accesskey="3" title="<?=T("inGame", "Navigation.Map"); ?>||"></a>
-                    <a class="statistics" href="statistiken.php" accesskey="4" title="<?=T("inGame", "Navigation.Statistics"); ?>||"></a>
-                    
-                    <a class="reports" href="reports.php" accesskey="5" title="<?=T("inGame", "Navigation.Reports"); ?>||<?=T("inGame", "Navigation.newReports"); ?>: <?=$vars['newReportsCount']; ?>">
-                        <?php if ($vars['newReportsCount']): ?>
-                            <div class="indicator"><?=$vars['newReportsCount'] > 99 ? '99+' : $vars['newReportsCount']; ?></div>
-                        <?php endif; ?>
-                    </a>
-                    
-                    <a class="messages" href="messages.php" accesskey="6" title="<?=T("inGame", "Navigation.Messages"); ?>||<?=T("inGame", "Navigation.newMessages"); ?>: <?=$vars['newMessagesCount']; ?>">
-                        <?php if ($vars['newMessagesCount']): ?>
-                            <div class="indicator"><?=$vars['newMessagesCount'] > 99 ? '99+' : $vars['newMessagesCount']; ?></div>
-                        <?php endif; ?>
-                    </a>
-                    
-                    <a class="dailyQuests" href="#" accesskey="7" onclick="Travian.React.openDailyQuestsDialog(); return false;"></a>
-                    <label class="mobileMenuButton" for="mobileMenuState"></label>
-                    <a class="mobileShopButton" href="#" accesskey="8" onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
-                </div>
-                
-                <?= $vars['topBarHero'] ?? ''; ?>
-                
-                <div id="goldSilver">
-                    <div class="gold">
-                        <img src="img/x.gif" alt="<?=T("inGame", "gold"); ?>" title="<?=T("inGame", "gold"); ?>" class="gold" onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: 'pros'}}); return false;"/>
-                        <span class="ajaxReplaceableGoldAmount">
-                            <?php if (getCustom("serverIsFreeGold")): ?>
-                                <b><?= T("Global", "Unlimited"); ?></b>
-                            <?php else: ?>
-                                <?=$vars['goldCount']; ?>
-                            <?php endif; ?>
-                        </span>
-                    </div>
-                    <div class="silver">
-                        <img src="img/x.gif" alt="<?=T("inGame", "silver"); ?>" title="<?=T("inGame", "silver"); ?>" class="silver" onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: 'pros'}}); return false;"/>
-                        <span class="ajaxReplaceableSilverAmount"><?=$vars['silverCount']; ?></span>
-                    </div>
-                </div>
-                <ul id="outOfGame" class="<?=getDirection(); ?>">
-                    <li class="profile">
-                        <a href="spieler.php"
-                           title="<?=T("inGame", "Profile.Profile"); ?>||<?=T("inGame",
-                               "Profile.edit profile description"); ?>">
-                            <img src="img/x.gif"
-                                 alt="<?=T("inGame", "Profile.Profile"); ?>"/>
-                        </a>
-                    </li>
-                    <li class="options">
-                        <?php if (!$vars['isSitter']): ?>
-                            <a href="options.php"
-                               title="<?=T("inGame", "Options.Options"); ?>||<?=T("inGame",
-                                   "Options.edit account settings"); ?>">
-                                <img src="img/x.gif"
-                                     alt="<?=T("inGame", "Options.Options"); ?>"/>
-                            </a>
-                        <?php else: ?>
-                            <div class="a disabled"
-                                 title="<?=T("inGame",
-                                     "Options.Options"); ?>||<?=htmlspecialchars('<span class="warning">' . T("inGame",
-                                         "Options.you may not edit settings of another account") . '</span>'); ?>">
-                                <img src="img/x.gif"
-                                     alt="<?=T("inGame", "Options.Options"); ?>"/>
-                            </div>
-                        <?php endif; ?>
-                    </li>
-                    <li class="forum">
-                        <a target="_blank" href="<?=getForumUrl(); ?>"
-                           title="<?=T("inGame", "Forum.Forum"); ?>||<?=T("inGame",
-                               "Forum.Meet other players on our external forum"); ?>">
-                            <img src="img/x.gif"
-                                 alt="<?=T("inGame", "Forum.Forum"); ?>"/>
-                        </a>
-                    </li>
-                    <?php
-                    /*<li class="chat">
-                        <a target="_blank" href="http://natar.travian.org:8080" title="Chat||Chat in IRC with other players from your server.">
-                            <img src="img/x.gif" alt="Chat" />
-                        </a>
-                    </li>*/
-                    ?>
-                    <li class="help">
-                        <a href="help.php"
-                           title="<?=T("inGame", "Help.Help"); ?>||<?=T("inGame",
-                               "Help.Manuals, Answers and Support"); ?>">
-                            <img src="img/x.gif" alt="<?=T("inGame", "Help.Help"); ?>"/>
-                        </a>
-                    </li>
-                    <li class="logout ">
-                        <a href="logout.php"
-                           title="<?=T("inGame", "Logout.Logout"); ?>||<?=T("inGame",
-                               "Logout.Log out from the game"); ?>">
-                            <img src="img/x.gif"
-                                 alt="<?=T("inGame", "Logout.Logout"); ?>"/>
-                        </a>
-                    </li>
-                    <li class="clear">&nbsp;</li>
-                </ul>
-                <script type="text/javascript">
-                    jQuery('#outOfGame li.logout a').click(function () {
-                        var windows = Travian.WindowManager.getWindows();
-                        for (var i = 0; i < windows.length; i++) {
-                            Travian.WindowManager.unregister(windows[i]);
-                        }
-                    });
-                </script>
+            <div id="navigation">
+                <a class="village resourceView <?=$vars['bodyCssClass'] == 'perspectiveBuildings' ? 'in' : ''; ?>active" href="dorf1.php" accesskey="1" title="<?=T("inGame", "Navigation.Resources"); ?>||"></a>
+                <a class="village buildingView <?=$vars['bodyCssClass'] == 'perspectiveResources' ? 'in' : ''; ?>active" href="dorf2.php" accesskey="2" title="<?=T("inGame", "Navigation.Buildings"); ?>||"></a>
+                <a class="map" href="karte.php" accesskey="3" title="<?=T("inGame", "Navigation.Map"); ?>||"></a>
+                <a class="statistics" href="statistiken.php" accesskey="4" title="<?=T("inGame", "Navigation.Statistics"); ?>||"></a>
+                <a class="reports" href="reports.php" accesskey="5" title="<?=T("inGame", "Navigation.Reports"); ?>||<?=T("inGame", "Navigation.newReports"); ?>: <?=$vars['newReportsCount']; ?>">
+                    <?php if ($vars['newReportsCount']): ?>
+                        <div class="indicator"><?=$vars['newReportsCount'] > 99 ? '99+' : $vars['newReportsCount']; ?></div>
+                    <?php endif; ?>
+                </a>
+                <a class="messages" href="messages.php" accesskey="6" title="<?=T("inGame", "Navigation.Messages"); ?>||<?=T("inGame", "Navigation.newMessages"); ?>: <?=$vars['newMessagesCount']; ?>">
+                    <?php if ($vars['newMessagesCount']): ?>
+                        <div class="indicator"><?=$vars['newMessagesCount'] > 99 ? '99+' : $vars['newMessagesCount']; ?></div>
+                    <?php endif; ?>
+                </a>
+                <a class="dailyQuests" href="#" accesskey="7" onclick="Travian.React.openDailyQuestsDialog(); return false;"></a>
+                <label class="mobileMenuButton" for="mobileMenuState"></label>
+                <a class="mobileShopButton" href="#" accesskey="8" onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
+            </div>
+            
+            <?= $vars['topBarHero'] ?? ''; ?>
 
-            <?php
-            } else if ($vars['headerBar']) {
-            ?>
-                <ul id="outOfGame" class="<?=getDirection(); ?>">
-                    <li class="logout logoutOnly">
-                        <a href="logout.php"
-                           title="<?=T("inGame", "Logout.Logout"); ?>||<?=T("inGame",
-                               "Logout.Log out from the game"); ?>">
-                            <img src="img/x.gif"
-                                 alt="<?=T("inGame", "Logout.Logout"); ?>"/>
-                        </a>
-                    </li>
-                </ul>
-                <?php
-            }
-            ?>
+
+
+        <div class="currency">
+            <svg viewBox="0 0 50 50" class="goldCoin" onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: Travian.Constants.SHOP_TABS.advantages}}); return false;">
+    <defs>
+        <linearGradient id="gold-coin-linear-gradient" x1="25" x2="25" y1="2" y2="48" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#ffdc79"></stop>
+            <stop offset=".47" stop-color="#fcbf60"></stop>
+            <stop offset=".8" stop-color="#af7029"></stop>
+            <stop offset="1" stop-color="#c09957"></stop>
+        </linearGradient>
+        <linearGradient id="gold-coin-linear-gradient-2" x1="25" x2="25" y1="7.9" y2="42.19" gradientUnits="userSpaceOnUse">
+            <stop offset=".06" stop-color="#81481b"></stop>
+            <stop offset="1" stop-color="#fef6a9"></stop>
+        </linearGradient>
+    </defs>
+    <circle cx="25" cy="25" r="25" fill="#522d1c"></circle>
+    <circle cx="25" cy="25" r="23" fill="url(#gold-coin-linear-gradient)"></circle>
+    <circle cx="25" cy="25" r="17" fill="url(#gold-coin-linear-gradient-2)"></circle>
+    <path fill="#b4772a" d="M41 25C40.62 3.67 9.38 3.67 9 25c.38 21.33 31.62 21.33 32 0Z"></path>
+    <path fill="#a06327" d="M14.84 12.41c.63-.49 1.29-.94 1.99-1.32l6.58 7.14v2.01l-8.57-7.83Zm20.9 10.4c.22-.05.91-.05.91-.05s2.01-1.26 3.66-2.53c-.11-.38-.22-.76-.35-1.12-.03-.06-.06-.13-.09-.2-1.69 1.71-3.63 3.58-4.12 3.89Zm-24.72-5.9c2.85 2.36 8.53 5.55 13.36 5.45-.49.1 1.95.1 1.36 0 4.87 0 10.42-3.05 13.24-5.42-.39-.69-.88-1.38-1.36-2.07-12.05 9.83-13.24 9.75-25.24-.03-.5.64-.96 1.32-1.37 2.07Zm14.14-1.24-3.38-6.36c-.42.08-.84.17-1.25.28 1.18 1.77 4.07 5.33 4.63 6.08Zm-1.25-6.62 1.25 1.6 1.24-1.59c-.83-.07-1.66-.06-2.49-.01Zm1.34 6.62s.69-1.18 1.96-2.66c.71-.81 1.75-2.27 2.51-3.35-.37-.11-.75-.19-1.13-.27l-3.35 6.28ZM9.07 23.94c-.02.35-.06.69-.07 1.06.01.67.05 1.31.12 1.94l2.5-3H9.06Zm17.75-3.84 8.47-7.59c-.62-.5-1.28-.95-1.96-1.35l-6.51 7.06v1.87Zm-12.37 2.66c-.38-.19-2.46-2.2-4.29-3.95-.16.42-.31.85-.43 1.29 2.51 1.71 3.48 2.85 4.72 2.66Zm24.21 10.89c-5.93-6.46-11.45-8.13-11.45-8.13 4.43 3.21 8.18 7.47 10.15 9.95.47-.56.91-1.16 1.31-1.82Zm-3.76-9.81h-4.48v.1c3.94 1.36 7.68 4.15 9.84 6.02.11-.38.23-.77.31-1.17-2.24-2.25-5.67-4.95-5.67-4.95Zm-8.37 6.8-.19 1.58c2.17 1.34 4.6 4.69 6.17 7.05.96-.47 1.86-1.05 2.71-1.71-4.64-4.57-8.68-6.91-8.68-6.91Zm-6.82-6.8h-4.38v.1s-3.51 2.78-5.85 5.03c.09.37.19.74.29 1.09 2.16-1.87 5.9-4.77 9.94-6.22Zm21.22.1H38.5l2.38 2.8c.06-.56.1-1.14.11-1.74 0-.36-.04-.71-.07-1.06Zm-17.91 1.58c-.68-.1-5.16 1.38-11.59 8.27.4.65.84 1.25 1.32 1.81 1.96-2.38 5.73-6.76 10.27-10.08Zm-5.33 13.84c1.57-2.44 3.97-5.74 6.21-7.15l-.19-1.48s-4.01 2.32-8.73 6.96c.85.65 1.76 1.21 2.71 1.67Zm12.93-.15-4.09-4.33H24l-4.09 4.33c1.56.59 2.92-1.97 5.36-3.64 2.34 1.67 3.7 4.24 5.36 3.64Z"></path>
+    <path fill="#703e19" d="M34.65 15.43h-1.8l-.4.6h-14.9l-.4-.6h-1.8l-1 5.8.9 1 2.1-3.1h4.8v14.6c0 1.7-2.6 2.1-2.6 2.1v2.3h11v-2.3s-2.6-.4-2.6-2.1v-14.6h4.8l2.1 3.1.7-1.1-.9-5.7Z"></path>
+    <path fill="#f7ce7c" d="m34.95 21.25.7-1.1-1-5.8h-1.8l-.4.6h-14.9l-.4-.6h-1.8l-1 5.8.9 1.1 2.1-3.1h5.3v14.6c0 1.7-3.1 2.1-3.1 2.1v1.4l.8.8h9.5l.7-.8v-1.5s-3.1-.4-3.1-2.1v-14.6h5.4l2.1 3.2Z"></path>
+    <path fill="#faf28a" d="m14.45 20.25-.1-.1 1-5.8h1.8l.4.6h14.9l.4-.6h1.8l1 5.8-.1.1-.9-5.3h-1.8l-.4.6h-14.9l-.4-.6h-1.8l-.9 5.3Zm5.1 15.17c.2.1 3.7-.8 3.1-2.7 0 1.7-3.1 2.1-3.1 2.1v.6Zm7.9-2.76c-.6 2 2.8 2.8 3.1 2.7v-.6s-3.1-.5-3.1-2.1Z"></path>
+    <path fill="#a87134" d="M25.05 4c1.48 0 1.48 2.26 0 2.26S23.57 4 25.05 4ZM21.7 6.56c1.48-.2 1.08-2.46-.39-2.16-1.38.2-.98 2.46.39 2.16Zm-3.14.78c1.38-.49.59-2.66-.79-2.07-1.28.49-.49 2.66.79 2.07Zm-2.95 1.38c1.28-.69.1-2.66-1.08-1.97-1.28.79-.1 2.75 1.08 1.97Zm-2.66 1.87c1.08-.89-.3-2.66-1.48-1.67-1.08.89.39 2.66 1.48 1.67Zm-2.26 2.36c.98-1.08-.79-2.56-1.67-1.48-.98 1.08.69 2.56 1.67 1.48Zm-1.97 2.66c.79-1.28-1.18-2.36-1.97-1.08-.69 1.18 1.28 2.36 1.97 1.08Zm-1.38 2.95c.59-1.38-1.57-2.07-2.07-.79-.49 1.38 1.67 2.16 2.07.79Zm-.78 3.14c.3-1.38-1.97-1.77-2.16-.39-.3 1.48 1.87 1.87 2.16.39Zm-.3 3.25c0-1.48-2.26-1.48-2.26 0s2.26 1.48 2.26 0Zm.3 3.35c-.2-1.48-2.46-1.08-2.16.39.2 1.38 2.36.98 2.16-.39Zm.78 3.14c-.49-1.38-2.66-.59-2.07.79.49 1.28 2.66.49 2.07-.79Zm1.38 2.95c-.69-1.28-2.66-.1-1.97 1.08.79 1.28 2.75.1 1.97-1.08Zm1.87 2.66c-.89-1.08-2.66.39-1.67 1.48.89 1.08 2.66-.39 1.67-1.48Zm2.36 2.36c-1.08-.98-2.56.79-1.48 1.67 1.08.98 2.56-.79 1.48-1.67Zm2.66 1.87c-1.28-.79-2.36 1.18-1.08 1.97 1.18.69 2.36-1.28 1.08-1.97Zm2.95 1.38c-1.38-.49-2.16 1.67-.79 2.07 1.38.49 2.16-1.57.79-2.07Zm3.14.78c-1.38-.3-1.77 1.97-.39 2.16 1.48.39 1.87-1.87.39-2.16Zm3.25.3c-1.48 0-1.48 2.26 0 2.26s1.48-2.26 0-2.26Zm3.25-.3c-1.48.2-1.08 2.46.39 2.16 1.48-.2 1.08-2.36-.39-2.16Zm3.14-.78c-1.38.49-.59 2.66.79 2.07 1.38-.49.59-2.56-.79-2.07Zm3.05-1.38c-1.28.69-.1 2.66 1.08 1.97 1.28-.79.1-2.75-1.08-1.97Zm2.66-1.87c-1.08.89.3 2.66 1.48 1.67 1.08-.89-.39-2.66-1.48-1.67Zm2.26-2.36c-.98 1.08.79 2.56 1.67 1.48.98-1.08-.69-2.56-1.67-1.48Zm1.87-2.66c-.79 1.28 1.18 2.36 1.97 1.08.79-1.18-1.18-2.36-1.97-1.08Zm1.38-2.95c-.49 1.38 1.57 2.16 2.07.79.59-1.38-1.57-2.16-2.07-.79Zm.88-3.14c-.3 1.38 1.97 1.77 2.16.39.3-1.48-1.97-1.87-2.16-.39Zm.3-3.25c0 1.48 2.26 1.48 2.26 0s-2.26-1.48-2.26 0Zm-.3-3.25c.2 1.48 2.46 1.08 2.16-.39-.2-1.48-2.46-1.08-2.16.39Zm-.78-3.14c.49 1.38 2.66.59 2.07-.79-.49-1.38-2.66-.59-2.07.79Zm-1.38-3.05c.69 1.28 2.66.1 1.97-1.08-.79-1.28-2.75-.1-1.97 1.08Zm-1.97-2.66c.89 1.08 2.66-.3 1.67-1.48-.79-1.08-2.56.39-1.67 1.48Zm-2.26-2.26c1.08.98 2.56-.79 1.48-1.67-1.18-.98-2.56.69-1.48 1.67Zm-2.66-1.87c1.28.79 2.36-1.18 1.08-1.97-1.18-.79-2.36 1.18-1.08 1.97Zm-2.95-1.38c1.38.49 2.16-1.67.79-2.07-1.38-.59-2.16 1.57-.79 2.07Zm-3.14-.88c1.38.3 1.77-1.97.39-2.16-1.48-.3-1.87 1.97-.39 2.16Z"></path>
+</svg>
+        <div class="value ajaxReplaceableGoldAmount"><?= $vars['goldCount']; ?></div>
+        
+            <svg viewBox="0 0 50 50" class="silverCoin" onclick="jQuery(window).trigger('startPaymentWizard', {data:{activeTab: Travian.Constants.SHOP_TABS.advantages}}); return false;">
+    <defs>
+        <linearGradient id="linear-gradient" x1="25" x2="25" y1="2" y2="48" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#c4e0f5"></stop>
+            <stop offset=".48" stop-color="#b7ceeb"></stop>
+            <stop offset=".77" stop-color="#6383a8"></stop>
+            <stop offset="1" stop-color="#98b7db"></stop>
+        </linearGradient>
+        <linearGradient id="linear-gradient-2" x1="25" x2="25" y1="7.9" y2="42.19" gradientUnits="userSpaceOnUse">
+            <stop offset=".06" stop-color="#4b6f7d"></stop>
+            <stop offset="1" stop-color="#fafbfb"></stop>
+        </linearGradient>
+    </defs>
+    <circle cx="25" cy="25" r="25" fill="#303a4c"></circle>
+    <circle cx="25" cy="25" r="23" fill="url(#linear-gradient)"></circle>
+    <circle cx="25" cy="25" r="17" fill="url(#linear-gradient-2)"></circle>
+    <path fill="#7991bc" d="M41 25C40.62 3.67 9.38 3.67 9 25c.38 21.33 31.62 21.33 32 0Z"></path>
+    <path fill="#5a7493" d="M14.84 12.41c.63-.49 1.29-.94 1.99-1.32l6.58 7.14v2.01l-8.57-7.83Zm20.9 10.4c.22-.05.91-.05.91-.05s2.01-1.26 3.66-2.53c-.11-.38-.22-.76-.35-1.12-.03-.06-.06-.13-.09-.2-1.69 1.71-3.63 3.58-4.12 3.89Zm-24.72-5.9c2.85 2.36 8.53 5.55 13.36 5.45-.49.1 1.95.1 1.36 0 4.87 0 10.42-3.05 13.24-5.42-.39-.69-.88-1.38-1.36-2.07-12.05 9.83-13.24 9.75-25.24-.03-.5.64-.96 1.32-1.37 2.07Zm14.14-1.24-3.38-6.36c-.42.08-.84.17-1.25.28 1.18 1.77 4.07 5.33 4.63 6.08Zm-1.25-6.62 1.25 1.6 1.24-1.59c-.83-.07-1.66-.06-2.49-.01Zm1.34 6.62s.69-1.18 1.96-2.66c.71-.81 1.75-2.27 2.51-3.35-.37-.11-.75-.19-1.13-.27l-3.35 6.28ZM9.07 23.94c-.02.35-.06.69-.07 1.06.01.67.05 1.31.12 1.94l2.5-3H9.06Zm17.75-3.84 8.47-7.59c-.62-.5-1.28-.95-1.96-1.35l-6.51 7.06v1.87Zm-12.37 2.66c-.38-.19-2.46-2.2-4.29-3.95-.16.42-.31.85-.43 1.29 2.51 1.71 3.48 2.85 4.72 2.66Zm24.21 10.89c-5.93-6.46-11.45-8.13-11.45-8.13 4.43 3.21 8.18 7.47 10.15 9.95.47-.56.91-1.16 1.31-1.82Zm-3.76-9.81h-4.48v.1c3.94 1.36 7.68 4.15 9.84 6.02.11-.38.23-.77.31-1.17-2.24-2.25-5.67-4.95-5.67-4.95Zm-8.37 6.8-.19 1.58c2.17 1.34 4.6 4.69 6.17 7.05.96-.47 1.86-1.05 2.71-1.71-4.64-4.57-8.68-6.91-8.68-6.91Zm-6.82-6.8h-4.38v.1s-3.51 2.78-5.85 5.03c.09.37.19.74.29 1.09 2.16-1.87 5.9-4.77 9.94-6.22Zm21.22.1H38.5l2.38 2.8c.06-.56.1-1.14.11-1.74 0-.36-.04-.71-.07-1.06Zm-17.91 1.58c-.68-.1-5.16 1.38-11.59 8.27.4.65.84 1.25 1.32 1.81 1.96-2.38 5.73-6.76 10.27-10.08Zm-5.33 13.84c1.57-2.44 3.97-5.74 6.21-7.15l-.19-1.48s-4.01 2.32-8.73 6.96c.85.65 1.76 1.21 2.71 1.67Zm12.93-.15-4.09-4.33H24l-4.09 4.33c1.56.59 2.92-1.97 5.36-3.64 2.34 1.67 3.7 4.24 5.36 3.64Z"></path>
+    <path fill="#445c6b" d="M34.65 15.43h-1.8l-.4.6h-14.9l-.4-.6h-1.8l-1 5.8.9 1 2.1-3.1h4.8v14.6c0 1.7-2.6 2.1-2.6 2.1v2.3h11v-2.3s-2.6-.4-2.6-2.1v-14.6h4.8l2.1 3.1.7-1.1-.9-5.7Z"></path>
+    <path fill="#c4e0f5" d="m34.95 21.25.7-1.1-1-5.8h-1.8l-.4.6h-14.9l-.4-.6h-1.8l-1 5.8.9 1.1 2.1-3.1h5.3v14.6c0 1.7-3.1 2.1-3.1 2.1v1.4l.8.8h9.5l.7-.8v-1.5s-3.1-.4-3.1-2.1v-14.6h5.4l2.1 3.2Z"></path>
+    <path fill="#eff7fd" d="m14.45 20.25-.1-.1 1-5.8h1.8l.4.6h14.9l.4-.6h1.8l1 5.8-.1.1-.9-5.3h-1.8l-.4.6h-14.9l-.4-.6h-1.8l-.9 5.3Zm5.1 15.17c.2.1 3.7-.8 3.1-2.7 0 1.7-3.1 2.1-3.1 2.1v.6Zm7.9-2.76c-.6 2 2.8 2.8 3.1 2.7v-.6s-3.1-.5-3.1-2.1Z"></path>
+    <path fill="#6f89a4" d="M25.05 4c1.48 0 1.48 2.26 0 2.26S23.57 4 25.05 4ZM21.7 6.56c1.48-.2 1.08-2.46-.39-2.16-1.38.2-.98 2.46.39 2.16Zm-3.14.78c1.38-.49.59-2.66-.79-2.07-1.28.49-.49 2.66.79 2.07Zm-2.95 1.38c1.28-.69.1-2.66-1.08-1.97-1.28.79-.1 2.75 1.08 1.97Zm-2.66 1.87c1.08-.89-.3-2.66-1.48-1.67-1.08.89.39 2.66 1.48 1.67Zm-2.26 2.36c.98-1.08-.79-2.56-1.67-1.48-.98 1.08.69 2.56 1.67 1.48Zm-1.97 2.66c.79-1.28-1.18-2.36-1.97-1.08-.69 1.18 1.28 2.36 1.97 1.08Zm-1.38 2.95c.59-1.38-1.57-2.07-2.07-.79-.49 1.38 1.67 2.16 2.07.79Zm-.78 3.14c.3-1.38-1.97-1.77-2.16-.39-.3 1.48 1.87 1.87 2.16.39Zm-.3 3.25c0-1.48-2.26-1.48-2.26 0s2.26 1.48 2.26 0Zm.3 3.35c-.2-1.48-2.46-1.08-2.16.39.2 1.38 2.36.98 2.16-.39Zm.78 3.14c-.49-1.38-2.66-.59-2.07.79.49 1.28 2.66.49 2.07-.79Zm1.38 2.95c-.69-1.28-2.66-.1-1.97 1.08.79 1.28 2.75.1 1.97-1.08Zm1.87 2.66c-.89-1.08-2.66.39-1.67 1.48.89 1.08 2.66-.39 1.67-1.48Zm2.36 2.36c-1.08-.98-2.56.79-1.48 1.67 1.08.98 2.56-.79 1.48-1.67Zm2.66 1.87c-1.28-.79-2.36 1.18-1.08 1.97 1.18.69 2.36-1.28 1.08-1.97Zm2.95 1.38c-1.38-.49-2.16 1.67-.79 2.07 1.38.49 2.16-1.57.79-2.07Zm3.14.78c-1.38-.3-1.77 1.97-.39 2.16 1.48.39 1.87-1.87.39-2.16Zm3.25.3c-1.48 0-1.48 2.26 0 2.26s1.48-2.26 0-2.26Zm3.25-.3c-1.48.2-1.08 2.46.39 2.16 1.48-.2 1.08-2.36-.39-2.16Zm3.14-.78c-1.38.49-.59 2.66.79 2.07 1.38-.49.59-2.56-.79-2.07Zm3.05-1.38c-1.28.69-.1 2.66 1.08 1.97 1.28-.79.1-2.75-1.08-1.97Zm2.66-1.87c-1.08.89.3 2.66 1.48 1.67 1.08-.89-.39-2.66-1.48-1.67Zm2.26-2.36c-.98 1.08.79 2.56 1.67 1.48.98-1.08-.69-2.56-1.67-1.48Zm1.87-2.66c-.79 1.28 1.18 2.36 1.97 1.08.79-1.18-1.18-2.36-1.97-1.08Zm1.38-2.95c-.49 1.38 1.57 2.16 2.07.79.59-1.38-1.57-2.16-2.07-.79Zm.88-3.14c-.3 1.38 1.97 1.77 2.16.39.3-1.48-1.97-1.87-2.16-.39Zm.3-3.25c0 1.48 2.26 1.48 2.26 0s-2.26-1.48-2.26 0Zm-.3-3.25c.2 1.48 2.46 1.08 2.16-.39-.2-1.48-2.46-1.08-2.16.39Zm-.78-3.14c.49 1.38 2.66.59 2.07-.79-.49-1.38-2.66-.59-2.07.79Zm-1.38-3.05c.69 1.28 2.66.1 1.97-1.08-.79-1.28-2.75-.1-1.97 1.08Zm-1.97-2.66c.89 1.08 2.66-.3 1.67-1.48-.79-1.08-2.56.39-1.67 1.48Zm-2.26-2.26c1.08.98 2.56-.79 1.48-1.67-1.18-.98-2.56.69-1.48 1.67Zm-2.66-1.87c1.28.79 2.36-1.18 1.08-1.97-1.18-.79-2.36 1.18-1.08 1.97Zm-2.95-1.38c1.38.49 2.16-1.67.79-2.07-1.38-.59-2.16 1.57-.79 2.07Zm-3.14-.88c1.38.3 1.77-1.97.39-2.16-1.48-.3-1.87 1.97-.39 2.16Z"></path>
+</svg>
+        <div class="value ajaxReplaceableSilverAmount" data-load-tooltip="free-silver"><?= $vars['silverCount']; ?></div>
         </div>
+        
+        <a class="shop" href="#" accesskey="8" onclick="jQuery(window).trigger('startPaymentWizard', {}); this.blur(); return false;"></a>
+
+
+            <?php if (isset($vars['stockBar']) && $vars['showStockbar']):?>
+<div id="stockBar">
+
+    <div class="warehouse">
+
+        <div class="capacity"><i class="granary_medium"></i><div class="value"><?=number_format_x($vars["stockBar"]["maxcrop"]); ?></div></div>
+
+        <a class="stockBarButton resource4" href="/production.php?t=crop">
+            <i class="crop_small"></i>
+            <svg viewBox="0 0 160 180" class=" advantageBonusArrow productionBoost">
+    <path class="border" d="M158.78 106.45 85.17 2.72C84.06 1.01 82.14 0 80.03 0S76 1.01 74.79 2.72L1.17 106.45c-1.41 1.91-1.51 4.53-.5 6.64 1.11 2.11 3.23 3.42 5.65 3.42h31.76v57.15c0 3.52 2.82 6.34 6.35 6.34h70.89c3.53 0 6.35-2.82 6.35-6.34v-57.15h31.97c2.42 0 4.54-1.31 5.65-3.42 1.11-2.11.91-4.63-.5-6.64Z"></path>
+    <path class="sideShadow" d="m20.6 103.48-14.07 6.78c.17.3.48.51.87.51h35.86c.55 0 1 .45 1 1v61.81c0 .55.45 1 1 1h69.48c.55 0 1-.45 1-1V111.8c0-.55.45-1 1-1l35.34.29c.41 0 .74-.23.9-.55l-14.1-7-118.28-.06Z"></path>
+    <path class="bottomShadow" d="m51.45 167.41-6.88 6.88c.18.18.42.28.69.28h69.48c.26 0 .49-.11.67-.27l-6.96-6.9H51.44Z"></path>
+    <path class="topShadow" d="m6.54 110.26 13.98-6.74 59.44-85.03 59.02 85.1 14.01 6.95c.15-.3.15-.68-.07-1.01L80.83 5.35c-.39-.57-1.24-.57-1.64 0L6.59 109.21c-.35.5-.16 1.14.3 1.42-.15-.09-.26-.22-.35-.37Z"></path>
+    <path class="inner" d="M108.45 167.41h-57v-63.89H20.52l59.44-85.03 59.02 85.1-30.53-.05v63.87z"></path>
+</svg>
+
+            <div id="l4" class="value <?= ($vars['stockBar']['production'][3] < 0 ? 'alert' : ''); ?>"><?=$vars["stockBar"]["storageString"][3];?></div>
+			<div class="barBox">
+				<div id="lbar4" class="bar stock<?=$vars["stockBar"]["storageClass"][0];?>" style="width:<?=$vars["stockBar"]["percents"][0]; ?>%;"></div>
+			</div>
+        </a>
+
+        <a class="stockBarButton" href="/production.php?t=balance">
+            <i class="freeCrop_small"></i>
+			<div id="stockBarFreeCrop" class="value"><?=$vars["stockBar"]["production"][4];?></div>
+        </a>
+
+    </div>
+
+</div>
+
+                    <script type="text/javascript">
+                        var resources = {};
+
+                        resources.production = {
+                            "l1": <?=$vars['stockBar']['production'][0];?>,
+                            "l2": <?=$vars['stockBar']['production'][1];?>,
+                            "l3": <?=$vars['stockBar']['production'][2];?>,
+                            "l4": <?=$vars['stockBar']['production'][3];?>,
+                            "l5": <?=$vars['stockBar']['production'][4];?>
+                        };
+                        resources.storage = {
+                            "l1": <?=$vars['stockBar']['storage'][0];?>,
+                            "l2": <?=$vars['stockBar']['storage'][1];?>,
+                            "l3": <?=$vars['stockBar']['storage'][2];?>,
+                            "l4": <?=$vars['stockBar']['storage'][3];?>
+                        };
+                        resources.maxStorage = {
+                            "l1": <?=$vars['stockBar']['maxstore'];?>,
+                            "l2": <?=$vars['stockBar']['maxstore'];?>,
+                            "l3": <?=$vars['stockBar']['maxstore'];?>,
+                            "l4": <?=$vars['stockBar']['maxcrop'];?>
+                        };
+                    </script>
+            <?php endif; ?>
+
+<nav id="mobileMenu">
+        <ul>
+                            <li>
+                    <a class="dailyQuests" href="#" accesskey="7" onclick="Travian.React.openDailyQuestsDialog(); return false;">
+                        <div class="inlineIcon " title=""><svg viewBox="0 0 40 130.22" class="dailyQuests ">
+    <rect width="40" height="89.11" rx="10.33"></rect>
+    <ellipse cx="19.67" cy="115.67" rx="17.22" ry="14.56"></ellipse>
+</svg>
+<span class="value ">Daily quests</span></div>                    </a>
+                </li>
+                <li>
+                    <a class="statistics" href="/statistics">
+                        <div class="inlineIcon " title=""><svg viewBox="0 0 120.56 137.33" class="statistics">
+    <path d="M1.67 70.67h32.67V130H1.67zM43.56 35.56h32.67V130H43.56zM86.46 0h32.67v130H86.46zM0 133.56h120.56v3.78H0z"></path>
+</svg>
+<span class="value ">Statistics</span></div>                    </a>
+                </li>
+									<li>
+						<a class="referAFriend" href="/referAFriend">
+							<div class="inlineIcon " title=""><svg viewBox="0 0 18.08 20" class="referAFriend">
+  <path class="human" d="M5.86 9a1.26 1.26 0 01-1.14-1.31V6.36a.72.72 0 01.55-.75.67.67 0 000-.42 4.87 4.87 0 01.2-2.51 1.63 1.63 0 01.28-.52c.29-.38.63-.73.94-1.09A3.84 3.84 0 0111.4.58a4.16 4.16 0 011.86 4.2 5.2 5.2 0 000 1c.63.3.41.88.39 1.38 0 .2-.05.41 0 .63a1.76 1.76 0 01-.09.75c-.15.43-.17.45-.59.6a3.31 3.31 0 01-.71 1.6c-.24.28-.16.65-.24 1s-.13.61-.21.91a1.56 1.56 0 00.83 2 6.14 6.14 0 011.63 1.14 4.54 4.54 0 01.91 1.38c.19.42.06.61-.4.61H.5c-.46 0-.51 0-.5-.52a4.13 4.13 0 012-3.48A6.1 6.1 0 013.57 13a4.77 4.77 0 002.07-1.21 1.2 1.2 0 00.36-1c-.06-.56-.1-1.16-.14-1.79z"></path>
+  <path class="plus" d="M8.38 16.43v-2.56a.71.71 0 01.77-.57h2.27v-2.32c0-.53.17-.68.69-.68h2.09c.7 0 .88.15.89.9v2.1h2.17c.62 0 .81.19.82.81v2c0 .71-.17.88-.87.88h-2.12v2.21c0 .72-.19.8-.81.81h-2c-.69 0-.85-.17-.85-.85v-2.17H9.25c-.42.01-.75-.1-.87-.56z"></path>
+</svg>
+<span class="value ">Refer a friend</span></div>						</a>
+					</li>
+				                <li>
+                    <a class="profile" href="spieler.php">
+                        <div class="inlineIcon " title=""><svg viewBox="0 0 15.76 21" class="profile">
+  <path d="M7.88 1.77c2.1 0 3.8 2.09 3.8 4.65s-1.7 4.65-3.8 4.65S4.08 9 4.08 6.42s1.71-4.65 3.8-4.65m0-1.77c-3 0-5.49 2.88-5.49 6.42s2.46 6.42 5.49 6.42 5.49-2.84 5.49-6.42S10.92 0 7.88 0zm7.88 21a11.81 11.81 0 0 0-2.51-7 7.17 7.17 0 0 1-5.37 2.46A7.17 7.17 0 0 1 2.52 14 11.82 11.82 0 0 0 0 21z"></path>
+</svg>
+<span class="value ">Profile</span></div>                    </a>
+                </li>
+                <li>
+                                            <a class="options" href="options.php">
+                            <div class="inlineIcon " title=""><svg viewBox="0 0 20 20" class="settings">
+  <path d="M9 20l-.24-3.26-.57-.16A7.21 7.21 0 0 1 6.66 16l-.52-.29-2.47 2.1-1.48-1.48 2.14-2.47-.33-.52a7.21 7.21 0 0 1-.62-1.49l-.16-.57L0 11V9l3.26-.24.16-.57A7.21 7.21 0 0 1 4 6.66l.29-.52-2.1-2.47 1.48-1.48 2.47 2.14.52-.33a7.21 7.21 0 0 1 1.49-.62l.57-.16L9 0h2l.24 3.26.57.16a7.21 7.21 0 0 1 1.53.58l.52.29 2.47-2.14 1.48 1.48-2.14 2.51.29.52a7.21 7.21 0 0 1 .62 1.49l.16.57L20 9v2l-3.26.24-.16.57a7.21 7.21 0 0 1-.58 1.53l-.29.52 2.14 2.47-1.48 1.48-2.47-2.14-.52.29a7.21 7.21 0 0 1-1.49.62l-.57.16L11 20zm1-15a5 5 0 1 0 5 5 5 5 0 0 0-5-5z"></path>
+</svg>
+<span class="value ">Options</span></div>                        </a>
+                                    </li>
+                <li>
+                    <a class="help" onclick="Travian.React.openHelpDialog()">
+                        <div class="inlineIcon " title=""><svg viewBox="0 0 12.24 20" class="answers">
+  <path d="M3.73 13.1v-.52c0-2.8 1.47-3.8 2.89-4.76 1-.72 2.14-1.46 2.14-2.9s-1.13-2.55-3-2.55A5.39 5.39 0 0 0 2 4.12L0 2.61A8.15 8.15 0 0 1 6.24 0c3 0 6 1.4 6 4.52 0 2.42-1.4 3.38-2.88 4.4-1.33.91-2.7 1.85-2.7 3.82v.36zm3.61 4.8a2.09 2.09 0 0 0-2.1-2.07 2.09 2.09 0 0 0 0 4.17 2.1 2.1 0 0 0 2.1-2.1z"></path>
+</svg>
+<span class="value ">Help</span></div>                    </a>
+                </li>
+                <li>
+                    <a class="discord" target="_blank" href="https://discord.gg/travianlegends">
+                        <div class="inlineIcon " title=""><svg viewBox="0 0 20 18.71" class="discord">
+  <path d="M0 2.91v10.18A2.92 2.92 0 002.91 16h12.71a.93.93 0 01.65.27l2.17 2.17a.91.91 0 001.56-.65V2.91A2.92 2.92 0 0017.09 0H2.91A2.92 2.92 0 000 2.91zm15.72 9.59H4.28a.78.78 0 01-.78-.78V4.28a.78.78 0 01.78-.78h11.44a.78.78 0 01.78.78v7.44a.78.78 0 01-.78.78z"></path>
+</svg>
+<span class="value ">Discord</span></div>                    </a>
+                </li>
+                                <li>
+                                        <a class="logout" href="logout.php" onclick="Travian.api('auth/logout'); return false;">
+                        <div class="inlineIcon " title=""><svg viewBox="0 0 20 20" class="logout">
+  <path d="M0 17.01L7.01 10 .14 3.13 3.13.14 10 7.01 17.01 0 20 2.99 12.99 10l6.87 6.87-2.99 2.99L10 12.99 2.99 20 0 17.01z"></path>
+</svg>
+<span class="value ">Logout</span></div>                    </a>
+                </li>
+                                                </ul>
+
+        
+        <svg viewBox="0 0 200 10" class="divider">
+    <path d="m200 5-78.7-2.5c.2.75.54 1.57.67 2.35h-2.49c-.08-1.31-1.16-2.35-2.48-2.35s-2.41 1.04-2.48 2.35h-9.67L100 0l-4.85 4.85h-9.67C85.4 3.54 84.32 2.5 83 2.5s-2.41 1.04-2.48 2.35h-2.49c.13-.78.47-1.6.67-2.35L0 5l78.7 2.5c-.22-.74-.55-1.58-.67-2.35h2.49C80.6 6.46 81.68 7.5 83 7.5s2.41-1.04 2.48-2.35h9.67L100 10l4.85-4.85h9.67c.08 1.31 1.16 2.35 2.48 2.35s2.41-1.04 2.48-2.35h2.49c-.12.77-.46 1.61-.67 2.35L200 5Z"></path>
+</svg>
+
+        <ul>
+            <li>
+                <a class="mainpage" href="https://www.travian.com/international" target="_blank" title="">Homepage</a>
+            </li>
+            <li>
+                <a class="terms" href="https://agb.traviangames.com/terms-en.pdf" target="_blank" title="">Terms</a>
+            </li>
+            <li>
+                <a class="imprint" href="https://www.travian.com/international/imprint" target="_blank" title="">Imprint</a>
+            </li>
+                            <li>
+                    <a class="imprint" href="#" onclick="__cmapi('showScreenAdvanced',null,null); return false" target="_blank" title="">Privacy settings</a>
+                </li>
+                    </ul>
+
+        <p class="copyright">© 2004 - 2026 Travian Games GmbH</p>
+    </nav>
+
+            <?php endif; ?>
+        </div>
+
         <div id="center">
             <div id="sidebarBeforeContent" class="sidebar beforeContent">
                 <?=$vars['sidebarBeforeContent']; ?>
                 <div class="clear"></div>
             </div>
             <div id="contentOuterContainer" class="size1">
-                <?php
-                if (isset($vars['stockBar']) && $vars['showStockbar']):?>
-                    <div id="stockBar">
-                        <div class="warehouse">
-                            <div class="capacity" title="<?=T("Buildings", "10.title"); ?>">
-                                <i class="warehouse_medium"></i>
-                                <div class="value" id="stockBarWarehouse"><?=number_format_x($vars['stockBar']['maxstore']); ?></div>
-                            </div>
-                            
-                            <a id="stockBarResource1" class="stockBarButton resource1" href="production.php?t=1" title="<?=$vars['stockBar']['titles'][0]; ?>">
-                                <i class="r1"></i>
-                                <?php if ($vars['stockBar']['productionBoost'][0]): ?><img src="img/x.gif" class="productionBoost" alt=""><?php endif; ?>
                                 <span id="l1" class="value" style="<?= (getDisplay("smallResourcesFontSize") ? 'font-size: 11px;' : ''); ?>"><?=$vars['stockBar']['storageString'][0]; ?></span>
                                 <div class="barBox"><div id="lbar1" class="bar stock<?=$vars['stockBar']['storageClass'][0];?>" style="width:<?=$vars['stockBar']['percents'][0]; ?>%;"></div></div>
                             </a>
