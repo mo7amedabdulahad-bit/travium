@@ -146,7 +146,7 @@ use Core\Helper\TimezoneHelper;
 
                 <div id="l1" class="value <?= ($vars['stockBar']['production'][0] < 0 ? 'alert' : ''); ?>"><?=$vars["stockBar"]["storageString"][0];?></div>
 				<div class="barBox">
-					<div id="lbar1" class="bar stock<?=$vars["stockBar"]["storageClass"][0];?>" style="width:<?=$vars[\'stockBar\'][\'percents\'][0];?>%;"></div>
+					<div id="lbar1" class="bar stock<?=$vars["stockBar"]["storageClass"][0];?>" style="width:<?=$vars['stockBar']['percents'][0];?>%;"></div>
 				</div>
             </a>
                     <a class="stockBarButton resource2" href="/production.php?t=clay">
@@ -161,7 +161,7 @@ use Core\Helper\TimezoneHelper;
 
                 <div id="l2" class="value <?= ($vars['stockBar']['production'][1] < 0 ? 'alert' : ''); ?>"><?=$vars["stockBar"]["storageString"][1];?></div>
 				<div class="barBox">
-					<div id="lbar2" class="bar stock<?=$vars["stockBar"]["storageClass"][1];?>" style="width:<?=$vars[\'stockBar\'][\'percents\'][1];?>%;"></div>
+					<div id="lbar2" class="bar stock<?=$vars["stockBar"]["storageClass"][1];?>" style="width:<?=$vars['stockBar']['percents'][1];?>%;"></div>
 				</div>
             </a>
                     <a class="stockBarButton resource3" href="/production.php?t=iron">
@@ -176,7 +176,7 @@ use Core\Helper\TimezoneHelper;
 
                 <div id="l3" class="value <?= ($vars['stockBar']['production'][2] < 0 ? 'alert' : ''); ?>"><?=$vars["stockBar"]["storageString"][2];?></div>
 				<div class="barBox">
-					<div id="lbar3" class="bar stock<?=$vars["stockBar"]["storageClass"][2];?>" style="width:<?=$vars[\'stockBar\'][\'percents\'][2];?>%;"></div>
+					<div id="lbar3" class="bar stock<?=$vars["stockBar"]["storageClass"][2];?>" style="width:<?=$vars['stockBar']['percents'][2];?>%;"></div>
 				</div>
             </a>
         
@@ -200,7 +200,7 @@ use Core\Helper\TimezoneHelper;
 
             <div id="l4" class="value <?= ($vars['stockBar']['production'][3] < 0 ? 'alert' : ''); ?>"><?=$vars["stockBar"]["storageString"][3];?></div>
 			<div class="barBox">
-				<div id="lbar4" class="bar stock<?=$vars["stockBar"]["storageClass"][3];?>" style="width:<?=$vars[\'stockBar\'][\'percents\'][3];?>%;"></div>
+				<div id="lbar4" class="bar stock<?=$vars["stockBar"]["storageClass"][3];?>" style="width:<?=$vars['stockBar']['percents'][3];?>%;"></div>
 			</div>
         </a>
 
