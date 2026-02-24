@@ -452,6 +452,7 @@ use Core\Helper\TimezoneHelper;
                 <?=appendTimer($vars['dateTime'], 1); ?>
             </div>
         <?php } ?>
+    </div> <!-- closes background -->
     <div id="ce"></div>
 </div>
 <script type="text/javascript">
