@@ -38,7 +38,7 @@ class OutOfGameView
             $this->renderSidebarBoxMenu();
         }
         $this->renderNewsBox();
-        $view = new PHPBatchView('layout/Layout');
+        $view = new PHPBatchView('layout/OutGameLayout');
         $view->vars = $this->vars;
         $view->display();
     }
