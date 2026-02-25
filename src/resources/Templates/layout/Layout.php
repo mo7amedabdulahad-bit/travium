@@ -8,7 +8,6 @@ use Core\Helper\TimezoneHelper;
 <body data-theme="<?= detect_season() === 'winter' ? 'winter' : 'default'; ?>" data-village-perspective="<?=$vars['bodyCssClass']; ?>" class="v35 webkit chrome <?=get_locale();?> <?= Config::getProperty("settings", "global_css_class"); ?> <?=$vars['contentCssClass']; ?> <?= $vars['colorBlind'] ? 'colorBlind' : ''; ?> <?=$vars['bodyCssClass']; ?> <?= (getDirection() == 'RTL' ? 'rtl' : 'ltr'); ?> season-<?= detect_season(); ?> buildingsV1">
 
 
-
 <div id="reactDialogWrapper"></div>
 <style>
 /* Override T4.4 legacy defaults for T4.6 map */
@@ -16,6 +15,9 @@ use Core\Helper\TimezoneHelper;
 #contentOuterContainer { background: transparent !important; }
 #resourceFieldContainer { top: 220px !important; margin-top: 0 !important; }
 .notNow .level { filter: grayscale(100%); }
+@media (min-width: 768px) {
+    #mobileMenu { display: none !important; }
+}
 </style>
 <div id="background">
     <?php
@@ -369,7 +371,6 @@ use Core\Helper\TimezoneHelper;
         }
     });
 </script>
-    </div>
 </div> <!-- closes topBar -->
 
     <div id="topBarHeroWrapper">
