@@ -215,13 +215,7 @@ use Core\Helper\TimezoneHelper;
 
 </div>
 
-<script type="text/javascript">
-    var resources = {
-        production: {"l1": 920,"l2": 920,"l3": 920,"l4": 1279,"l5": 1279},
-        storage: {"l1": 800,"l2": 800,"l3": 800,"l4": 800},
-        maxStorage: {"l1": 800,"l2": 800,"l3": 800,"l4": 800}
-    };
-</script>
+
 		            <nav id="mobileMenu">
         <ul>
                             <li>
