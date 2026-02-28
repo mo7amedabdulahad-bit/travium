@@ -622,21 +622,7 @@ function get_gpack_cdn_base_url_with_protocol()
 
 function get_gpack_version($default = false)
 {
-    global $globalConfig;
-    $gpack_version = $globalConfig['staticParameters']['gpacks']['default'];
-
-    // Removed early return
-    // return $gpack_version; 
-
-    if (!$default) {
-        $gpackList = $globalConfig['staticParameters']['gpacks']['list'];
-        if (isset($_COOKIE['travian_gpack_hash'])) {
-            if (isset($gpackList[$_COOKIE['travian_gpack_hash']])) {
-                $gpack_version = $_COOKIE['travian_gpack_hash'];
-            }
-        }
-    }
-    return $gpack_version;
+    return 'a17a8f72';
 }
 
 function set_gpack_version($gpack_version)
