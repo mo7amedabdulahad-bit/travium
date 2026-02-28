@@ -12,17 +12,10 @@ use Core\Helper\PreferencesHelper;
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="content-language" content="<?=get_locale(); ?>"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <link href="<?=get_gpack_link_and_hash("compact.css"); ?>"
-          rel="stylesheet" type="text/css"/>
-    <link href="<?=get_gpack_link_and_hash("lang.css"); ?>"
-          rel="stylesheet" type="text/css"/>
+    <link href="<?=get_gpack_link_and_hash("imports_compressed.css"); ?>" rel="stylesheet" type="text/css"/>
     <?php if (is_lowres()): ?>
         <link href="<?=get_gpack_link_and_hash("compact-lowres.css"); ?>" rel="stylesheet" type="text/css"/>
-
     <?php endif; ?>
-    <link href="<?=get_gpack_link_and_hash("fixes.css", false); ?>?rev13" rel="stylesheet" type="text/css"/>
-
-
     <script type="text/javascript">
         window.ajaxToken = '<?=(isset($vars['ajaxToken']) ? $vars['ajaxToken'] : null);?>';
         window._player_uuid = '<?=(isset($vars['_player_uuid']) ? $vars['_player_uuid'] : null);?>';
