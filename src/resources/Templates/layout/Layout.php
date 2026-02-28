@@ -365,7 +365,7 @@ use Core\Helper\TimezoneHelper;
         }
     });
 </script>
-    <div id="topBarHeroWrapper">
+    <div id="topBarHeroWrapper" style="grid-column: 2; position: absolute;">
         <?= $vars['topBarHero'] ?? ''; ?>
     </div>
 </div> <!-- closes topBar -->
