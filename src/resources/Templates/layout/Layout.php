@@ -365,11 +365,10 @@ use Core\Helper\TimezoneHelper;
         }
     });
 </script>
-</div> <!-- closes topBar -->
-
     <div id="topBarHeroWrapper">
         <?= $vars['topBarHero'] ?? ''; ?>
     </div>
+</div> <!-- closes topBar -->
 
     <div id="center">
         <div id="sidebarBeforeContent" class="sidebar beforeContent">
